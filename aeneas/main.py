@@ -4,19 +4,21 @@ from aeneas.executetask import ExecuteTask
 from moviepy import TextClip, CompositeVideoClip, CompositeAudioClip, ImageClip, AudioFileClip
 
 def clean_lyrics(song_folder):
+	import re
+	# Read original lyrics
 	with open(song_folder + "/lyrics.txt", "r", encoding="utf-8") as fin:
-		lyrics = fin.read()
-		cleaned_lyrics = []
-		
-		for line in lyrics.splitlines():
-			line = line.strip()
-			if line and not line.startswith('[') and not line.endswith(']'):
-				words = line.split()
-				cleaned_lyrics.extend(words) 
-
+		text = fin.read()
+	# Normalize whitespace and remove commas explicitly
+	text = text.replace("\r\n", " ").replace("\n", " ")
+	text = text.replace(",", "")
+	# Remove any other non-alphanumeric characters (keep spaces) and collapse whitespace
+	text = re.sub(r"[^A-Za-z0-9 ]+", "", text)
+	text = re.sub(r"\s+", " ", text).strip()
+	# Split into words and write one per line
+	words = [w for w in text.split(" ") if w]
 	with open(song_folder + "/lyrics-clean.txt", "w", encoding="utf-8") as fout:
-		fout.write('\n'.join(cleaned_lyrics))
-		print("Cleaned lyrics saved → " + song_folder + "/lyrics-clean.txt")
+		fout.write("\n".join(words))
+	print("Cleaned lyrics saved → " + song_folder + "/lyrics-clean.txt")
 
 
 def run_aeneas_alignment(song_folder, clean=False):
@@ -95,7 +97,7 @@ def render_video(song_folder, font, fps=30):
 
 font = "C:\Windows\Fonts\Arial.ttf"
 
-song_folder = "samples/Death Grips - Lost Boys"
+song_folder = "samples/Geese - Husbands"#"samples/Death Grips - Lost Boys"
 clean_lyrics(song_folder)
 run_aeneas_alignment(song_folder, True)
 render_video(song_folder, font)

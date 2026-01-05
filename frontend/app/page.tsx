@@ -1,20 +1,25 @@
+import Wallpaper from "@/components/wallpaper";
 import Image from "next/image";
+import Link from "next/link";
 
-export default function Home() {
+export default function HomePage() {
 	return (
-		<div className="flex flex-col min-h-screen items-center justify-center bg-linear-to-b from-red-200 to-orange-100 font-sans dark:bg-black">
-      <div className="absolute inset-0 bg-diamond-overlay pointer-events-none"></div>
+		<Wallpaper color="peach">
+			<h1 className="tall-outline md:text-8xl">
+				Singish
+			</h1>
 
-      <div className="relative z-10 text-center">
-        <h1 className="tall-outline text-6xl md:text-8xl leading-tight">
-          Singish
-        </h1>
+			<h2 className="text-black text-lg md:text-2xl font-semibold mt-6 max-w-2xl">
+				Create karaoke videos, create covers to your favorite songs, and compete
+				for the highest karaoke score.
+			</h2>
 
-        <h2 className="text-black text-lg md:text-2xl font-semibold mt-6 max-w-2xl">
-          Create karaoke videos, create covers to your favorite songs, and compete
-          for the highest karaoke score.
-        </h2>
-      </div>
-		</div>
+			<Link
+				href="/create"
+				className="inline-block px-4 py-2 border-4 border-black text-black bg-white font-semibold rounded-lg hover:bg-gray-100 transition"
+				>
+				Create
+			</Link>
+		</Wallpaper>
 	);
 }
