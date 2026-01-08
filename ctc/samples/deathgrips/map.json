@@ -1,4924 +1,2954 @@
-{
- "fragments": [
-  {
-   "begin": "0.000",
-   "children": [],
-   "end": "10.480",
-   "id": "f000001",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "10.480",
-   "children": [],
-   "end": "13.720",
-   "id": "f000002",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "13.720",
-   "children": [],
-   "end": "17.040",
-   "id": "f000003",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "17.040",
-   "children": [],
-   "end": "17.560",
-   "id": "f000004",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "17.560",
-   "children": [],
-   "end": "17.840",
-   "id": "f000005",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "17.840",
-   "children": [],
-   "end": "18.240",
-   "id": "f000006",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "18.240",
-   "children": [],
-   "end": "18.560",
-   "id": "f000007",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "18.560",
-   "children": [],
-   "end": "19.080",
-   "id": "f000008",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "19.080",
-   "children": [],
-   "end": "19.600",
-   "id": "f000009",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "19.600",
-   "children": [],
-   "end": "19.600",
-   "id": "f000010",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "19.600",
-   "children": [],
-   "end": "20.040",
-   "id": "f000011",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "20.040",
-   "children": [],
-   "end": "23.360",
-   "id": "f000012",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "23.360",
-   "children": [],
-   "end": "23.640",
-   "id": "f000013",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "23.640",
-   "children": [],
-   "end": "24.040",
-   "id": "f000014",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "24.040",
-   "children": [],
-   "end": "24.320",
-   "id": "f000015",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "24.320",
-   "children": [],
-   "end": "24.320",
-   "id": "f000016",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "24.320",
-   "children": [],
-   "end": "24.320",
-   "id": "f000017",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "24.320",
-   "children": [],
-   "end": "24.320",
-   "id": "f000018",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "24.320",
-   "children": [],
-   "end": "24.320",
-   "id": "f000019",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "24.320",
-   "children": [],
-   "end": "24.320",
-   "id": "f000020",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "24.320",
-   "children": [],
-   "end": "25.640",
-   "id": "f000021",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "25.640",
-   "children": [],
-   "end": "26.280",
-   "id": "f000022",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "26.280",
-   "children": [],
-   "end": "27.320",
-   "id": "f000023",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "27.320",
-   "children": [],
-   "end": "28.120",
-   "id": "f000024",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "28.120",
-   "children": [],
-   "end": "28.640",
-   "id": "f000025",
-   "language": "eng",
-   "lines": [
-    "Other"
-   ]
-  },
-  {
-   "begin": "28.640",
-   "children": [],
-   "end": "29.280",
-   "id": "f000026",
-   "language": "eng",
-   "lines": [
-    "side"
-   ]
-  },
-  {
-   "begin": "29.280",
-   "children": [],
-   "end": "29.880",
-   "id": "f000027",
-   "language": "eng",
-   "lines": [
-    "of"
-   ]
-  },
-  {
-   "begin": "29.880",
-   "children": [],
-   "end": "30.240",
-   "id": "f000028",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "30.240",
-   "children": [],
-   "end": "31.640",
-   "id": "f000029",
-   "language": "eng",
-   "lines": [
-    "tracks"
-   ]
-  },
-  {
-   "begin": "31.640",
-   "children": [],
-   "end": "31.800",
-   "id": "f000030",
-   "language": "eng",
-   "lines": [
-    "scuzz"
-   ]
-  },
-  {
-   "begin": "31.800",
-   "children": [],
-   "end": "31.800",
-   "id": "f000031",
-   "language": "eng",
-   "lines": [
-    "outsiders"
-   ]
-  },
-  {
-   "begin": "31.800",
-   "children": [],
-   "end": "31.960",
-   "id": "f000032",
-   "language": "eng",
-   "lines": [
-    "Nothin"
-   ]
-  },
-  {
-   "begin": "31.960",
-   "children": [],
-   "end": "32.960",
-   "id": "f000033",
-   "language": "eng",
-   "lines": [
-    "to"
-   ]
-  },
-  {
-   "begin": "32.960",
-   "children": [],
-   "end": "34.040",
-   "id": "f000034",
-   "language": "eng",
-   "lines": [
-    "lose"
-   ]
-  },
-  {
-   "begin": "34.040",
-   "children": [],
-   "end": "34.840",
-   "id": "f000035",
-   "language": "eng",
-   "lines": [
-    "strike"
-   ]
-  },
-  {
-   "begin": "34.840",
-   "children": [],
-   "end": "35.000",
-   "id": "f000036",
-   "language": "eng",
-   "lines": [
-    "of"
-   ]
-  },
-  {
-   "begin": "35.000",
-   "children": [],
-   "end": "35.760",
-   "id": "f000037",
-   "language": "eng",
-   "lines": [
-    "midnighters"
-   ]
-  },
-  {
-   "begin": "35.760",
-   "children": [],
-   "end": "35.760",
-   "id": "f000038",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "35.760",
-   "children": [],
-   "end": "35.920",
-   "id": "f000039",
-   "language": "eng",
-   "lines": [
-    "paradise"
-   ]
-  },
-  {
-   "begin": "35.920",
-   "children": [],
-   "end": "36.120",
-   "id": "f000040",
-   "language": "eng",
-   "lines": [
-    "True"
-   ]
-  },
-  {
-   "begin": "36.120",
-   "children": [],
-   "end": "36.120",
-   "id": "f000041",
-   "language": "eng",
-   "lines": [
-    "black"
-   ]
-  },
-  {
-   "begin": "36.120",
-   "children": [],
-   "end": "36.120",
-   "id": "f000042",
-   "language": "eng",
-   "lines": [
-    "and"
-   ]
-  },
-  {
-   "begin": "36.120",
-   "children": [],
-   "end": "36.120",
-   "id": "f000043",
-   "language": "eng",
-   "lines": [
-    "blues"
-   ]
-  },
-  {
-   "begin": "36.120",
-   "children": [],
-   "end": "36.120",
-   "id": "f000044",
-   "language": "eng",
-   "lines": [
-    "no"
-   ]
-  },
-  {
-   "begin": "36.120",
-   "children": [],
-   "end": "36.160",
-   "id": "f000045",
-   "language": "eng",
-   "lines": [
-    "shoes"
-   ]
-  },
-  {
-   "begin": "36.160",
-   "children": [],
-   "end": "36.600",
-   "id": "f000046",
-   "language": "eng",
-   "lines": [
-    "flat"
-   ]
-  },
-  {
-   "begin": "36.600",
-   "children": [],
-   "end": "36.800",
-   "id": "f000047",
-   "language": "eng",
-   "lines": [
-    "tires"
-   ]
-  },
-  {
-   "begin": "36.800",
-   "children": [],
-   "end": "37.040",
-   "id": "f000048",
-   "language": "eng",
-   "lines": [
-    "Broke"
-   ]
-  },
-  {
-   "begin": "37.040",
-   "children": [],
-   "end": "37.360",
-   "id": "f000049",
-   "language": "eng",
-   "lines": [
-    "out"
-   ]
-  },
-  {
-   "begin": "37.360",
-   "children": [],
-   "end": "37.360",
-   "id": "f000050",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "37.360",
-   "children": [],
-   "end": "37.600",
-   "id": "f000051",
-   "language": "eng",
-   "lines": [
-    "pen"
-   ]
-  },
-  {
-   "begin": "37.600",
-   "children": [],
-   "end": "38.280",
-   "id": "f000052",
-   "language": "eng",
-   "lines": [
-    "blood"
-   ]
-  },
-  {
-   "begin": "38.280",
-   "children": [],
-   "end": "38.600",
-   "id": "f000053",
-   "language": "eng",
-   "lines": [
-    "on"
-   ]
-  },
-  {
-   "begin": "38.600",
-   "children": [],
-   "end": "38.800",
-   "id": "f000054",
-   "language": "eng",
-   "lines": [
-    "barbed"
-   ]
-  },
-  {
-   "begin": "38.800",
-   "children": [],
-   "end": "39.400",
-   "id": "f000055",
-   "language": "eng",
-   "lines": [
-    "wire"
-   ]
-  },
-  {
-   "begin": "39.400",
-   "children": [],
-   "end": "39.680",
-   "id": "f000056",
-   "language": "eng",
-   "lines": [
-    "Safe"
-   ]
-  },
-  {
-   "begin": "39.680",
-   "children": [],
-   "end": "40.240",
-   "id": "f000057",
-   "language": "eng",
-   "lines": [
-    "in"
-   ]
-  },
-  {
-   "begin": "40.240",
-   "children": [],
-   "end": "41.080",
-   "id": "f000058",
-   "language": "eng",
-   "lines": [
-    "your"
-   ]
-  },
-  {
-   "begin": "41.080",
-   "children": [],
-   "end": "41.240",
-   "id": "f000059",
-   "language": "eng",
-   "lines": [
-    "home"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.240",
-   "id": "f000060",
-   "language": "eng",
-   "lines": [
-    "gated"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.240",
-   "id": "f000061",
-   "language": "eng",
-   "lines": [
-    "zone"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.240",
-   "id": "f000062",
-   "language": "eng",
-   "lines": [
-    "terrorizers"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.240",
-   "id": "f000063",
-   "language": "eng",
-   "lines": [
-    "Nowhere"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.240",
-   "id": "f000064",
-   "language": "eng",
-   "lines": [
-    "to"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.240",
-   "id": "f000065",
-   "language": "eng",
-   "lines": [
-    "go"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.240",
-   "id": "f000066",
-   "language": "eng",
-   "lines": [
-    "Far"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.240",
-   "id": "f000067",
-   "language": "eng",
-   "lines": [
-    "as"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.240",
-   "id": "f000068",
-   "language": "eng",
-   "lines": [
-    "I"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.240",
-   "id": "f000069",
-   "language": "eng",
-   "lines": [
-    "can"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.240",
-   "id": "f000070",
-   "language": "eng",
-   "lines": [
-    "get"
-   ]
-  },
-  {
-   "begin": "41.240",
-   "children": [],
-   "end": "41.760",
-   "id": "f000071",
-   "language": "eng",
-   "lines": [
-    "hitchhikers"
-   ]
-  },
-  {
-   "begin": "41.760",
-   "children": [],
-   "end": "42.560",
-   "id": "f000072",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "42.560",
-   "children": [],
-   "end": "42.920",
-   "id": "f000073",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "42.920",
-   "children": [],
-   "end": "43.160",
-   "id": "f000074",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "43.160",
-   "children": [],
-   "end": "43.520",
-   "id": "f000075",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "43.520",
-   "children": [],
-   "end": "44.040",
-   "id": "f000076",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "44.040",
-   "children": [],
-   "end": "44.480",
-   "id": "f000077",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "44.480",
-   "children": [],
-   "end": "44.880",
-   "id": "f000078",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "44.880",
-   "children": [],
-   "end": "45.200",
-   "id": "f000079",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "45.200",
-   "children": [],
-   "end": "45.800",
-   "id": "f000080",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "45.800",
-   "children": [],
-   "end": "46.160",
-   "id": "f000081",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "46.160",
-   "children": [],
-   "end": "46.480",
-   "id": "f000082",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "46.480",
-   "children": [],
-   "end": "46.840",
-   "id": "f000083",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "46.840",
-   "children": [],
-   "end": "47.480",
-   "id": "f000084",
-   "language": "eng",
-   "lines": [
-    "Fuck"
-   ]
-  },
-  {
-   "begin": "47.480",
-   "children": [],
-   "end": "47.640",
-   "id": "f000085",
-   "language": "eng",
-   "lines": [
-    "a"
-   ]
-  },
-  {
-   "begin": "47.640",
-   "children": [],
-   "end": "47.640",
-   "id": "f000086",
-   "language": "eng",
-   "lines": [
-    "job"
-   ]
-  },
-  {
-   "begin": "47.640",
-   "children": [],
-   "end": "47.640",
-   "id": "f000087",
-   "language": "eng",
-   "lines": [
-    "might"
-   ]
-  },
-  {
-   "begin": "47.640",
-   "children": [],
-   "end": "47.640",
-   "id": "f000088",
-   "language": "eng",
-   "lines": [
-    "have"
-   ]
-  },
-  {
-   "begin": "47.640",
-   "children": [],
-   "end": "47.640",
-   "id": "f000089",
-   "language": "eng",
-   "lines": [
-    "to"
-   ]
-  },
-  {
-   "begin": "47.640",
-   "children": [],
-   "end": "47.880",
-   "id": "f000090",
-   "language": "eng",
-   "lines": [
-    "rob"
-   ]
-  },
-  {
-   "begin": "47.880",
-   "children": [],
-   "end": "48.000",
-   "id": "f000091",
-   "language": "eng",
-   "lines": [
-    "And"
-   ]
-  },
-  {
-   "begin": "48.000",
-   "children": [],
-   "end": "48.520",
-   "id": "f000092",
-   "language": "eng",
-   "lines": [
-    "dont"
-   ]
-  },
-  {
-   "begin": "48.520",
-   "children": [],
-   "end": "48.800",
-   "id": "f000093",
-   "language": "eng",
-   "lines": [
-    "know"
-   ]
-  },
-  {
-   "begin": "48.800",
-   "children": [],
-   "end": "49.680",
-   "id": "f000094",
-   "language": "eng",
-   "lines": [
-    "just"
-   ]
-  },
-  {
-   "begin": "49.680",
-   "children": [],
-   "end": "50.520",
-   "id": "f000095",
-   "language": "eng",
-   "lines": [
-    "to"
-   ]
-  },
-  {
-   "begin": "50.520",
-   "children": [],
-   "end": "51.000",
-   "id": "f000096",
-   "language": "eng",
-   "lines": [
-    "get"
-   ]
-  },
-  {
-   "begin": "51.000",
-   "children": [],
-   "end": "51.600",
-   "id": "f000097",
-   "language": "eng",
-   "lines": [
-    "by"
-   ]
-  },
-  {
-   "begin": "51.600",
-   "children": [],
-   "end": "52.240",
-   "id": "f000098",
-   "language": "eng",
-   "lines": [
-    "word"
-   ]
-  },
-  {
-   "begin": "52.240",
-   "children": [],
-   "end": "53.040",
-   "id": "f000099",
-   "language": "eng",
-   "lines": [
-    "On"
-   ]
-  },
-  {
-   "begin": "53.040",
-   "children": [],
-   "end": "53.480",
-   "id": "f000100",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "53.480",
-   "children": [],
-   "end": "54.880",
-   "id": "f000101",
-   "language": "eng",
-   "lines": [
-    "road"
-   ]
-  },
-  {
-   "begin": "54.880",
-   "children": [],
-   "end": "55.560",
-   "id": "f000102",
-   "language": "eng",
-   "lines": [
-    "for"
-   ]
-  },
-  {
-   "begin": "55.560",
-   "children": [],
-   "end": "57.240",
-   "id": "f000103",
-   "language": "eng",
-   "lines": [
-    "lifers"
-   ]
-  },
-  {
-   "begin": "57.240",
-   "children": [],
-   "end": "58.240",
-   "id": "f000104",
-   "language": "eng",
-   "lines": [
-    "Bullets"
-   ]
-  },
-  {
-   "begin": "58.240",
-   "children": [],
-   "end": "58.640",
-   "id": "f000105",
-   "language": "eng",
-   "lines": [
-    "in"
-   ]
-  },
-  {
-   "begin": "58.640",
-   "children": [],
-   "end": "59.600",
-   "id": "f000106",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "59.600",
-   "children": [],
-   "end": "59.760",
-   "id": "f000107",
-   "language": "eng",
-   "lines": [
-    "fire"
-   ]
-  },
-  {
-   "begin": "59.760",
-   "children": [],
-   "end": "60.400",
-   "id": "f000108",
-   "language": "eng",
-   "lines": [
-    "Bullets"
-   ]
-  },
-  {
-   "begin": "60.400",
-   "children": [],
-   "end": "60.680",
-   "id": "f000109",
-   "language": "eng",
-   "lines": [
-    "in"
-   ]
-  },
-  {
-   "begin": "60.680",
-   "children": [],
-   "end": "61.120",
-   "id": "f000110",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "61.120",
-   "children": [],
-   "end": "61.400",
-   "id": "f000111",
-   "language": "eng",
-   "lines": [
-    "fire"
-   ]
-  },
-  {
-   "begin": "61.400",
-   "children": [],
-   "end": "61.480",
-   "id": "f000112",
-   "language": "eng",
-   "lines": [
-    "Check"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000113",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000114",
-   "language": "eng",
-   "lines": [
-    "chain"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000115",
-   "language": "eng",
-   "lines": [
-    "link"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000116",
-   "language": "eng",
-   "lines": [
-    "Swayze"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000117",
-   "language": "eng",
-   "lines": [
-    "Im"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000118",
-   "language": "eng",
-   "lines": [
-    "slummin"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000119",
-   "language": "eng",
-   "lines": [
-    "Let"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000120",
-   "language": "eng",
-   "lines": [
-    "em"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000121",
-   "language": "eng",
-   "lines": [
-    "know"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000122",
-   "language": "eng",
-   "lines": [
-    "who"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000123",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000124",
-   "language": "eng",
-   "lines": [
-    "fuck"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000125",
-   "language": "eng",
-   "lines": [
-    "we"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000126",
-   "language": "eng",
-   "lines": [
-    "are"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000127",
-   "language": "eng",
-   "lines": [
-    "Low"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000128",
-   "language": "eng",
-   "lines": [
-    "and"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000129",
-   "language": "eng",
-   "lines": [
-    "dirty"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000130",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000131",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000132",
-   "language": "eng",
-   "lines": [
-    "Comin"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000133",
-   "language": "eng",
-   "lines": [
-    "out"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000134",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000135",
-   "language": "eng",
-   "lines": [
-    "cuts"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000136",
-   "language": "eng",
-   "lines": [
-    "Like"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000137",
-   "language": "eng",
-   "lines": [
-    "your"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000138",
-   "language": "eng",
-   "lines": [
-    "favorite"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000139",
-   "language": "eng",
-   "lines": [
-    "scar"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000140",
-   "language": "eng",
-   "lines": [
-    "Oh"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.480",
-   "id": "f000141",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "61.480",
-   "children": [],
-   "end": "61.720",
-   "id": "f000142",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "61.720",
-   "children": [],
-   "end": "62.600",
-   "id": "f000143",
-   "language": "eng",
-   "lines": [
-    "Crawlin"
-   ]
-  },
-  {
-   "begin": "62.600",
-   "children": [],
-   "end": "63.160",
-   "id": "f000144",
-   "language": "eng",
-   "lines": [
-    "on"
-   ]
-  },
-  {
-   "begin": "63.160",
-   "children": [],
-   "end": "63.720",
-   "id": "f000145",
-   "language": "eng",
-   "lines": [
-    "tile"
-   ]
-  },
-  {
-   "begin": "63.720",
-   "children": [],
-   "end": "64.440",
-   "id": "f000146",
-   "language": "eng",
-   "lines": [
-    "cant"
-   ]
-  },
-  {
-   "begin": "64.440",
-   "children": [],
-   "end": "65.000",
-   "id": "f000147",
-   "language": "eng",
-   "lines": [
-    "stand"
-   ]
-  },
-  {
-   "begin": "65.000",
-   "children": [],
-   "end": "66.520",
-   "id": "f000148",
-   "language": "eng",
-   "lines": [
-    "up"
-   ]
-  },
-  {
-   "begin": "66.520",
-   "children": [],
-   "end": "67.160",
-   "id": "f000149",
-   "language": "eng",
-   "lines": [
-    "Been"
-   ]
-  },
-  {
-   "begin": "67.160",
-   "children": [],
-   "end": "67.440",
-   "id": "f000150",
-   "language": "eng",
-   "lines": [
-    "a"
-   ]
-  },
-  {
-   "begin": "67.440",
-   "children": [],
-   "end": "68.000",
-   "id": "f000151",
-   "language": "eng",
-   "lines": [
-    "while"
-   ]
-  },
-  {
-   "begin": "68.000",
-   "children": [],
-   "end": "68.720",
-   "id": "f000152",
-   "language": "eng",
-   "lines": [
-    "kommodo"
-   ]
-  },
-  {
-   "begin": "68.720",
-   "children": [],
-   "end": "69.120",
-   "id": "f000153",
-   "language": "eng",
-   "lines": [
-    "gut"
-   ]
-  },
-  {
-   "begin": "69.120",
-   "children": [],
-   "end": "69.680",
-   "id": "f000154",
-   "language": "eng",
-   "lines": [
-    "How"
-   ]
-  },
-  {
-   "begin": "69.680",
-   "children": [],
-   "end": "70.240",
-   "id": "f000155",
-   "language": "eng",
-   "lines": [
-    "to"
-   ]
-  },
-  {
-   "begin": "70.240",
-   "children": [],
-   "end": "70.800",
-   "id": "f000156",
-   "language": "eng",
-   "lines": [
-    "take"
-   ]
-  },
-  {
-   "begin": "70.800",
-   "children": [],
-   "end": "71.120",
-   "id": "f000157",
-   "language": "eng",
-   "lines": [
-    "it"
-   ]
-  },
-  {
-   "begin": "71.120",
-   "children": [],
-   "end": "71.760",
-   "id": "f000158",
-   "language": "eng",
-   "lines": [
-    "How"
-   ]
-  },
-  {
-   "begin": "71.760",
-   "children": [],
-   "end": "72.360",
-   "id": "f000159",
-   "language": "eng",
-   "lines": [
-    "to"
-   ]
-  },
-  {
-   "begin": "72.360",
-   "children": [],
-   "end": "73.080",
-   "id": "f000160",
-   "language": "eng",
-   "lines": [
-    "give"
-   ]
-  },
-  {
-   "begin": "73.080",
-   "children": [],
-   "end": "73.560",
-   "id": "f000161",
-   "language": "eng",
-   "lines": [
-    "a"
-   ]
-  },
-  {
-   "begin": "73.560",
-   "children": [],
-   "end": "73.960",
-   "id": "f000162",
-   "language": "eng",
-   "lines": [
-    "fuck"
-   ]
-  },
-  {
-   "begin": "73.960",
-   "children": [],
-   "end": "74.720",
-   "id": "f000163",
-   "language": "eng",
-   "lines": [
-    "How"
-   ]
-  },
-  {
-   "begin": "74.720",
-   "children": [],
-   "end": "75.080",
-   "id": "f000164",
-   "language": "eng",
-   "lines": [
-    "to"
-   ]
-  },
-  {
-   "begin": "75.080",
-   "children": [],
-   "end": "75.520",
-   "id": "f000165",
-   "language": "eng",
-   "lines": [
-    "live"
-   ]
-  },
-  {
-   "begin": "75.520",
-   "children": [],
-   "end": "76.120",
-   "id": "f000166",
-   "language": "eng",
-   "lines": [
-    "with"
-   ]
-  },
-  {
-   "begin": "76.120",
-   "children": [],
-   "end": "76.800",
-   "id": "f000167",
-   "language": "eng",
-   "lines": [
-    "pain"
-   ]
-  },
-  {
-   "begin": "76.800",
-   "children": [],
-   "end": "77.040",
-   "id": "f000168",
-   "language": "eng",
-   "lines": [
-    "How"
-   ]
-  },
-  {
-   "begin": "77.040",
-   "children": [],
-   "end": "77.720",
-   "id": "f000169",
-   "language": "eng",
-   "lines": [
-    "to"
-   ]
-  },
-  {
-   "begin": "77.720",
-   "children": [],
-   "end": "78.320",
-   "id": "f000170",
-   "language": "eng",
-   "lines": [
-    "get"
-   ]
-  },
-  {
-   "begin": "78.320",
-   "children": [],
-   "end": "78.840",
-   "id": "f000171",
-   "language": "eng",
-   "lines": [
-    "your"
-   ]
-  },
-  {
-   "begin": "78.840",
-   "children": [],
-   "end": "79.360",
-   "id": "f000172",
-   "language": "eng",
-   "lines": [
-    "cut"
-   ]
-  },
-  {
-   "begin": "79.360",
-   "children": [],
-   "end": "79.520",
-   "id": "f000173",
-   "language": "eng",
-   "lines": [
-    "How"
-   ]
-  },
-  {
-   "begin": "79.520",
-   "children": [],
-   "end": "79.760",
-   "id": "f000174",
-   "language": "eng",
-   "lines": [
-    "longs"
-   ]
-  },
-  {
-   "begin": "79.760",
-   "children": [],
-   "end": "79.960",
-   "id": "f000175",
-   "language": "eng",
-   "lines": [
-    "this"
-   ]
-  },
-  {
-   "begin": "79.960",
-   "children": [],
-   "end": "80.560",
-   "id": "f000176",
-   "language": "eng",
-   "lines": [
-    "been"
-   ]
-  },
-  {
-   "begin": "80.560",
-   "children": [],
-   "end": "80.680",
-   "id": "f000177",
-   "language": "eng",
-   "lines": [
-    "goin"
-   ]
-  },
-  {
-   "begin": "80.680",
-   "children": [],
-   "end": "80.680",
-   "id": "f000178",
-   "language": "eng",
-   "lines": [
-    "on"
-   ]
-  },
-  {
-   "begin": "80.680",
-   "children": [],
-   "end": "81.200",
-   "id": "f000179",
-   "language": "eng",
-   "lines": [
-    "Man"
-   ]
-  },
-  {
-   "begin": "81.200",
-   "children": [],
-   "end": "81.720",
-   "id": "f000180",
-   "language": "eng",
-   "lines": [
-    "shit"
-   ]
-  },
-  {
-   "begin": "81.720",
-   "children": [],
-   "end": "82.360",
-   "id": "f000181",
-   "language": "eng",
-   "lines": [
-    "no"
-   ]
-  },
-  {
-   "begin": "82.360",
-   "children": [],
-   "end": "82.880",
-   "id": "f000182",
-   "language": "eng",
-   "lines": [
-    "way"
-   ]
-  },
-  {
-   "begin": "82.880",
-   "children": [],
-   "end": "83.520",
-   "id": "f000183",
-   "language": "eng",
-   "lines": [
-    "to"
-   ]
-  },
-  {
-   "begin": "83.520",
-   "children": [],
-   "end": "83.960",
-   "id": "f000184",
-   "language": "eng",
-   "lines": [
-    "tell"
-   ]
-  },
-  {
-   "begin": "83.960",
-   "children": [],
-   "end": "84.360",
-   "id": "f000185",
-   "language": "eng",
-   "lines": [
-    "too"
-   ]
-  },
-  {
-   "begin": "84.360",
-   "children": [],
-   "end": "84.880",
-   "id": "f000186",
-   "language": "eng",
-   "lines": [
-    "far"
-   ]
-  },
-  {
-   "begin": "84.880",
-   "children": [],
-   "end": "85.320",
-   "id": "f000187",
-   "language": "eng",
-   "lines": [
-    "gone"
-   ]
-  },
-  {
-   "begin": "85.320",
-   "children": [],
-   "end": "86.240",
-   "id": "f000188",
-   "language": "eng",
-   "lines": [
-    "go"
-   ]
-  },
-  {
-   "begin": "86.240",
-   "children": [],
-   "end": "86.880",
-   "id": "f000189",
-   "language": "eng",
-   "lines": [
-    "get"
-   ]
-  },
-  {
-   "begin": "86.880",
-   "children": [],
-   "end": "87.760",
-   "id": "f000190",
-   "language": "eng",
-   "lines": [
-    "those"
-   ]
-  },
-  {
-   "begin": "87.760",
-   "children": [],
-   "end": "88.440",
-   "id": "f000191",
-   "language": "eng",
-   "lines": [
-    "flames"
-   ]
-  },
-  {
-   "begin": "88.440",
-   "children": [],
-   "end": "89.000",
-   "id": "f000192",
-   "language": "eng",
-   "lines": [
-    "from"
-   ]
-  },
-  {
-   "begin": "89.000",
-   "children": [],
-   "end": "89.520",
-   "id": "f000193",
-   "language": "eng",
-   "lines": [
-    "hell"
-   ]
-  },
-  {
-   "begin": "89.520",
-   "children": [],
-   "end": "90.040",
-   "id": "f000194",
-   "language": "eng",
-   "lines": [
-    "bring"
-   ]
-  },
-  {
-   "begin": "90.040",
-   "children": [],
-   "end": "90.600",
-   "id": "f000195",
-   "language": "eng",
-   "lines": [
-    "em"
-   ]
-  },
-  {
-   "begin": "90.600",
-   "children": [],
-   "end": "90.960",
-   "id": "f000196",
-   "language": "eng",
-   "lines": [
-    "here"
-   ]
-  },
-  {
-   "begin": "90.960",
-   "children": [],
-   "end": "92.400",
-   "id": "f000197",
-   "language": "eng",
-   "lines": [
-    "Dont"
-   ]
-  },
-  {
-   "begin": "92.400",
-   "children": [],
-   "end": "93.320",
-   "id": "f000198",
-   "language": "eng",
-   "lines": [
-    "trip"
-   ]
-  },
-  {
-   "begin": "93.320",
-   "children": [],
-   "end": "93.720",
-   "id": "f000199",
-   "language": "eng",
-   "lines": [
-    "no"
-   ]
-  },
-  {
-   "begin": "93.720",
-   "children": [],
-   "end": "94.440",
-   "id": "f000200",
-   "language": "eng",
-   "lines": [
-    "No"
-   ]
-  },
-  {
-   "begin": "94.440",
-   "children": [],
-   "end": "95.040",
-   "id": "f000201",
-   "language": "eng",
-   "lines": [
-    "Ill"
-   ]
-  },
-  {
-   "begin": "95.040",
-   "children": [],
-   "end": "95.800",
-   "id": "f000202",
-   "language": "eng",
-   "lines": [
-    "handle"
-   ]
-  },
-  {
-   "begin": "95.800",
-   "children": [],
-   "end": "96.880",
-   "id": "f000203",
-   "language": "eng",
-   "lines": [
-    "this"
-   ]
-  },
-  {
-   "begin": "96.880",
-   "children": [],
-   "end": "97.520",
-   "id": "f000204",
-   "language": "eng",
-   "lines": [
-    "On"
-   ]
-  },
-  {
-   "begin": "97.520",
-   "children": [],
-   "end": "98.160",
-   "id": "f000205",
-   "language": "eng",
-   "lines": [
-    "some"
-   ]
-  },
-  {
-   "begin": "98.160",
-   "children": [],
-   "end": "99.280",
-   "id": "f000206",
-   "language": "eng",
-   "lines": [
-    "scandalous"
-   ]
-  },
-  {
-   "begin": "99.280",
-   "children": [],
-   "end": "99.840",
-   "id": "f000207",
-   "language": "eng",
-   "lines": [
-    "Inland"
-   ]
-  },
-  {
-   "begin": "99.840",
-   "children": [],
-   "end": "100.240",
-   "id": "f000208",
-   "language": "eng",
-   "lines": [
-    "empire"
-   ]
-  },
-  {
-   "begin": "100.240",
-   "children": [],
-   "end": "100.640",
-   "id": "f000209",
-   "language": "eng",
-   "lines": [
-    "Los"
-   ]
-  },
-  {
-   "begin": "100.640",
-   "children": [],
-   "end": "104.000",
-   "id": "f000210",
-   "language": "eng",
-   "lines": [
-    "Angeles"
-   ]
-  },
-  {
-   "begin": "104.000",
-   "children": [],
-   "end": "104.560",
-   "id": "f000211",
-   "language": "eng",
-   "lines": [
-    "Antiego"
-   ]
-  },
-  {
-   "begin": "104.560",
-   "children": [],
-   "end": "107.520",
-   "id": "f000212",
-   "language": "eng",
-   "lines": [
-    "propaganda"
-   ]
-  },
-  {
-   "begin": "107.520",
-   "children": [],
-   "end": "111.480",
-   "id": "f000213",
-   "language": "eng",
-   "lines": [
-    "shit"
-   ]
-  },
-  {
-   "begin": "111.480",
-   "children": [],
-   "end": "111.480",
-   "id": "f000214",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "111.480",
-   "children": [],
-   "end": "111.480",
-   "id": "f000215",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "111.480",
-   "children": [],
-   "end": "112.000",
-   "id": "f000216",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "112.000",
-   "children": [],
-   "end": "112.000",
-   "id": "f000217",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "112.000",
-   "children": [],
-   "end": "112.000",
-   "id": "f000218",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "112.000",
-   "children": [],
-   "end": "112.000",
-   "id": "f000219",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "112.000",
-   "children": [],
-   "end": "112.000",
-   "id": "f000220",
-   "language": "eng",
-   "lines": [
-    "Whos"
-   ]
-  },
-  {
-   "begin": "112.000",
-   "children": [],
-   "end": "112.000",
-   "id": "f000221",
-   "language": "eng",
-   "lines": [
-    "comin"
-   ]
-  },
-  {
-   "begin": "112.000",
-   "children": [],
-   "end": "112.000",
-   "id": "f000222",
-   "language": "eng",
-   "lines": [
-    "up"
-   ]
-  },
-  {
-   "begin": "112.000",
-   "children": [],
-   "end": "112.160",
-   "id": "f000223",
-   "language": "eng",
-   "lines": [
-    "Whos"
-   ]
-  },
-  {
-   "begin": "112.160",
-   "children": [],
-   "end": "112.160",
-   "id": "f000224",
-   "language": "eng",
-   "lines": [
-    "losin"
-   ]
-  },
-  {
-   "begin": "112.160",
-   "children": [],
-   "end": "112.560",
-   "id": "f000225",
-   "language": "eng",
-   "lines": [
-    "ground"
-   ]
-  },
-  {
-   "begin": "112.560",
-   "children": [],
-   "end": "112.600",
-   "id": "f000226",
-   "language": "eng",
-   "lines": [
-    "Twenty"
-   ]
-  },
-  {
-   "begin": "112.600",
-   "children": [],
-   "end": "112.680",
-   "id": "f000227",
-   "language": "eng",
-   "lines": [
-    "twelve"
-   ]
-  },
-  {
-   "begin": "112.680",
-   "children": [],
-   "end": "112.840",
-   "id": "f000228",
-   "language": "eng",
-   "lines": [
-    "Fuck"
-   ]
-  },
-  {
-   "begin": "112.840",
-   "children": [],
-   "end": "112.880",
-   "id": "f000229",
-   "language": "eng",
-   "lines": [
-    "Im"
-   ]
-  },
-  {
-   "begin": "112.880",
-   "children": [],
-   "end": "112.960",
-   "id": "f000230",
-   "language": "eng",
-   "lines": [
-    "shady"
-   ]
-  },
-  {
-   "begin": "112.960",
-   "children": [],
-   "end": "113.640",
-   "id": "f000231",
-   "language": "eng",
-   "lines": [
-    "now"
-   ]
-  },
-  {
-   "begin": "113.640",
-   "children": [],
-   "end": "114.120",
-   "id": "f000232",
-   "language": "eng",
-   "lines": [
-    "running"
-   ]
-  },
-  {
-   "begin": "114.120",
-   "children": [],
-   "end": "115.400",
-   "id": "f000233",
-   "language": "eng",
-   "lines": [
-    "game"
-   ]
-  },
-  {
-   "begin": "115.400",
-   "children": [],
-   "end": "115.960",
-   "id": "f000234",
-   "language": "eng",
-   "lines": [
-    "on"
-   ]
-  },
-  {
-   "begin": "115.960",
-   "children": [],
-   "end": "116.840",
-   "id": "f000235",
-   "language": "eng",
-   "lines": [
-    "every"
-   ]
-  },
-  {
-   "begin": "116.840",
-   "children": [],
-   "end": "117.640",
-   "id": "f000236",
-   "language": "eng",
-   "lines": [
-    "thing"
-   ]
-  },
-  {
-   "begin": "117.640",
-   "children": [],
-   "end": "119.280",
-   "id": "f000237",
-   "language": "eng",
-   "lines": [
-    "in"
-   ]
-  },
-  {
-   "begin": "119.280",
-   "children": [],
-   "end": "119.960",
-   "id": "f000238",
-   "language": "eng",
-   "lines": [
-    "town"
-   ]
-  },
-  {
-   "begin": "119.960",
-   "children": [],
-   "end": "120.240",
-   "id": "f000239",
-   "language": "eng",
-   "lines": [
-    "Its"
-   ]
-  },
-  {
-   "begin": "120.240",
-   "children": [],
-   "end": "120.680",
-   "id": "f000240",
-   "language": "eng",
-   "lines": [
-    "such"
-   ]
-  },
-  {
-   "begin": "120.680",
-   "children": [],
-   "end": "121.200",
-   "id": "f000241",
-   "language": "eng",
-   "lines": [
-    "a"
-   ]
-  },
-  {
-   "begin": "121.200",
-   "children": [],
-   "end": "121.840",
-   "id": "f000242",
-   "language": "eng",
-   "lines": [
-    "long"
-   ]
-  },
-  {
-   "begin": "121.840",
-   "children": [],
-   "end": "122.640",
-   "id": "f000243",
-   "language": "eng",
-   "lines": [
-    "way"
-   ]
-  },
-  {
-   "begin": "122.640",
-   "children": [],
-   "end": "123.680",
-   "id": "f000244",
-   "language": "eng",
-   "lines": [
-    "down"
-   ]
-  },
-  {
-   "begin": "123.680",
-   "children": [],
-   "end": "124.240",
-   "id": "f000245",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "124.240",
-   "children": [],
-   "end": "124.640",
-   "id": "f000246",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "124.640",
-   "children": [],
-   "end": "125.320",
-   "id": "f000247",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "125.320",
-   "children": [],
-   "end": "126.040",
-   "id": "f000248",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "126.040",
-   "children": [],
-   "end": "126.640",
-   "id": "f000249",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "126.640",
-   "children": [],
-   "end": "127.400",
-   "id": "f000250",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "127.400",
-   "children": [],
-   "end": "127.960",
-   "id": "f000251",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "127.960",
-   "children": [],
-   "end": "128.480",
-   "id": "f000252",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "128.480",
-   "children": [],
-   "end": "129.120",
-   "id": "f000253",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "129.120",
-   "children": [],
-   "end": "129.360",
-   "id": "f000254",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "129.360",
-   "children": [],
-   "end": "129.360",
-   "id": "f000255",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "129.360",
-   "children": [],
-   "end": "129.360",
-   "id": "f000256",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "129.360",
-   "children": [],
-   "end": "129.360",
-   "id": "f000257",
-   "language": "eng",
-   "lines": [
-    "Its"
-   ]
-  },
-  {
-   "begin": "129.360",
-   "children": [],
-   "end": "129.360",
-   "id": "f000258",
-   "language": "eng",
-   "lines": [
-    "such"
-   ]
-  },
-  {
-   "begin": "129.360",
-   "children": [],
-   "end": "129.360",
-   "id": "f000259",
-   "language": "eng",
-   "lines": [
-    "a"
-   ]
-  },
-  {
-   "begin": "129.360",
-   "children": [],
-   "end": "129.400",
-   "id": "f000260",
-   "language": "eng",
-   "lines": [
-    "long"
-   ]
-  },
-  {
-   "begin": "129.400",
-   "children": [],
-   "end": "129.800",
-   "id": "f000261",
-   "language": "eng",
-   "lines": [
-    "way"
-   ]
-  },
-  {
-   "begin": "129.800",
-   "children": [],
-   "end": "130.160",
-   "id": "f000262",
-   "language": "eng",
-   "lines": [
-    "down"
-   ]
-  },
-  {
-   "begin": "130.160",
-   "children": [],
-   "end": "130.640",
-   "id": "f000263",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "130.640",
-   "children": [],
-   "end": "131.120",
-   "id": "f000264",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "131.120",
-   "children": [],
-   "end": "131.200",
-   "id": "f000265",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "131.200",
-   "children": [],
-   "end": "131.400",
-   "id": "f000266",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "131.400",
-   "children": [],
-   "end": "131.400",
-   "id": "f000267",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "131.400",
-   "children": [],
-   "end": "131.400",
-   "id": "f000268",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "131.400",
-   "children": [],
-   "end": "131.600",
-   "id": "f000269",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "131.600",
-   "children": [],
-   "end": "131.960",
-   "id": "f000270",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "131.960",
-   "children": [],
-   "end": "132.440",
-   "id": "f000271",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "132.440",
-   "children": [],
-   "end": "133.440",
-   "id": "f000272",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "133.440",
-   "children": [],
-   "end": "133.880",
-   "id": "f000273",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "133.880",
-   "children": [],
-   "end": "134.640",
-   "id": "f000274",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "134.640",
-   "children": [],
-   "end": "135.400",
-   "id": "f000275",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "135.400",
-   "children": [],
-   "end": "135.840",
-   "id": "f000276",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "135.840",
-   "children": [],
-   "end": "136.400",
-   "id": "f000277",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "136.400",
-   "children": [],
-   "end": "137.040",
-   "id": "f000278",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "137.040",
-   "children": [],
-   "end": "137.800",
-   "id": "f000279",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "137.800",
-   "children": [],
-   "end": "138.520",
-   "id": "f000280",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "138.520",
-   "children": [],
-   "end": "139.040",
-   "id": "f000281",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "139.040",
-   "children": [],
-   "end": "139.880",
-   "id": "f000282",
-   "language": "eng",
-   "lines": [
-    "boy"
-   ]
-  },
-  {
-   "begin": "139.880",
-   "children": [],
-   "end": "140.480",
-   "id": "f000283",
-   "language": "eng",
-   "lines": [
-    "Its"
-   ]
-  },
-  {
-   "begin": "140.480",
-   "children": [],
-   "end": "140.840",
-   "id": "f000284",
-   "language": "eng",
-   "lines": [
-    "such"
-   ]
-  },
-  {
-   "begin": "140.840",
-   "children": [],
-   "end": "141.280",
-   "id": "f000285",
-   "language": "eng",
-   "lines": [
-    "a"
-   ]
-  },
-  {
-   "begin": "141.280",
-   "children": [],
-   "end": "142.040",
-   "id": "f000286",
-   "language": "eng",
-   "lines": [
-    "long"
-   ]
-  },
-  {
-   "begin": "142.040",
-   "children": [],
-   "end": "142.680",
-   "id": "f000287",
-   "language": "eng",
-   "lines": [
-    "way"
-   ]
-  },
-  {
-   "begin": "142.680",
-   "children": [],
-   "end": "143.200",
-   "id": "f000288",
-   "language": "eng",
-   "lines": [
-    "down"
-   ]
-  },
-  {
-   "begin": "143.200",
-   "children": [],
-   "end": "143.680",
-   "id": "f000289",
-   "language": "eng",
-   "lines": [
-    "Brown"
-   ]
-  },
-  {
-   "begin": "143.680",
-   "children": [],
-   "end": "144.040",
-   "id": "f000290",
-   "language": "eng",
-   "lines": [
-    "paper"
-   ]
-  },
-  {
-   "begin": "144.040",
-   "children": [],
-   "end": "144.720",
-   "id": "f000291",
-   "language": "eng",
-   "lines": [
-    "baggin"
-   ]
-  },
-  {
-   "begin": "144.720",
-   "children": [],
-   "end": "148.440",
-   "id": "f000292",
-   "language": "eng",
-   "lines": [
-    "asphalt"
-   ]
-  },
-  {
-   "begin": "148.440",
-   "children": [],
-   "end": "149.320",
-   "id": "f000293",
-   "language": "eng",
-   "lines": [
-    "scrapin"
-   ]
-  },
-  {
-   "begin": "149.320",
-   "children": [],
-   "end": "149.760",
-   "id": "f000294",
-   "language": "eng",
-   "lines": [
-    "all"
-   ]
-  },
-  {
-   "begin": "149.760",
-   "children": [],
-   "end": "150.600",
-   "id": "f000295",
-   "language": "eng",
-   "lines": [
-    "talk"
-   ]
-  },
-  {
-   "begin": "150.600",
-   "children": [],
-   "end": "151.120",
-   "id": "f000296",
-   "language": "eng",
-   "lines": [
-    "no"
-   ]
-  },
-  {
-   "begin": "151.120",
-   "children": [],
-   "end": "151.840",
-   "id": "f000297",
-   "language": "eng",
-   "lines": [
-    "action"
-   ]
-  },
-  {
-   "begin": "151.840",
-   "children": [],
-   "end": "152.440",
-   "id": "f000298",
-   "language": "eng",
-   "lines": [
-    "what"
-   ]
-  },
-  {
-   "begin": "152.440",
-   "children": [],
-   "end": "153.080",
-   "id": "f000299",
-   "language": "eng",
-   "lines": [
-    "Im"
-   ]
-  },
-  {
-   "begin": "153.080",
-   "children": [],
-   "end": "154.560",
-   "id": "f000300",
-   "language": "eng",
-   "lines": [
-    "waitin"
-   ]
-  },
-  {
-   "begin": "154.560",
-   "children": [],
-   "end": "155.240",
-   "id": "f000301",
-   "language": "eng",
-   "lines": [
-    "Weak"
-   ]
-  },
-  {
-   "begin": "155.240",
-   "children": [],
-   "end": "156.040",
-   "id": "f000302",
-   "language": "eng",
-   "lines": [
-    "tongue"
-   ]
-  },
-  {
-   "begin": "156.040",
-   "children": [],
-   "end": "156.800",
-   "id": "f000303",
-   "language": "eng",
-   "lines": [
-    "waggin"
-   ]
-  },
-  {
-   "begin": "156.800",
-   "children": [],
-   "end": "157.520",
-   "id": "f000304",
-   "language": "eng",
-   "lines": [
-    "Stray"
-   ]
-  },
-  {
-   "begin": "157.520",
-   "children": [],
-   "end": "158.080",
-   "id": "f000305",
-   "language": "eng",
-   "lines": [
-    "dog"
-   ]
-  },
-  {
-   "begin": "158.080",
-   "children": [],
-   "end": "158.760",
-   "id": "f000306",
-   "language": "eng",
-   "lines": [
-    "beggin"
-   ]
-  },
-  {
-   "begin": "158.760",
-   "children": [],
-   "end": "159.520",
-   "id": "f000307",
-   "language": "eng",
-   "lines": [
-    "Like"
-   ]
-  },
-  {
-   "begin": "159.520",
-   "children": [],
-   "end": "160.800",
-   "id": "f000308",
-   "language": "eng",
-   "lines": [
-    "Dont"
-   ]
-  },
-  {
-   "begin": "160.800",
-   "children": [],
-   "end": "161.440",
-   "id": "f000309",
-   "language": "eng",
-   "lines": [
-    "hurt"
-   ]
-  },
-  {
-   "begin": "161.440",
-   "children": [],
-   "end": "162.160",
-   "id": "f000310",
-   "language": "eng",
-   "lines": [
-    "me"
-   ]
-  },
-  {
-   "begin": "162.160",
-   "children": [],
-   "end": "162.560",
-   "id": "f000311",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "162.560",
-   "children": [],
-   "end": "163.080",
-   "id": "f000312",
-   "language": "eng",
-   "lines": [
-    "right"
-   ]
-  },
-  {
-   "begin": "163.080",
-   "children": [],
-   "end": "163.520",
-   "id": "f000313",
-   "language": "eng",
-   "lines": [
-    "Im"
-   ]
-  },
-  {
-   "begin": "163.520",
-   "children": [],
-   "end": "164.120",
-   "id": "f000314",
-   "language": "eng",
-   "lines": [
-    "sayin"
-   ]
-  },
-  {
-   "begin": "164.120",
-   "children": [],
-   "end": "164.800",
-   "id": "f000315",
-   "language": "eng",
-   "lines": [
-    "Beware"
-   ]
-  },
-  {
-   "begin": "164.800",
-   "children": [],
-   "end": "165.360",
-   "id": "f000316",
-   "language": "eng",
-   "lines": [
-    "you"
-   ]
-  },
-  {
-   "begin": "165.360",
-   "children": [],
-   "end": "166.040",
-   "id": "f000317",
-   "language": "eng",
-   "lines": [
-    "have"
-   ]
-  },
-  {
-   "begin": "166.040",
-   "children": [],
-   "end": "166.720",
-   "id": "f000318",
-   "language": "eng",
-   "lines": [
-    "been"
-   ]
-  },
-  {
-   "begin": "166.720",
-   "children": [],
-   "end": "167.280",
-   "id": "f000319",
-   "language": "eng",
-   "lines": [
-    "warned"
-   ]
-  },
-  {
-   "begin": "167.280",
-   "children": [],
-   "end": "167.920",
-   "id": "f000320",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "167.920",
-   "children": [],
-   "end": "168.520",
-   "id": "f000321",
-   "language": "eng",
-   "lines": [
-    "barrels"
-   ]
-  },
-  {
-   "begin": "168.520",
-   "children": [],
-   "end": "169.160",
-   "id": "f000322",
-   "language": "eng",
-   "lines": [
-    "still"
-   ]
-  },
-  {
-   "begin": "169.160",
-   "children": [],
-   "end": "169.800",
-   "id": "f000323",
-   "language": "eng",
-   "lines": [
-    "warm"
-   ]
-  },
-  {
-   "begin": "169.800",
-   "children": [],
-   "end": "170.440",
-   "id": "f000324",
-   "language": "eng",
-   "lines": [
-    "ease"
-   ]
-  },
-  {
-   "begin": "170.440",
-   "children": [],
-   "end": "171.280",
-   "id": "f000325",
-   "language": "eng",
-   "lines": [
-    "up"
-   ]
-  },
-  {
-   "begin": "171.280",
-   "children": [],
-   "end": "171.960",
-   "id": "f000326",
-   "language": "eng",
-   "lines": [
-    "off"
-   ]
-  },
-  {
-   "begin": "171.960",
-   "children": [],
-   "end": "172.320",
-   "id": "f000327",
-   "language": "eng",
-   "lines": [
-    "that"
-   ]
-  },
-  {
-   "begin": "172.320",
-   "children": [],
-   "end": "172.960",
-   "id": "f000328",
-   "language": "eng",
-   "lines": [
-    "lip"
-   ]
-  },
-  {
-   "begin": "172.960",
-   "children": [],
-   "end": "173.440",
-   "id": "f000329",
-   "language": "eng",
-   "lines": [
-    "or"
-   ]
-  },
-  {
-   "begin": "173.440",
-   "children": [],
-   "end": "173.960",
-   "id": "f000330",
-   "language": "eng",
-   "lines": [
-    "step"
-   ]
-  },
-  {
-   "begin": "173.960",
-   "children": [],
-   "end": "174.520",
-   "id": "f000331",
-   "language": "eng",
-   "lines": [
-    "How"
-   ]
-  },
-  {
-   "begin": "174.520",
-   "children": [],
-   "end": "175.320",
-   "id": "f000332",
-   "language": "eng",
-   "lines": [
-    "quick"
-   ]
-  },
-  {
-   "begin": "175.320",
-   "children": [],
-   "end": "176.080",
-   "id": "f000333",
-   "language": "eng",
-   "lines": [
-    "a"
-   ]
-  },
-  {
-   "begin": "176.080",
-   "children": [],
-   "end": "176.440",
-   "id": "f000334",
-   "language": "eng",
-   "lines": [
-    "bitch"
-   ]
-  },
-  {
-   "begin": "176.440",
-   "children": [],
-   "end": "177.360",
-   "id": "f000335",
-   "language": "eng",
-   "lines": [
-    "fit"
-   ]
-  },
-  {
-   "begin": "177.360",
-   "children": [],
-   "end": "178.040",
-   "id": "f000336",
-   "language": "eng",
-   "lines": [
-    "to"
-   ]
-  },
-  {
-   "begin": "178.040",
-   "children": [],
-   "end": "178.400",
-   "id": "f000337",
-   "language": "eng",
-   "lines": [
-    "get"
-   ]
-  },
-  {
-   "begin": "178.400",
-   "children": [],
-   "end": "179.040",
-   "id": "f000338",
-   "language": "eng",
-   "lines": [
-    "checked"
-   ]
-  },
-  {
-   "begin": "179.040",
-   "children": [],
-   "end": "179.560",
-   "id": "f000339",
-   "language": "eng",
-   "lines": [
-    "mate"
-   ]
-  },
-  {
-   "begin": "179.560",
-   "children": [],
-   "end": "180.400",
-   "id": "f000340",
-   "language": "eng",
-   "lines": [
-    "One"
-   ]
-  },
-  {
-   "begin": "180.400",
-   "children": [],
-   "end": "181.120",
-   "id": "f000341",
-   "language": "eng",
-   "lines": [
-    "false"
-   ]
-  },
-  {
-   "begin": "181.120",
-   "children": [],
-   "end": "181.720",
-   "id": "f000342",
-   "language": "eng",
-   "lines": [
-    "movell"
-   ]
-  },
-  {
-   "begin": "181.720",
-   "children": [],
-   "end": "182.160",
-   "id": "f000343",
-   "language": "eng",
-   "lines": [
-    "get"
-   ]
-  },
-  {
-   "begin": "182.160",
-   "children": [],
-   "end": "182.640",
-   "id": "f000344",
-   "language": "eng",
-   "lines": [
-    "ya"
-   ]
-  },
-  {
-   "begin": "182.640",
-   "children": [],
-   "end": "183.200",
-   "id": "f000345",
-   "language": "eng",
-   "lines": [
-    "Set"
-   ]
-  },
-  {
-   "begin": "183.200",
-   "children": [],
-   "end": "183.320",
-   "id": "f000346",
-   "language": "eng",
-   "lines": [
-    "straight"
-   ]
-  },
-  {
-   "begin": "183.320",
-   "children": [],
-   "end": "183.440",
-   "id": "f000347",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "183.440",
-   "children": [],
-   "end": "183.480",
-   "id": "f000348",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "183.480",
-   "children": [],
-   "end": "183.480",
-   "id": "f000349",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "183.480",
-   "children": [],
-   "end": "183.480",
-   "id": "f000350",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "183.480",
-   "children": [],
-   "end": "183.480",
-   "id": "f000351",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "183.480",
-   "children": [],
-   "end": "183.480",
-   "id": "f000352",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "183.480",
-   "children": [],
-   "end": "183.480",
-   "id": "f000353",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "183.480",
-   "children": [],
-   "end": "183.480",
-   "id": "f000354",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "183.480",
-   "children": [],
-   "end": "186.840",
-   "id": "f000355",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000356",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000357",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000358",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000359",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000360",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000361",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000362",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000363",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000364",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000365",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000366",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000367",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000368",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000369",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000370",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000371",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000372",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000373",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000374",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000375",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000376",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000377",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000378",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000379",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000380",
-   "language": "eng",
-   "lines": [
-    "Its"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000381",
-   "language": "eng",
-   "lines": [
-    "such"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000382",
-   "language": "eng",
-   "lines": [
-    "a"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000383",
-   "language": "eng",
-   "lines": [
-    "long"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000384",
-   "language": "eng",
-   "lines": [
-    "way"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000385",
-   "language": "eng",
-   "lines": [
-    "down"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000386",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000387",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000388",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000389",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000390",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000391",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000392",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000393",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000394",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000395",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000396",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000397",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000398",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000399",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000400",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000401",
-   "language": "eng",
-   "lines": [
-    "Its"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000402",
-   "language": "eng",
-   "lines": [
-    "such"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000403",
-   "language": "eng",
-   "lines": [
-    "a"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000404",
-   "language": "eng",
-   "lines": [
-    "long"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000405",
-   "language": "eng",
-   "lines": [
-    "way"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000406",
-   "language": "eng",
-   "lines": [
-    "down"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000407",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000408",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000409",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000410",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000411",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000412",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000413",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000414",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000415",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000416",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000417",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000418",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000419",
-   "language": "eng",
-   "lines": [
-    "Its"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000420",
-   "language": "eng",
-   "lines": [
-    "such"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000421",
-   "language": "eng",
-   "lines": [
-    "a"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000422",
-   "language": "eng",
-   "lines": [
-    "long"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000423",
-   "language": "eng",
-   "lines": [
-    "way"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000424",
-   "language": "eng",
-   "lines": [
-    "down"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000425",
-   "language": "eng",
-   "lines": [
-    "Yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000426",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000427",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000428",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000429",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000430",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000431",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000432",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000433",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000434",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000435",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000436",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000437",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000438",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000439",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000440",
-   "language": "eng",
-   "lines": [
-    "Its"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000441",
-   "language": "eng",
-   "lines": [
-    "such"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000442",
-   "language": "eng",
-   "lines": [
-    "a"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000443",
-   "language": "eng",
-   "lines": [
-    "long"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000444",
-   "language": "eng",
-   "lines": [
-    "way"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000445",
-   "language": "eng",
-   "lines": [
-    "down"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000446",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000447",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000448",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000449",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000450",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000451",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000452",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000453",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000454",
-   "language": "eng",
-   "lines": [
-    "Lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000455",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000456",
-   "language": "eng",
-   "lines": [
-    "lost"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000457",
-   "language": "eng",
-   "lines": [
-    "boys"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000458",
-   "language": "eng",
-   "lines": [
-    "Oh"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000459",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000460",
-   "language": "eng",
-   "lines": [
-    "yeah"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000461",
-   "language": "eng",
-   "lines": [
-    "why"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000462",
-   "language": "eng",
-   "lines": [
-    "Ride"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000463",
-   "language": "eng",
-   "lines": [
-    "through"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000464",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000465",
-   "language": "eng",
-   "lines": [
-    "sky"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000466",
-   "language": "eng",
-   "lines": [
-    "of"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000467",
-   "language": "eng",
-   "lines": [
-    "black"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000468",
-   "language": "eng",
-   "lines": [
-    "mist"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000469",
-   "language": "eng",
-   "lines": [
-    "Ride"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000470",
-   "language": "eng",
-   "lines": [
-    "through"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000471",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000472",
-   "language": "eng",
-   "lines": [
-    "sky"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000473",
-   "language": "eng",
-   "lines": [
-    "of"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000474",
-   "language": "eng",
-   "lines": [
-    "black"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000475",
-   "language": "eng",
-   "lines": [
-    "mist"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000476",
-   "language": "eng",
-   "lines": [
-    "Ride"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000477",
-   "language": "eng",
-   "lines": [
-    "through"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000478",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000479",
-   "language": "eng",
-   "lines": [
-    "sky"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000480",
-   "language": "eng",
-   "lines": [
-    "of"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000481",
-   "language": "eng",
-   "lines": [
-    "black"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000482",
-   "language": "eng",
-   "lines": [
-    "mist"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000483",
-   "language": "eng",
-   "lines": [
-    "Ride"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000484",
-   "language": "eng",
-   "lines": [
-    "through"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000485",
-   "language": "eng",
-   "lines": [
-    "the"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000486",
-   "language": "eng",
-   "lines": [
-    "sky"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000487",
-   "language": "eng",
-   "lines": [
-    "of"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000488",
-   "language": "eng",
-   "lines": [
-    "black"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000489",
-   "language": "eng",
-   "lines": [
-    "mist"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000490",
-   "language": "eng",
-   "lines": [
-    "Two"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.840",
-   "id": "f000491",
-   "language": "eng",
-   "lines": [
-    "three"
-   ]
-  },
-  {
-   "begin": "186.840",
-   "children": [],
-   "end": "186.880",
-   "id": "f000492",
-   "language": "eng",
-   "lines": [
-    "four"
-   ]
+[
+  {
+    "word": "LOST",
+    "start": 25.262403627996576,
+    "end": 25.95242135661922,
+    "confidence": 0.0
+  },
+  {
+    "word": "BOY",
+    "start": 25.95242135661922,
+    "end": 26.19244375066888,
+    "confidence": 6.174696107705434
+  },
+  {
+    "word": "LOST",
+    "start": 26.19244375066888,
+    "end": 26.41246427854773,
+    "confidence": 5.5204149186611176
+  },
+  {
+    "word": "BOY",
+    "start": 26.41246427854773,
+    "end": 26.552477341743362,
+    "confidence": 4.372580986469984
+  },
+  {
+    "word": "LOST",
+    "start": 26.552477341743362,
+    "end": 26.752496003451412,
+    "confidence": 5.3797502517700195
+  },
+  {
+    "word": "BOY",
+    "start": 26.752496003451412,
+    "end": 26.852505334305434,
+    "confidence": 3.5550006069242954
+  },
+  {
+    "word": "LOST",
+    "start": 26.852505334305434,
+    "end": 27.112529594525896,
+    "confidence": 5.693522251569307
+  },
+  {
+    "word": "BOY",
+    "start": 27.112529594525896,
+    "end": 27.552570650283606,
+    "confidence": 6.791756650675898
+  },
+  {
+    "word": "LOST",
+    "start": 27.552570650283606,
+    "end": 28.31264156477419,
+    "confidence": 0.0
+  },
+  {
+    "word": "BOY",
+    "start": 28.31264156477419,
+    "end": 28.53266209265304,
+    "confidence": 7.161278161135587
+  },
+  {
+    "word": "LOST",
+    "start": 28.53266209265304,
+    "end": 29.052710613093964,
+    "confidence": 6.9634891653060915
+  },
+  {
+    "word": "BOY",
+    "start": 29.052710613093964,
+    "end": 29.91279085843857,
+    "confidence": 0.0
+  },
+  {
+    "word": "LOST",
+    "start": 29.91279085843857,
+    "end": 30.15281325248823,
+    "confidence": 6.071172008911769
+  },
+  {
+    "word": "BOY",
+    "start": 31.482984007116865,
+    "end": 32.43302599595997,
+    "confidence": 0.0
+  },
+  {
+    "word": "LOST",
+    "start": 32.43302599595997,
+    "end": 32.993078248742506,
+    "confidence": 6.194851475102561
+  },
+  {
+    "word": "BOY",
+    "start": 32.993078248742506,
+    "end": 33.113089445767336,
+    "confidence": 3.8070856034755707
+  },
+  {
+    "word": "LOST",
+    "start": 33.113089445767336,
+    "end": 33.33310997364619,
+    "confidence": 6.085372877120972
+  },
+  {
+    "word": "BOY",
+    "start": 33.33310997364619,
+    "end": 33.77315102940389,
+    "confidence": 7.293793602423235
+  },
+  {
+    "word": "LOST",
+    "start": 33.77315102940389,
+    "end": 34.533221943894475,
+    "confidence": 0.0
+  },
+  {
+    "word": "BOY",
+    "start": 34.533221943894475,
+    "end": 34.75324247177333,
+    "confidence": 6.758484939734141
+  },
+  {
+    "word": "LOST",
+    "start": 34.75324247177333,
+    "end": 35.29329285838506,
+    "confidence": 7.12281656723756
+  },
+  {
+    "word": "BOY",
+    "start": 35.29329285838506,
+    "end": 35.49331152009311,
+    "confidence": 6.746471738815307
+  },
+  {
+    "word": "LOST",
+    "start": 35.49331152009311,
+    "end": 36.07336563904644,
+    "confidence": 7.162262649371706
+  },
+  {
+    "word": "BOY",
+    "start": 36.07336563904644,
+    "end": 36.37339363160852,
+    "confidence": 6.117289047688246
+  },
+  {
+    "word": "OTHER",
+    "start": 36.37339363160852,
+    "end": 37.91353732676049,
+    "confidence": 0.0
+  },
+  {
+    "word": "SIDE",
+    "start": 37.91353732676049,
+    "end": 38.133557854639335,
+    "confidence": 4.948590564727783
+  },
+  {
+    "word": "OF",
+    "start": 38.133557854639335,
+    "end": 38.213565319322555,
+    "confidence": 3.7886070609092712
+  },
+  {
+    "word": "THE",
+    "start": 38.213565319322555,
+    "end": 38.33357651634739,
+    "confidence": 4.725947482245309
+  },
+  {
+    "word": "TRACKS",
+    "start": 38.33357651634739,
+    "end": 38.71361197359268,
+    "confidence": 4.920950641757564
+  },
+  {
+    "word": "SCUZZ",
+    "start": 38.71361197359268,
+    "end": 39.013639966154756,
+    "confidence": 3.948806722958883
+  },
+  {
+    "word": "OUTSIDERS",
+    "start": 39.013639966154756,
+    "end": 39.41367728957084,
+    "confidence": 4.547923749998996
+  },
+  {
+    "word": "NOTHIN",
+    "start": 39.41367728957084,
+    "end": 39.67370154979131,
+    "confidence": 4.4597698364939005
+  },
+  {
+    "word": "TO",
+    "start": 39.67370154979131,
+    "end": 39.81371461298694,
+    "confidence": 5.337886333465576
+  },
+  {
+    "word": "LOSE",
+    "start": 39.81371461298694,
+    "end": 40.13374447171982,
+    "confidence": 5.399944798911319
+  },
+  {
+    "word": "STRIKE",
+    "start": 40.13374447171982,
+    "end": 40.373766865769475,
+    "confidence": 4.728720532222227
+  },
+  {
+    "word": "OF",
+    "start": 40.373766865769475,
+    "end": 40.473776196623504,
+    "confidence": 4.410050968329112
+  },
+  {
+    "word": "MIDNIGHTERS",
+    "start": 40.473776196623504,
+    "end": 41.03382844940603,
+    "confidence": 4.750134550931829
+  },
+  {
+    "word": "LOST",
+    "start": 41.03382844940603,
+    "end": 41.49387137133455,
+    "confidence": 7.461645603179932
+  },
+  {
+    "word": "PARADISE",
+    "start": 41.49387137133455,
+    "end": 42.253942285825126,
+    "confidence": 0.0
+  },
+  {
+    "word": "TRUE",
+    "start": 42.253942285825126,
+    "end": 42.67398147541203,
+    "confidence": 6.426443164998835
+  },
+  {
+    "word": "BLACK",
+    "start": 42.67398147541203,
+    "end": 42.87400013712008,
+    "confidence": 4.386673963069915
+  },
+  {
+    "word": "AND",
+    "start": 42.87400013712008,
+    "end": 43.01401320031571,
+    "confidence": 5.5874388217926025
+  },
+  {
+    "word": "BLUES",
+    "start": 43.01401320031571,
+    "end": 43.19402999585295,
+    "confidence": 3.719151811301708
+  },
+  {
+    "word": "NO",
+    "start": 43.19402999585295,
+    "end": 43.33404305904858,
+    "confidence": 5.228003064791362
+  },
+  {
+    "word": "SHOES",
+    "start": 43.33404305904858,
+    "end": 43.63407105161066,
+    "confidence": 4.646076546981931
+  },
+  {
+    "word": "FLAT",
+    "start": 43.63407105161066,
+    "end": 43.8140878471479,
+    "confidence": 5.761397257447243
+  },
+  {
+    "word": "TIRES",
+    "start": 43.8140878471479,
+    "end": 44.13411770588078,
+    "confidence": 5.048009479747099
+  },
+  {
+    "word": "BROKE",
+    "start": 44.13411770588078,
+    "end": 44.334136367588826,
+    "confidence": 4.204238057136536
+  },
+  {
+    "word": "OUT",
+    "start": 44.334136367588826,
+    "end": 44.43414569844285,
+    "confidence": 3.9602588017781577
+  },
+  {
+    "word": "THE",
+    "start": 44.43414569844285,
+    "end": 44.51415316312607,
+    "confidence": 4.027055263519287
+  },
+  {
+    "word": "PEN",
+    "start": 44.51415316312607,
+    "end": 44.59416062780929,
+    "confidence": 2.4200566075742245
+  },
+  {
+    "word": "BLOOD",
+    "start": 44.59416062780929,
+    "end": 44.87418675420055,
+    "confidence": 5.12703981766334
+  },
+  {
+    "word": "ON",
+    "start": 44.87418675420055,
+    "end": 44.97419608505458,
+    "confidence": 5.33318338394165
+  },
+  {
+    "word": "BARBED",
+    "start": 44.97419608505458,
+    "end": 45.31422780995826,
+    "confidence": 4.980665975146824
+  },
+  {
+    "word": "WIRE",
+    "start": 45.31422780995826,
+    "end": 45.67426140103275,
+    "confidence": 5.847992764578925
+  },
+  {
+    "word": "SAFE",
+    "start": 45.67426140103275,
+    "end": 45.85427819656999,
+    "confidence": 4.776951838284731
+  },
+  {
+    "word": "IN",
+    "start": 45.85427819656999,
+    "end": 45.974289393594816,
+    "confidence": 4.96981406211853
+  },
+  {
+    "word": "YOUR",
+    "start": 45.974289393594816,
+    "end": 46.114302456790455,
+    "confidence": 4.387742578983307
+  },
+  {
+    "word": "HOME",
+    "start": 46.114302456790455,
+    "end": 46.294319252327696,
+    "confidence": 4.76411871612072
+  },
+  {
+    "word": "GATED",
+    "start": 46.294319252327696,
+    "end": 46.51433978020655,
+    "confidence": 4.4741886258125305
+  },
+  {
+    "word": "ZONE",
+    "start": 46.51433978020655,
+    "end": 46.7543621742562,
+    "confidence": 4.824981212615967
+  },
+  {
+    "word": "TERRORIZERS",
+    "start": 46.7543621742562,
+    "end": 47.37442002555115,
+    "confidence": 0.0
+  },
+  {
+    "word": "NOWHERE",
+    "start": 47.504478809931506,
+    "end": 48.33450960174979,
+    "confidence": 0.0
+  },
+  {
+    "word": "TO",
+    "start": 48.33450960174979,
+    "end": 48.41451706643301,
+    "confidence": 3.688076436519623
+  },
+  {
+    "word": "GO",
+    "start": 48.41451706643301,
+    "end": 48.49452453111623,
+    "confidence": 2.65578331053257
+  },
+  {
+    "word": "FAR",
+    "start": 48.49452453111623,
+    "end": 48.89456185453232,
+    "confidence": 6.248277592658996
+  },
+  {
+    "word": "AS",
+    "start": 48.89456185453232,
+    "end": 49.09458051624037,
+    "confidence": 5.2286925435066225
+  },
+  {
+    "word": "I",
+    "start": 49.09458051624037,
+    "end": 49.13458424858197,
+    "confidence": 3.275282306713052
+  },
+  {
+    "word": "CAN",
+    "start": 49.13458424858197,
+    "end": 49.35460477646083,
+    "confidence": 5.127541601657867
+  },
+  {
+    "word": "GET",
+    "start": 49.35460477646083,
+    "end": 49.45461410731485,
+    "confidence": 4.373291492462158
+  },
+  {
+    "word": "HITCHHIKERS",
+    "start": 49.45461410731485,
+    "end": 50.41470368351348,
+    "confidence": 0.0
+  },
+  {
+    "word": "LOST",
+    "start": 50.41470368351348,
+    "end": 50.77473727458797,
+    "confidence": 5.778230412138833
+  },
+  {
+    "word": "BOY",
+    "start": 50.77473727458797,
+    "end": 51.25478206268728,
+    "confidence": 5.857602248589198
+  },
+  {
+    "word": "LOST",
+    "start": 51.25478206268728,
+    "end": 51.554810055249355,
+    "confidence": 5.876636441331357
+  },
+  {
+    "word": "BOY",
+    "start": 51.554810055249355,
+    "end": 52.074858575690286,
+    "confidence": 5.779535559507517
+  },
+  {
+    "word": "LOST",
+    "start": 52.074858575690286,
+    "end": 52.51489963144799,
+    "confidence": 6.827913044528528
+  },
+  {
+    "word": "BOY",
+    "start": 52.51489963144799,
+    "end": 52.73492015932684,
+    "confidence": 6.711132836341858
+  },
+  {
+    "word": "LOST",
+    "start": 52.73492015932684,
+    "end": 53.294972412109374,
+    "confidence": 6.465505607958351
+  },
+  {
+    "word": "BOY",
+    "start": 53.294972412109374,
+    "end": 53.514992939988225,
+    "confidence": 6.67590085665385
+  },
+  {
+    "word": "LOST",
+    "start": 53.56504425968536,
+    "end": 54.255061988308,
+    "confidence": 0.0
+  },
+  {
+    "word": "BOY",
+    "start": 54.255061988308,
+    "end": 54.45508065001605,
+    "confidence": 6.685405921936035
+  },
+  {
+    "word": "LOST",
+    "start": 54.45508065001605,
+    "end": 55.015132902798584,
+    "confidence": 6.520973692781159
+  },
+  {
+    "word": "BOY",
+    "start": 55.015132902798584,
+    "end": 55.23515343067744,
+    "confidence": 6.798131148020427
+  },
+  {
+    "word": "FUCK",
+    "start": 56.40530925593964,
+    "end": 57.075325118391476,
+    "confidence": 0.0
+  },
+  {
+    "word": "A",
+    "start": 57.075325118391476,
+    "end": 57.175334449245504,
+    "confidence": 5.293702960014343
+  },
+  {
+    "word": "JOB",
+    "start": 57.175334449245504,
+    "end": 57.455360575636774,
+    "confidence": 5.16147415127073
+  },
+  {
+    "word": "MIGHT",
+    "start": 57.455360575636774,
+    "end": 57.89540163139448,
+    "confidence": 4.709244660355828
+  },
+  {
+    "word": "HAVE",
+    "start": 57.89540163139448,
+    "end": 58.07541842693172,
+    "confidence": 3.643433566391468
+  },
+  {
+    "word": "TO",
+    "start": 58.07541842693172,
+    "end": 58.19542962395655,
+    "confidence": 5.397166132926941
+  },
+  {
+    "word": "ROB",
+    "start": 58.19542962395655,
+    "end": 58.35544455332298,
+    "confidence": 4.1494044959545135
+  },
+  {
+    "word": "AND",
+    "start": 58.35544455332298,
+    "end": 58.47545575034782,
+    "confidence": 4.71654196580251
+  },
+  {
+    "word": "DONT",
+    "start": 58.47545575034782,
+    "end": 58.63547067971425,
+    "confidence": 4.943318843841553
+  },
+  {
+    "word": "KNOW",
+    "start": 58.63547067971425,
+    "end": 58.8154874752515,
+    "confidence": 3.9119676881366305
+  },
+  {
+    "word": "JUST",
+    "start": 58.8154874752515,
+    "end": 59.055509869301154,
+    "confidence": 4.75129584832625
+  },
+  {
+    "word": "TO",
+    "start": 59.055509869301154,
+    "end": 59.235526664838396,
+    "confidence": 5.429257464408875
+  },
+  {
+    "word": "GET",
+    "start": 59.235526664838396,
+    "end": 59.495550925058865,
+    "confidence": 5.073193513430082
+  },
+  {
+    "word": "BY",
+    "start": 59.495550925058865,
+    "end": 59.595560255912886,
+    "confidence": 4.2689911186695095
+  },
+  {
+    "word": "WORD",
+    "start": 59.595560255912886,
+    "end": 60.05560317784139,
+    "confidence": 5.979751207611778
+  },
+  {
+    "word": "ON",
+    "start": 60.05560317784139,
+    "end": 60.31562743806185,
+    "confidence": 7.127920491354806
+  },
+  {
+    "word": "THE",
+    "start": 60.31562743806185,
+    "end": 60.39563490274507,
+    "confidence": 4.627363502979279
+  },
+  {
+    "word": "ROAD",
+    "start": 60.39563490274507,
+    "end": 60.61565543062393,
+    "confidence": 5.392451524734497
+  },
+  {
+    "word": "FOR",
+    "start": 60.61565543062393,
+    "end": 60.935685289356805,
+    "confidence": 5.920207381248474
+  },
+  {
+    "word": "LIFERS",
+    "start": 60.935685289356805,
+    "end": 61.155705817235656,
+    "confidence": 3.183874929944674
+  },
+  {
+    "word": "BULLETS",
+    "start": 61.155705817235656,
+    "end": 61.65575247150578,
+    "confidence": 7.271765381097794
+  },
+  {
+    "word": "IN",
+    "start": 61.65575247150578,
+    "end": 61.735759936189,
+    "confidence": 3.311614155769348
+  },
+  {
+    "word": "THE",
+    "start": 61.735759936189,
+    "end": 61.81576740087222,
+    "confidence": 1.9875678718090057
+  },
+  {
+    "word": "FIRE",
+    "start": 61.81576740087222,
+    "end": 61.97578233023866,
+    "confidence": 4.079248741269112
+  },
+  {
+    "word": "BULLETS",
+    "start": 61.97578233023866,
+    "end": 62.23580659045912,
+    "confidence": 4.039889061025211
+  },
+  {
+    "word": "IN",
+    "start": 62.23580659045912,
+    "end": 62.31581405514234,
+    "confidence": 5.068273901939392
+  },
+  {
+    "word": "THE",
+    "start": 62.31581405514234,
+    "end": 62.455827118337965,
+    "confidence": 5.055654923121135
+  },
+  {
+    "word": "FIRE",
+    "start": 62.455827118337965,
+    "end": 62.695849512387625,
+    "confidence": 5.699961284796397
+  },
+  {
+    "word": "CHECK",
+    "start": 62.695849512387625,
+    "end": 62.855864441754065,
+    "confidence": 3.5282314284704626
+  },
+  {
+    "word": "THE",
+    "start": 62.855864441754065,
+    "end": 62.9958775049497,
+    "confidence": 4.635474160313606
+  },
+  {
+    "word": "CHAIN",
+    "start": 62.9958775049497,
+    "end": 63.23589989899936,
+    "confidence": 4.5826011300086975
+  },
+  {
+    "word": "LINK",
+    "start": 63.23589989899936,
+    "end": 63.4159166945366,
+    "confidence": 4.77310910820961
+  },
+  {
+    "word": "SWAYZE",
+    "start": 63.4159166945366,
+    "end": 63.71594468709867,
+    "confidence": 4.132793166209012
+  },
+  {
+    "word": "IM",
+    "start": 63.71594468709867,
+    "end": 63.85595775029431,
+    "confidence": 5.209273815155029
+  },
+  {
+    "word": "SLUMMIN",
+    "start": 63.85595775029431,
+    "end": 64.37600627073522,
+    "confidence": 5.32045090972231
+  },
+  {
+    "word": "LET",
+    "start": 64.37600627073522,
+    "end": 64.47601560158925,
+    "confidence": 3.3099662015835443
+  },
+  {
+    "word": "EM",
+    "start": 64.47601560158925,
+    "end": 64.55602306627247,
+    "confidence": 5.168998867273331
+  },
+  {
+    "word": "KNOW",
+    "start": 64.55602306627247,
+    "end": 64.79604546032212,
+    "confidence": 5.2542209733616225
+  },
+  {
+    "word": "WHO",
+    "start": 64.79604546032212,
+    "end": 64.93605852351777,
+    "confidence": 4.569354817271233
+  },
+  {
+    "word": "THE",
+    "start": 64.93605852351777,
+    "end": 65.13607718522582,
+    "confidence": 5.621901988983154
+  },
+  {
+    "word": "FUCK",
+    "start": 65.13607718522582,
+    "end": 65.23608651607984,
+    "confidence": 1.8804775575796764
+  },
+  {
+    "word": "WE",
+    "start": 65.23608651607984,
+    "end": 65.33609584693386,
+    "confidence": 5.51028847694397
+  },
+  {
+    "word": "ARE",
+    "start": 65.33609584693386,
+    "end": 65.57611824098352,
+    "confidence": 5.127464254697164
+  },
+  {
+    "word": "LOW",
+    "start": 65.57611824098352,
+    "end": 66.03616116291204,
+    "confidence": 5.992560019095738
+  },
+  {
+    "word": "AND",
+    "start": 66.03616116291204,
+    "end": 66.15617235993685,
+    "confidence": 5.631603717803955
+  },
+  {
+    "word": "DIRTY",
+    "start": 66.15617235993685,
+    "end": 66.47620221866973,
+    "confidence": 4.885400772094727
+  },
+  {
+    "word": "LOST",
+    "start": 66.47620221866973,
+    "end": 66.69622274654859,
+    "confidence": 4.393194427777251
+  },
+  {
+    "word": "BOYS",
+    "start": 66.69622274654859,
+    "end": 66.99625073911065,
+    "confidence": 4.587407978375753
+  },
+  {
+    "word": "COMIN",
+    "start": 66.99625073911065,
+    "end": 67.37628619635595,
+    "confidence": 5.492728154910238
+  },
+  {
+    "word": "OUT",
+    "start": 67.37628619635595,
+    "end": 67.53630112572239,
+    "confidence": 5.172250270843506
+  },
+  {
+    "word": "THE",
+    "start": 67.53630112572239,
+    "end": 67.67631418891801,
+    "confidence": 4.927070685795376
+  },
+  {
+    "word": "CUTS",
+    "start": 67.67631418891801,
+    "end": 67.93633844913847,
+    "confidence": 5.4174720874199505
+  },
+  {
+    "word": "LIKE",
+    "start": 67.93633844913847,
+    "end": 68.05634964616331,
+    "confidence": 3.174370288848877
+  },
+  {
+    "word": "YOUR",
+    "start": 68.05634964616331,
+    "end": 68.17636084318815,
+    "confidence": 3.5965449469430104
+  },
+  {
+    "word": "FAVORITE",
+    "start": 68.17636084318815,
+    "end": 68.51639256809182,
+    "confidence": 4.628220483660698
+  },
+  {
+    "word": "SCAR",
+    "start": 68.51639256809182,
+    "end": 68.77641682831228,
+    "confidence": 6.382463418520414
+  },
+  {
+    "word": "OH",
+    "start": 68.77641682831228,
+    "end": 68.85642429299551,
+    "confidence": 2.688023126125336
+  },
+  {
+    "word": "YEAH",
+    "start": 68.85642429299551,
+    "end": 68.95643362384953,
+    "confidence": 1.6144411087036132
+  },
+  {
+    "word": "YEAH",
+    "start": 68.95643362384953,
+    "end": 69.11644855321597,
+    "confidence": 4.390632406808436
+  },
+  {
+    "word": "CRAWLIN",
+    "start": 69.11644855321597,
+    "end": 69.43647841194885,
+    "confidence": 4.59792996942997
+  },
+  {
+    "word": "ON",
+    "start": 69.43647841194885,
+    "end": 69.6765008059985,
+    "confidence": 5.049260854721069
+  },
+  {
+    "word": "TILE",
+    "start": 69.6765008059985,
+    "end": 70.01653253090218,
+    "confidence": 5.195602357387543
+  },
+  {
+    "word": "CANT",
+    "start": 70.01653253090218,
+    "end": 70.29655865729345,
+    "confidence": 4.863591453060508
+  },
+  {
+    "word": "STAND",
+    "start": 70.29655865729345,
+    "end": 70.59658664985551,
+    "confidence": 5.03233225941658
+  },
+  {
+    "word": "UP",
+    "start": 70.59658664985551,
+    "end": 70.69659598070955,
+    "confidence": 5.424599266052246
+  },
+  {
+    "word": "BEEN",
+    "start": 70.69659598070955,
+    "end": 71.01662583944241,
+    "confidence": 5.8960699290037155
+  },
+  {
+    "word": "A",
+    "start": 71.01662583944241,
+    "end": 71.11663517029643,
+    "confidence": 4.948108196258545
+  },
+  {
+    "word": "WHILE",
+    "start": 71.11663517029643,
+    "end": 71.49667062754173,
+    "confidence": 5.832460422264902
+  },
+  {
+    "word": "KOMMODO",
+    "start": 71.49667062754173,
+    "end": 71.90670888404324,
+    "confidence": 5.027911878767467
+  },
+  {
+    "word": "GUT",
+    "start": 71.90670888404324,
+    "end": 72.2167378096907,
+    "confidence": 5.9607645034790036
+  },
+  {
+    "word": "HOW",
+    "start": 72.2167378096907,
+    "end": 72.47676206991116,
+    "confidence": 6.996186036330003
+  },
+  {
+    "word": "TO",
+    "start": 72.47676206991116,
+    "end": 72.5767714007652,
+    "confidence": 4.650672483444214
+  },
+  {
+    "word": "TAKE",
+    "start": 72.5767714007652,
+    "end": 72.85679752715646,
+    "confidence": 4.948160622801099
+  },
+  {
+    "word": "IT",
+    "start": 72.85679752715646,
+    "end": 72.91680312566888,
+    "confidence": 3.386203482747078
+  },
+  {
+    "word": "HOW",
+    "start": 72.91680312566888,
+    "end": 73.0168124565229,
+    "confidence": 6.1206090450286865
+  },
+  {
+    "word": "TO",
+    "start": 73.0168124565229,
+    "end": 73.11682178737692,
+    "confidence": 4.097626935690641
+  },
+  {
+    "word": "GIVE",
+    "start": 73.11682178737692,
+    "end": 73.3968479137682,
+    "confidence": 5.2771322556904385
+  },
+  {
+    "word": "A",
+    "start": 73.3968479137682,
+    "end": 73.51685911079302,
+    "confidence": 4.847624500592549
+  },
+  {
+    "word": "FUCK",
+    "start": 73.51685911079302,
+    "end": 73.69687590633026,
+    "confidence": 5.028788046911359
+  },
+  {
+    "word": "HOW",
+    "start": 73.69687590633026,
+    "end": 73.8168871033551,
+    "confidence": 3.8470029490334645
+  },
+  {
+    "word": "TO",
+    "start": 73.8168871033551,
+    "end": 73.8968945680383,
+    "confidence": 4.256453990936279
+  },
+  {
+    "word": "LIVE",
+    "start": 73.8968945680383,
+    "end": 74.04690856431935,
+    "confidence": 4.046769600361586
+  },
+  {
+    "word": "WITH",
+    "start": 74.04690856431935,
+    "end": 74.31693375762521,
+    "confidence": 5.62879177240225
+  },
+  {
+    "word": "PAIN",
+    "start": 74.31693375762521,
+    "end": 74.43694495465004,
+    "confidence": 3.5279373356274197
+  },
+  {
+    "word": "HOW",
+    "start": 74.43694495465004,
+    "end": 74.55695615167488,
+    "confidence": 3.879128161817789
+  },
+  {
+    "word": "TO",
+    "start": 74.55695615167488,
+    "end": 74.6569654825289,
+    "confidence": 4.916945362091065
+  },
+  {
+    "word": "GET",
+    "start": 74.6569654825289,
+    "end": 74.85698414423695,
+    "confidence": 5.5384081363677975
+  },
+  {
+    "word": "YOUR",
+    "start": 74.85698414423695,
+    "end": 75.0770046721158,
+    "confidence": 4.93713070016185
+  },
+  {
+    "word": "CUT",
+    "start": 75.0770046721158,
+    "end": 75.31702706616545,
+    "confidence": 5.320870280265808
+  },
+  {
+    "word": "HOW",
+    "start": 75.31702706616545,
+    "end": 75.5570494602151,
+    "confidence": 4.830187494781884
+  },
+  {
+    "word": "LONGS",
+    "start": 75.5570494602151,
+    "end": 75.71706438958154,
+    "confidence": 4.528050608932972
+  },
+  {
+    "word": "THIS",
+    "start": 75.71706438958154,
+    "end": 75.85707745277719,
+    "confidence": 4.049146376550198
+  },
+  {
+    "word": "BEEN",
+    "start": 75.85707745277719,
+    "end": 76.03709424831442,
+    "confidence": 5.297040581703186
+  },
+  {
+    "word": "GOIN",
+    "start": 76.03709424831442,
+    "end": 76.25711477619328,
+    "confidence": 4.69849384914745
+  },
+  {
+    "word": "ON",
+    "start": 76.25711477619328,
+    "end": 76.43713157173053,
+    "confidence": 4.979447865486145
+  },
+  {
+    "word": "MAN",
+    "start": 76.43713157173053,
+    "end": 76.59714650109696,
+    "confidence": 5.034031242132187
+  },
+  {
+    "word": "SHIT",
+    "start": 76.59714650109696,
+    "end": 76.89717449365904,
+    "confidence": 5.052287085851034
+  },
+  {
+    "word": "NO",
+    "start": 76.89717449365904,
+    "end": 77.13719688770868,
+    "confidence": 5.855525580319491
+  },
+  {
+    "word": "WAY",
+    "start": 77.13719688770868,
+    "end": 77.27720995090432,
+    "confidence": 4.077230751514435
+  },
+  {
+    "word": "TO",
+    "start": 77.27720995090432,
+    "end": 77.35721741558754,
+    "confidence": 5.506063520908356
+  },
+  {
+    "word": "TELL",
+    "start": 77.35721741558754,
+    "end": 77.617241675808,
+    "confidence": 5.443848888079326
+  },
+  {
+    "word": "TOO",
+    "start": 77.617241675808,
+    "end": 77.73725287283284,
+    "confidence": 4.592228055000305
+  },
+  {
+    "word": "FAR",
+    "start": 77.73725287283284,
+    "end": 77.81726033751605,
+    "confidence": 2.4542428155740104
+  },
+  {
+    "word": "GONE",
+    "start": 77.81726033751605,
+    "end": 78.0372808653949,
+    "confidence": 5.0437489946683245
+  },
+  {
+    "word": "GO",
+    "start": 78.0372808653949,
+    "end": 78.11728833007811,
+    "confidence": 5.034542401631673
+  },
+  {
+    "word": "GET",
+    "start": 78.11728833007811,
+    "end": 78.37731259029859,
+    "confidence": 5.817297715407151
+  },
+  {
+    "word": "THOSE",
+    "start": 78.37731259029859,
+    "end": 78.59733311817743,
+    "confidence": 5.112218705090609
+  },
+  {
+    "word": "FLAMES",
+    "start": 78.59733311817743,
+    "end": 78.79735177988547,
+    "confidence": 3.671794068813324
+  },
+  {
+    "word": "FROM",
+    "start": 78.79735177988547,
+    "end": 78.95736670925191,
+    "confidence": 4.162821549922228
+  },
+  {
+    "word": "HELL",
+    "start": 78.95736670925191,
+    "end": 79.15738537095997,
+    "confidence": 4.457814574241638
+  },
+  {
+    "word": "BRING",
+    "start": 79.15738537095997,
+    "end": 79.29739843415561,
+    "confidence": 4.051785400935581
+  },
+  {
+    "word": "EM",
+    "start": 79.29739843415561,
+    "end": 79.41740963118043,
+    "confidence": 5.193105459213257
+  },
+  {
+    "word": "HERE",
+    "start": 79.41740963118043,
+    "end": 79.55742269437607,
+    "confidence": 4.170255228877068
+  },
+  {
+    "word": "DONT",
+    "start": 79.55742269437607,
+    "end": 79.7374394899133,
+    "confidence": 5.270909756422043
+  },
+  {
+    "word": "TRIP",
+    "start": 79.7374394899133,
+    "end": 79.93745815162137,
+    "confidence": 4.744892705570567
+  },
+  {
+    "word": "NO",
+    "start": 79.93745815162137,
+    "end": 80.05746934864618,
+    "confidence": 5.273733615875244
+  },
+  {
+    "word": "NO",
+    "start": 80.30753933005137,
+    "end": 80.8775458616492,
+    "confidence": 8.6813231501086
+  },
+  {
+    "word": "ILL",
+    "start": 81.18762144156678,
+    "end": 81.7976317055062,
+    "confidence": 0.0
+  },
+  {
+    "word": "HANDLE",
+    "start": 81.7976317055062,
+    "end": 82.01765223338506,
+    "confidence": 3.8032881379127503
+  },
+  {
+    "word": "THIS",
+    "start": 82.01765223338506,
+    "end": 82.27767649360553,
+    "confidence": 4.747090544019427
+  },
+  {
+    "word": "ON",
+    "start": 82.27767649360553,
+    "end": 82.37768582445955,
+    "confidence": 5.000187516212463
+  },
+  {
+    "word": "SOME",
+    "start": 82.37768582445955,
+    "end": 82.57770448616759,
+    "confidence": 4.312443661689758
+  },
+  {
+    "word": "SCANDALOUS",
+    "start": 82.57770448616759,
+    "end": 83.11775487277933,
+    "confidence": 4.446536896750331
+  },
+  {
+    "word": "INLAND",
+    "start": 83.11775487277933,
+    "end": 83.4177828653414,
+    "confidence": 4.298207644905363
+  },
+  {
+    "word": "EMPIRE",
+    "start": 83.4177828653414,
+    "end": 83.8778257872699,
+    "confidence": 5.334108432133992
+  },
+  {
+    "word": "LOS",
+    "start": 83.8778257872699,
+    "end": 84.07784444897794,
+    "confidence": 5.182998736699422
+  },
+  {
+    "word": "ANGELES",
+    "start": 84.07784444897794,
+    "end": 84.57789110324808,
+    "confidence": 4.840869193077087
+  },
+  {
+    "word": "ANTIEGO",
+    "start": 84.57789110324808,
+    "end": 85.25795455305544,
+    "confidence": 0.0
+  },
+  {
+    "word": "PROPAGANDA",
+    "start": 85.25795455305544,
+    "end": 85.89801427052119,
+    "confidence": 0.0
+  },
+  {
+    "word": "SHIT",
+    "start": 85.89801427052119,
+    "end": 86.33805532627889,
+    "confidence": 6.05778076431968
+  },
+  {
+    "word": "YEAH",
+    "start": 86.33805532627889,
+    "end": 86.57807772032855,
+    "confidence": 6.957673529783885
+  },
+  {
+    "word": "YEAH",
+    "start": 86.57807772032855,
+    "end": 86.85810384671981,
+    "confidence": 6.974500392164503
+  },
+  {
+    "word": "YEAH",
+    "start": 86.85810384671981,
+    "end": 87.09812624076947,
+    "confidence": 6.910929595430692
+  },
+  {
+    "word": "YEAH",
+    "start": 87.09812624076947,
+    "end": 87.33814863481913,
+    "confidence": 6.90302337706089
+  },
+  {
+    "word": "YEAH",
+    "start": 87.33814863481913,
+    "end": 87.5981728950396,
+    "confidence": 6.698094704321453
+  },
+  {
+    "word": "YEAH",
+    "start": 87.5981728950396,
+    "end": 87.85819715526006,
+    "confidence": 7.574015974998474
+  },
+  {
+    "word": "WHOS",
+    "start": 87.85819715526006,
+    "end": 87.9782083522849,
+    "confidence": 1.9408162633577983
+  },
+  {
+    "word": "COMIN",
+    "start": 87.9782083522849,
+    "end": 88.21823074633454,
+    "confidence": 4.67530686656634
+  },
+  {
+    "word": "UP",
+    "start": 88.21823074633454,
+    "end": 88.41824940804258,
+    "confidence": 5.242310833930969
+  },
+  {
+    "word": "WHOS",
+    "start": 88.41824940804258,
+    "end": 88.65827180209226,
+    "confidence": 5.827507297197978
+  },
+  {
+    "word": "LOSIN",
+    "start": 88.65827180209226,
+    "end": 89.01830539316674,
+    "confidence": 4.650696615378062
+  },
+  {
+    "word": "GROUND",
+    "start": 89.01830539316674,
+    "end": 89.29833151955799,
+    "confidence": 4.659814685583115
+  },
+  {
+    "word": "TWENTY",
+    "start": 89.29833151955799,
+    "end": 89.61836137829087,
+    "confidence": 4.932422216981649
+  },
+  {
+    "word": "TWELVE",
+    "start": 89.61836137829087,
+    "end": 90.07840430021939,
+    "confidence": 5.05591256916523
+  },
+  {
+    "word": "FUCK",
+    "start": 90.07840430021939,
+    "end": 90.23841922958583,
+    "confidence": 4.097872702404857
+  },
+  {
+    "word": "IM",
+    "start": 90.23841922958583,
+    "end": 90.29842482809823,
+    "confidence": 3.683061182498932
+  },
+  {
+    "word": "SHADY",
+    "start": 90.29842482809823,
+    "end": 90.59845282066031,
+    "confidence": 4.422591548413038
+  },
+  {
+    "word": "NOW",
+    "start": 90.59845282066031,
+    "end": 91.01849201024721,
+    "confidence": 6.262195134162903
+  },
+  {
+    "word": "RUNNING",
+    "start": 91.01849201024721,
+    "end": 91.33852186898008,
+    "confidence": 4.19454759825021
+  },
+  {
+    "word": "GAME",
+    "start": 91.33852186898008,
+    "end": 91.49853679834652,
+    "confidence": 3.6262339651584625
+  },
+  {
+    "word": "ON",
+    "start": 91.49853679834652,
+    "end": 91.57854426302976,
+    "confidence": 3.2847031876444817
+  },
+  {
+    "word": "EVERY",
+    "start": 91.57854426302976,
+    "end": 91.79856479090861,
+    "confidence": 3.716659303754568
+  },
+  {
+    "word": "THING",
+    "start": 91.79856479090861,
+    "end": 91.99858345261666,
+    "confidence": 3.84527040719986
+  },
+  {
+    "word": "IN",
+    "start": 91.99858345261666,
+    "end": 92.1585983819831,
+    "confidence": 5.507976800203323
+  },
+  {
+    "word": "TOWN",
+    "start": 92.1585983819831,
+    "end": 92.51863197305758,
+    "confidence": 5.519425888856252
+  },
+  {
+    "word": "ITS",
+    "start": 92.51863197305758,
+    "end": 92.93867116264448,
+    "confidence": 8.046531915664673
+  },
+  {
+    "word": "SUCH",
+    "start": 92.93867116264448,
+    "end": 93.27870288754815,
+    "confidence": 4.985635664727953
+  },
+  {
+    "word": "A",
+    "start": 93.27870288754815,
+    "end": 93.31870661988977,
+    "confidence": 6.6090850830078125
+  },
+  {
+    "word": "LONG",
+    "start": 93.31870661988977,
+    "end": 93.55872901393943,
+    "confidence": 5.162859087189038
+  },
+  {
+    "word": "WAY",
+    "start": 93.55872901393943,
+    "end": 93.8987607388431,
+    "confidence": 6.2212511003017426
+  },
+  {
+    "word": "DOWN",
+    "start": 93.8987607388431,
+    "end": 94.65883165333369,
+    "confidence": 0.0
+  },
+  {
+    "word": "LOST",
+    "start": 94.65883165333369,
+    "end": 96.07896415146084,
+    "confidence": 0.0
+  },
+  {
+    "word": "BOYS",
+    "start": 96.07896415146084,
+    "end": 96.61901453807255,
+    "confidence": 6.071304532197805
+  },
+  {
+    "word": "LOST",
+    "start": 96.61901453807255,
+    "end": 97.07905746000107,
+    "confidence": 6.289242778283854
+  },
+  {
+    "word": "BOYS",
+    "start": 97.07905746000107,
+    "end": 97.23907238936751,
+    "confidence": 4.841684225946665
+  },
+  {
+    "word": "LOST",
+    "start": 97.23907238936751,
+    "end": 97.45909291724635,
+    "confidence": 5.325987088680267
+  },
+  {
+    "word": "BOYS",
+    "start": 97.45909291724635,
+    "end": 97.63910971278361,
+    "confidence": 4.461701452732086
+  },
+  {
+    "word": "LOST",
+    "start": 97.63910971278361,
+    "end": 97.81912650832084,
+    "confidence": 4.598311603069305
+  },
+  {
+    "word": "BOYS",
+    "start": 97.81912650832084,
+    "end": 98.0391470361997,
+    "confidence": 5.112495109438896
+  },
+  {
+    "word": "LOST",
+    "start": 98.0391470361997,
+    "end": 98.15915823322453,
+    "confidence": 3.089840749899546
+  },
+  {
+    "word": "BOYS",
+    "start": 98.15915823322453,
+    "end": 98.59919928898222,
+    "confidence": 5.8560344605218795
+  },
+  {
+    "word": "LOST",
+    "start": 98.59919928898222,
+    "end": 98.81921981686108,
+    "confidence": 5.84783842346885
+  },
+  {
+    "word": "BOYS",
+    "start": 98.81921981686108,
+    "end": 99.09924594325236,
+    "confidence": 5.147458050932203
+  },
+  {
+    "word": "ITS",
+    "start": 99.09924594325236,
+    "end": 99.47928140049765,
+    "confidence": 6.405353946983814
+  },
+  {
+    "word": "SUCH",
+    "start": 99.47928140049765,
+    "end": 99.81931312540132,
+    "confidence": 5.636328101158142
+  },
+  {
+    "word": "A",
+    "start": 99.81931312540132,
+    "end": 99.85931685774293,
+    "confidence": 4.998278021812439
+  },
+  {
+    "word": "LONG",
+    "start": 99.85931685774293,
+    "end": 100.15934485030502,
+    "confidence": 5.588044745847583
+  },
+  {
+    "word": "WAY",
+    "start": 100.15934485030502,
+    "end": 100.43937097669627,
+    "confidence": 7.683377061571393
+  },
+  {
+    "word": "DOWN",
+    "start": 100.43937097669627,
+    "end": 101.23944562352847,
+    "confidence": 0.0
+  },
+  {
+    "word": "LOST",
+    "start": 101.23944562352847,
+    "end": 101.65948481311537,
+    "confidence": 6.6446339473128315
+  },
+  {
+    "word": "BOYS",
+    "start": 101.65948481311537,
+    "end": 102.27954266441031,
+    "confidence": 0.0
+  },
+  {
+    "word": "LOST",
+    "start": 102.27954266441031,
+    "end": 103.15962477592572,
+    "confidence": 0.0
+  },
+  {
+    "word": "BOYS",
+    "start": 103.15962477592572,
+    "end": 103.77968262722067,
+    "confidence": 6.558188438415527
+  },
+  {
+    "word": "LOST",
+    "start": 103.77968262722067,
+    "end": 103.97970128892872,
+    "confidence": 4.393950700759888
+  },
+  {
+    "word": "BOYS",
+    "start": 103.97970128892872,
+    "end": 104.17971995063678,
+    "confidence": 4.562534993345087
+  },
+  {
+    "word": "LOST",
+    "start": 104.17971995063678,
+    "end": 104.35973674617401,
+    "confidence": 4.399453295601739
+  },
+  {
+    "word": "BOYS",
+    "start": 104.35973674617401,
+    "end": 104.59975914022368,
+    "confidence": 5.201202849547069
+  },
+  {
+    "word": "LOST",
+    "start": 104.59975914022368,
+    "end": 104.6997684710777,
+    "confidence": 2.709141128510237
+  },
+  {
+    "word": "BOYS",
+    "start": 104.6997684710777,
+    "end": 105.13980952683539,
+    "confidence": 5.865522774912062
+  },
+  {
+    "word": "LOST",
+    "start": 105.13980952683539,
+    "end": 105.37983192088507,
+    "confidence": 5.3655582849796
+  },
+  {
+    "word": "BOYS",
+    "start": 105.37983192088507,
+    "end": 105.69986177961793,
+    "confidence": 5.305443811416626
+  },
+  {
+    "word": "LOST",
+    "start": 113.15060358251284,
+    "end": 113.82061944496468,
+    "confidence": 0.0
+  },
+  {
+    "word": "BOY",
+    "start": 113.82061944496468,
+    "end": 114.16065116986837,
+    "confidence": 6.136680139435662
+  },
+  {
+    "word": "LOST",
+    "start": 114.16065116986837,
+    "end": 114.60069222562606,
+    "confidence": 6.854183879765597
+  },
+  {
+    "word": "BOY",
+    "start": 114.60069222562606,
+    "end": 114.82071275350492,
+    "confidence": 6.7797904968261715
+  },
+  {
+    "word": "LOST",
+    "start": 114.82071275350492,
+    "end": 115.36076314011666,
+    "confidence": 6.812433072498867
+  },
+  {
+    "word": "BOY",
+    "start": 115.36076314011666,
+    "end": 115.58078366799549,
+    "confidence": 7.076735973358154
+  },
+  {
+    "word": "LOST",
+    "start": 115.58078366799549,
+    "end": 116.14083592077804,
+    "confidence": 7.553579324058124
+  },
+  {
+    "word": "BOY",
+    "start": 116.14083592077804,
+    "end": 116.36085644865689,
+    "confidence": 6.788792689641316
+  },
+  {
+    "word": "ITS",
+    "start": 116.36085644865689,
+    "end": 116.88090496909781,
+    "confidence": 6.881524911293616
+  },
+  {
+    "word": "SUCH",
+    "start": 116.88090496909781,
+    "end": 117.16093109548908,
+    "confidence": 4.771841858114515
+  },
+  {
+    "word": "A",
+    "start": 117.16093109548908,
+    "end": 117.20093482783068,
+    "confidence": 6.810403347015381
+  },
+  {
+    "word": "LONG",
+    "start": 117.20093482783068,
+    "end": 117.50096282039277,
+    "confidence": 5.464870195835829
+  },
+  {
+    "word": "WAY",
+    "start": 117.50096282039277,
+    "end": 118.76108038915346,
+    "confidence": 0.0
+  },
+  {
+    "word": "DOWN",
+    "start": 118.76108038915346,
+    "end": 119.48114757130244,
+    "confidence": 0.0
+  },
+  {
+    "word": "BROWN",
+    "start": 119.48114757130244,
+    "end": 119.86118302854773,
+    "confidence": 6.190329339769152
+  },
+  {
+    "word": "PAPER",
+    "start": 119.86118302854773,
+    "end": 120.12120728876819,
+    "confidence": 4.47325764809336
+  },
+  {
+    "word": "BAGGIN",
+    "start": 120.12120728876819,
+    "end": 120.54124647835509,
+    "confidence": 5.181263638287783
+  },
+  {
+    "word": "ASPHALT",
+    "start": 120.54124647835509,
+    "end": 120.86127633708796,
+    "confidence": 4.701200656592846
+  },
+  {
+    "word": "SCRAPIN",
+    "start": 120.86127633708796,
+    "end": 121.20130806199165,
+    "confidence": 4.463558903998798
+  },
+  {
+    "word": "ALL",
+    "start": 121.20130806199165,
+    "end": 121.28131552667486,
+    "confidence": 3.5226865895092487
+  },
+  {
+    "word": "TALK",
+    "start": 121.28131552667486,
+    "end": 121.48133418838292,
+    "confidence": 4.800895428657531
+  },
+  {
+    "word": "NO",
+    "start": 121.48133418838292,
+    "end": 121.60134538540774,
+    "confidence": 4.914576669534047
+  },
+  {
+    "word": "ACTION",
+    "start": 121.60134538540774,
+    "end": 122.00138270882384,
+    "confidence": 5.021588721871376
+  },
+  {
+    "word": "WHAT",
+    "start": 122.00138270882384,
+    "end": 122.30141070138592,
+    "confidence": 5.2472196987697055
+  },
+  {
+    "word": "IM",
+    "start": 122.30141070138592,
+    "end": 122.42142189841074,
+    "confidence": 5.2547452847162885
+  },
+  {
+    "word": "WAITIN",
+    "start": 122.42142189841074,
+    "end": 122.74145175714361,
+    "confidence": 5.210243925452232
+  },
+  {
+    "word": "WEAK",
+    "start": 122.74145175714361,
+    "end": 122.94147041885167,
+    "confidence": 4.418016868829727
+  },
+  {
+    "word": "TONGUE",
+    "start": 122.94147041885167,
+    "end": 123.16149094673051,
+    "confidence": 3.485429742119529
+  },
+  {
+    "word": "WAGGIN",
+    "start": 123.16149094673051,
+    "end": 123.48152080546339,
+    "confidence": 4.53746675130199
+  },
+  {
+    "word": "STRAY",
+    "start": 123.48152080546339,
+    "end": 123.72154319951306,
+    "confidence": 4.420954704284668
+  },
+  {
+    "word": "DOG",
+    "start": 123.72154319951306,
+    "end": 123.86155626270869,
+    "confidence": 5.4171630044778185
+  },
+  {
+    "word": "BEGGIN",
+    "start": 123.86155626270869,
+    "end": 124.08157679058755,
+    "confidence": 3.5388312141100564
+  },
+  {
+    "word": "LIKE",
+    "start": 124.08157679058755,
+    "end": 124.30159731846639,
+    "confidence": 4.89483757019043
+  },
+  {
+    "word": "DONT",
+    "start": 124.30159731846639,
+    "end": 124.52161784634524,
+    "confidence": 4.777217139800389
+  },
+  {
+    "word": "HURT",
+    "start": 124.52161784634524,
+    "end": 124.68163277571168,
+    "confidence": 4.676105797290802
+  },
+  {
+    "word": "ME",
+    "start": 124.68163277571168,
+    "end": 124.7816421065657,
+    "confidence": 5.574394702911377
+  },
+  {
+    "word": "YEAH",
+    "start": 124.7816421065657,
+    "end": 125.06166823295698,
+    "confidence": 4.973667034081051
+  },
+  {
+    "word": "RIGHT",
+    "start": 125.06166823295698,
+    "end": 125.28168876083583,
+    "confidence": 4.042131245136261
+  },
+  {
+    "word": "IM",
+    "start": 125.28168876083583,
+    "end": 125.38169809168986,
+    "confidence": 5.568054437637329
+  },
+  {
+    "word": "SAYIN",
+    "start": 125.38169809168986,
+    "end": 125.70172795042274,
+    "confidence": 5.0075622969307005
+  },
+  {
+    "word": "BEWARE",
+    "start": 125.70172795042274,
+    "end": 126.08176340766802,
+    "confidence": 4.323779682815075
+  },
+  {
+    "word": "YOU",
+    "start": 126.08176340766802,
+    "end": 126.26178020320526,
+    "confidence": 4.058184435591102
+  },
+  {
+    "word": "HAVE",
+    "start": 126.26178020320526,
+    "end": 126.40179326640089,
+    "confidence": 4.206744745373726
+  },
+  {
+    "word": "BEEN",
+    "start": 126.40179326640089,
+    "end": 126.58181006193814,
+    "confidence": 4.809152245521545
+  },
+  {
+    "word": "WARNED",
+    "start": 126.58181006193814,
+    "end": 126.801830589817,
+    "confidence": 3.9581891894340515
+  },
+  {
+    "word": "THE",
+    "start": 126.801830589817,
+    "end": 126.88183805450021,
+    "confidence": 5.217903137207031
+  },
+  {
+    "word": "BARRELS",
+    "start": 126.88183805450021,
+    "end": 127.2218697794039,
+    "confidence": 4.708543419837952
+  },
+  {
+    "word": "STILL",
+    "start": 127.2218697794039,
+    "end": 127.38188470877033,
+    "confidence": 4.282448768615723
+  },
+  {
+    "word": "WARM",
+    "start": 127.38188470877033,
+    "end": 127.72191643367401,
+    "confidence": 4.866191168626149
+  },
+  {
+    "word": "EASE",
+    "start": 127.72191643367401,
+    "end": 127.98194069389447,
+    "confidence": 5.080981761217117
+  },
+  {
+    "word": "UP",
+    "start": 127.98194069389447,
+    "end": 128.18195935560254,
+    "confidence": 5.321223670786077
+  },
+  {
+    "word": "OFF",
+    "start": 128.18195935560254,
+    "end": 128.30197055262735,
+    "confidence": 5.767638444900513
+  },
+  {
+    "word": "THAT",
+    "start": 128.30197055262735,
+    "end": 128.5019892143354,
+    "confidence": 5.298673820495606
+  },
+  {
+    "word": "LIP",
+    "start": 128.5019892143354,
+    "end": 128.76201347455586,
+    "confidence": 5.366863710539682
+  },
+  {
+    "word": "OR",
+    "start": 128.76201347455586,
+    "end": 128.8420209392391,
+    "confidence": 5.584667146205902
+  },
+  {
+    "word": "STEP",
+    "start": 128.8420209392391,
+    "end": 129.24205826265518,
+    "confidence": 6.434845077991485
+  },
+  {
+    "word": "HOW",
+    "start": 129.24205826265518,
+    "end": 129.60209185372966,
+    "confidence": 8.288943138387468
+  },
+  {
+    "word": "QUICK",
+    "start": 129.60209185372966,
+    "end": 129.7821086492669,
+    "confidence": 3.054292879998684
+  },
+  {
+    "word": "A",
+    "start": 129.7821086492669,
+    "end": 129.82211238160852,
+    "confidence": 2.4962837249040604
+  },
+  {
+    "word": "BITCH",
+    "start": 129.82211238160852,
+    "end": 130.08213664182898,
+    "confidence": 4.6226486052785605
+  },
+  {
+    "word": "FIT",
+    "start": 130.08213664182898,
+    "end": 130.26215343736624,
+    "confidence": 4.4858820173475475
+  },
+  {
+    "word": "TO",
+    "start": 130.26215343736624,
+    "end": 130.34216090204944,
+    "confidence": 5.09465479850769
+  },
+  {
+    "word": "GET",
+    "start": 130.34216090204944,
+    "end": 130.48217396524507,
+    "confidence": 4.420393504202366
+  },
+  {
+    "word": "CHECKED",
+    "start": 130.48217396524507,
+    "end": 130.78220195780716,
+    "confidence": 4.8649075349171955
+  },
+  {
+    "word": "MATE",
+    "start": 130.78220195780716,
+    "end": 131.0622280841984,
+    "confidence": 5.296508202185998
+  },
+  {
+    "word": "ONE",
+    "start": 131.0622280841984,
+    "end": 131.24224487973567,
+    "confidence": 4.678990519046783
+  },
+  {
+    "word": "FALSE",
+    "start": 131.24224487973567,
+    "end": 131.42226167527292,
+    "confidence": 3.780891537666321
+  },
+  {
+    "word": "MOVELL",
+    "start": 131.42226167527292,
+    "end": 131.68228593549338,
+    "confidence": 4.1405226562458735
+  },
+  {
+    "word": "GET",
+    "start": 131.68228593549338,
+    "end": 131.8423008648598,
+    "confidence": 4.897048398852348
+  },
+  {
+    "word": "YA",
+    "start": 131.8423008648598,
+    "end": 132.00231579422623,
+    "confidence": 5.177663236856461
+  },
+  {
+    "word": "SET",
+    "start": 132.00231579422623,
+    "end": 132.2823419206175,
+    "confidence": 5.142185126032148
+  },
+  {
+    "word": "STRAIGHT",
+    "start": 132.2823419206175,
+    "end": 132.88239790574164,
+    "confidence": 5.823986007769903
+  },
+  {
+    "word": "YEAH",
+    "start": 132.88239790574164,
+    "end": 133.24243149681615,
+    "confidence": 6.9816947778066
+  },
+  {
+    "word": "YEAH",
+    "start": 133.24243149681615,
+    "end": 133.4424501585242,
+    "confidence": 5.642494404315949
+  },
+  {
+    "word": "YEAH",
+    "start": 133.4424501585242,
+    "end": 133.74247815108626,
+    "confidence": 6.1379812104361395
+  },
+  {
+    "word": "YEAH",
+    "start": 133.74247815108626,
+    "end": 133.9224949466235,
+    "confidence": 5.623822702301873
+  },
+  {
+    "word": "YEAH",
+    "start": 133.9224949466235,
+    "end": 134.22252293918558,
+    "confidence": 5.843236930668354
+  },
+  {
+    "word": "YEAH",
+    "start": 134.22252293918558,
+    "end": 134.50254906557683,
+    "confidence": 6.32789237682636
+  },
+  {
+    "word": "YEAH",
+    "start": 134.50254906557683,
+    "end": 134.7425714596265,
+    "confidence": 5.7400689125061035
+  },
+  {
+    "word": "YEAH",
+    "start": 134.7425714596265,
+    "end": 134.98259385367615,
+    "confidence": 5.984160805741946
+  },
+  {
+    "word": "YEAH",
+    "start": 134.98259385367615,
+    "end": 135.26261998006743,
+    "confidence": 5.759996048041752
+  },
+  {
+    "word": "YEAH",
+    "start": 135.26261998006743,
+    "end": 135.5226442402879,
+    "confidence": 5.087824598420411
+  },
+  {
+    "word": "YEAH",
+    "start": 135.5226442402879,
+    "end": 135.76266663433753,
+    "confidence": 5.690805753072103
+  },
+  {
+    "word": "YEAH",
+    "start": 135.76266663433753,
+    "end": 136.0426927607288,
+    "confidence": 5.832746641976493
+  },
+  {
+    "word": "YEAH",
+    "start": 136.0426927607288,
+    "end": 136.2827151547785,
+    "confidence": 5.628869225581487
+  },
+  {
+    "word": "YEAH",
+    "start": 136.2827151547785,
+    "end": 136.68275247819457,
+    "confidence": 6.013139224052429
+  },
+  {
+    "word": "YEAH",
+    "start": 136.68275247819457,
+    "end": 137.32281219566033,
+    "confidence": 0.0
+  },
+  {
+    "word": "YEAH",
+    "start": 137.32281219566033,
+    "end": 137.56283458970995,
+    "confidence": 5.37871236150915
+  },
+  {
+    "word": "YEAH",
+    "start": 137.56283458970995,
+    "end": 137.78285511758884,
+    "confidence": 4.723291019598643
+  },
+  {
+    "word": "YEAH",
+    "start": 137.78285511758884,
+    "end": 138.30290363802976,
+    "confidence": 5.678193275745098
+  },
+  {
+    "word": "YEAH",
+    "start": 138.30290363802976,
+    "end": 138.72294282761663,
+    "confidence": 5.7154153227806095
+  },
+  {
+    "word": "YEAH",
+    "start": 138.72294282761663,
+    "end": 138.9629652216663,
+    "confidence": 5.222668354327862
+  },
+  {
+    "word": "YEAH",
+    "start": 138.9629652216663,
+    "end": 139.14298201720356,
+    "confidence": 3.591923716995451
+  },
+  {
+    "word": "YEAH",
+    "start": 139.14298201720356,
+    "end": 139.40300627742403,
+    "confidence": 6.195058334332246
+  },
+  {
+    "word": "YEAH",
+    "start": 139.40300627742403,
+    "end": 139.6630305376445,
+    "confidence": 5.839086569272554
+  },
+  {
+    "word": "YEAH",
+    "start": 139.6630305376445,
+    "end": 139.92305479786495,
+    "confidence": 5.7663566791094265
+  },
+  {
+    "word": "YEAH",
+    "start": 139.92305479786495,
+    "end": 140.2030809242562,
+    "confidence": 5.964928546122143
+  },
+  {
+    "word": "YEAH",
+    "start": 140.2030809242562,
+    "end": 140.44310331830587,
+    "confidence": 6.054904331763585
+  },
+  {
+    "word": "YEAH",
+    "start": 140.44310331830587,
+    "end": 140.72312944469712,
+    "confidence": 5.668792503220694
+  },
+  {
+    "word": "YEAH",
+    "start": 140.72312944469712,
+    "end": 140.98315370491758,
+    "confidence": 6.521925767262776
+  },
+  {
+    "word": "YEAH",
+    "start": 140.98315370491758,
+    "end": 141.36318916216288,
+    "confidence": 5.83309069275856
+  },
+  {
+    "word": "YEAH",
+    "start": 141.36318916216288,
+    "end": 141.72322275323737,
+    "confidence": 5.727172772089641
+  },
+  {
+    "word": "YEAH",
+    "start": 141.72322275323737,
+    "end": 141.98324701345783,
+    "confidence": 6.188700159390767
+  },
+  {
+    "word": "YEAH",
+    "start": 141.98324701345783,
+    "end": 142.40328620304473,
+    "confidence": 5.744180695577101
+  },
+  {
+    "word": "YEAH",
+    "start": 142.40328620304473,
+    "end": 143.1233533851937,
+    "confidence": 0.0
+  },
+  {
+    "word": "ITS",
+    "start": 143.1233533851937,
+    "end": 143.30337018073095,
+    "confidence": 6.518251061439514
+  },
+  {
+    "word": "SUCH",
+    "start": 143.30337018073095,
+    "end": 143.54339257478063,
+    "confidence": 4.281427291723398
+  },
+  {
+    "word": "A",
+    "start": 143.54339257478063,
+    "end": 143.64340190563462,
+    "confidence": 5.0845736265182495
+  },
+  {
+    "word": "LONG",
+    "start": 143.64340190563462,
+    "end": 144.08344296139234,
+    "confidence": 5.634226420651311
+  },
+  {
+    "word": "WAY",
+    "start": 144.08344296139234,
+    "end": 144.2634597569296,
+    "confidence": 5.505255063374837
+  },
+  {
+    "word": "DOWN",
+    "start": 144.2634597569296,
+    "end": 145.02353067142016,
+    "confidence": 0.0
+  },
+  {
+    "word": "YEAH",
+    "start": 145.02353067142016,
+    "end": 145.46357172717785,
+    "confidence": 6.691320289265025
+  },
+  {
+    "word": "YEAH",
+    "start": 145.46357172717785,
+    "end": 145.86360905059396,
+    "confidence": 6.078514707088471
+  },
+  {
+    "word": "YEAH",
+    "start": 145.86360905059396,
+    "end": 146.54367250040133,
+    "confidence": 0.0
+  },
+  {
+    "word": "LOST",
+    "start": 146.54367250040133,
+    "end": 146.8637023591342,
+    "confidence": 5.598254851996899
+  },
+  {
+    "word": "BOYS",
+    "start": 146.8637023591342,
+    "end": 147.5637676751124,
+    "confidence": 0.0
+  },
+  {
+    "word": "LOST",
+    "start": 147.5637676751124,
+    "end": 147.84379380150364,
+    "confidence": 5.637994170188904
+  },
+  {
+    "word": "BOYS",
+    "start": 147.84379380150364,
+    "end": 147.98380686469926,
+    "confidence": 3.60775688290596
+  },
+  {
+    "word": "LOST",
+    "start": 147.98380686469926,
+    "end": 148.38384418811535,
+    "confidence": 5.8868630766868595
+  },
+  {
+    "word": "BOYS",
+    "start": 148.38384418811535,
+    "end": 148.92389457472711,
+    "confidence": 5.755899412291391
+  },
+  {
+    "word": "LOST",
+    "start": 148.92389457472711,
+    "end": 149.18391883494758,
+    "confidence": 5.444138930394099
+  },
+  {
+    "word": "BOYS",
+    "start": 149.18391883494758,
+    "end": 149.4239412289972,
+    "confidence": 5.011013410308144
+  },
+  {
+    "word": "LOST",
+    "start": 149.4239412289972,
+    "end": 149.84398041858412,
+    "confidence": 5.868430027907545
+  },
+  {
+    "word": "BOYS",
+    "start": 149.84398041858412,
+    "end": 150.10400467880459,
+    "confidence": 5.630537662034233
+  },
+  {
+    "word": "LOST",
+    "start": 150.10400467880459,
+    "end": 150.2440177420002,
+    "confidence": 3.7259680777788162
+  },
+  {
+    "word": "BOYS",
+    "start": 150.2440177420002,
+    "end": 150.5440457345623,
+    "confidence": 5.94292672475179
+  },
+  {
+    "word": "ITS",
+    "start": 150.5440457345623,
+    "end": 150.92408119180757,
+    "confidence": 7.320362147532012
+  },
+  {
+    "word": "SUCH",
+    "start": 150.92408119180757,
+    "end": 152.00418196503102,
+    "confidence": 0.0
+  },
+  {
+    "word": "A",
+    "start": 152.00418196503102,
+    "end": 152.04418569737265,
+    "confidence": 5.861311674118042
+  },
+  {
+    "word": "LONG",
+    "start": 152.04418569737265,
+    "end": 152.48422675313034,
+    "confidence": 6.081065031953833
+  },
+  {
+    "word": "WAY",
+    "start": 152.48422675313034,
+    "end": 152.94426967505888,
+    "confidence": 7.256042957305908
+  },
+  {
+    "word": "DOWN",
+    "start": 152.94426967505888,
+    "end": 153.32430513230415,
+    "confidence": 6.103776335716248
+  },
+  {
+    "word": "LOST",
+    "start": 153.33435271965968,
+    "end": 153.9443629835991,
+    "confidence": 6.333596531550089
+  },
+  {
+    "word": "BOYS",
+    "start": 153.9443629835991,
+    "end": 154.14438164530713,
+    "confidence": 5.0737956166267395
+  },
+  {
+    "word": "LOST",
+    "start": 154.14438164530713,
+    "end": 154.34440030701518,
+    "confidence": 4.494053453207016
+  },
+  {
+    "word": "BOYS",
+    "start": 154.34440030701518,
+    "end": 154.52441710255243,
+    "confidence": 3.8889429777860642
+  },
+  {
+    "word": "LOST",
+    "start": 154.52441710255243,
+    "end": 154.68443203191887,
+    "confidence": 4.267841175198555
+  },
+  {
+    "word": "BOYS",
+    "start": 154.68443203191887,
+    "end": 154.92445442596852,
+    "confidence": 5.482790665193037
+  },
+  {
+    "word": "LOST",
+    "start": 154.92445442596852,
+    "end": 155.02446375682257,
+    "confidence": 2.1020528270552554
+  },
+  {
+    "word": "BOYS",
+    "start": 155.02446375682257,
+    "end": 155.48450667875107,
+    "confidence": 5.950398600619772
+  },
+  {
+    "word": "LOST",
+    "start": 155.48450667875107,
+    "end": 155.7045272066299,
+    "confidence": 5.79755402803421
+  },
+  {
+    "word": "BOYS",
+    "start": 155.7045272066299,
+    "end": 155.82453840365474,
+    "confidence": 3.484084149201711
+  },
+  {
+    "word": "LOST",
+    "start": 155.82453840365474,
+    "end": 156.14456826238762,
+    "confidence": 5.253311971202493
+  },
+  {
+    "word": "BOYS",
+    "start": 156.14456826238762,
+    "end": 156.40459252260808,
+    "confidence": 5.864825367927551
+  },
+  {
+    "word": "ITS",
+    "start": 156.40459252260808,
+    "end": 156.62461305048694,
+    "confidence": 5.883318042755127
+  },
+  {
+    "word": "SUCH",
+    "start": 156.62461305048694,
+    "end": 156.8846373107074,
+    "confidence": 5.244281355823789
+  },
+  {
+    "word": "A",
+    "start": 156.8846373107074,
+    "end": 156.924641043049,
+    "confidence": 6.786660432815552
+  },
+  {
+    "word": "LONG",
+    "start": 156.924641043049,
+    "end": 157.20466716944026,
+    "confidence": 5.399440857080313
+  },
+  {
+    "word": "WAY",
+    "start": 157.20466716944026,
+    "end": 157.3046765002943,
+    "confidence": 3.6414187788963317
+  },
+  {
+    "word": "DOWN",
+    "start": 157.3046765002943,
+    "end": 157.7047138237104,
+    "confidence": 5.764529901742935
+  },
+  {
+    "word": "YEAH",
+    "start": 157.7047138237104,
+    "end": 158.20476047798053,
+    "confidence": 6.982262421112794
+  },
+  {
+    "word": "YEAH",
+    "start": 158.20476047798053,
+    "end": 158.9048257939587,
+    "confidence": 0.0
+  },
+  {
+    "word": "YEAH",
+    "start": 158.9048257939587,
+    "end": 159.4048724482288,
+    "confidence": 7.160729307681322
+  },
+  {
+    "word": "LOST",
+    "start": 159.4048724482288,
+    "end": 159.6848985746201,
+    "confidence": 5.168670797348023
+  },
+  {
+    "word": "BOYS",
+    "start": 159.6848985746201,
+    "end": 160.04493216569455,
+    "confidence": 5.975389578763177
+  },
+  {
+    "word": "LOST",
+    "start": 160.04493216569455,
+    "end": 160.48497322145226,
+    "confidence": 6.023134848345881
+  },
+  {
+    "word": "BOYS",
+    "start": 160.48497322145226,
+    "end": 160.6449881508187,
+    "confidence": 4.5843730345368385
+  },
+  {
+    "word": "LOST",
+    "start": 160.6449881508187,
+    "end": 160.88501054486835,
+    "confidence": 5.215105357495221
+  },
+  {
+    "word": "BOYS",
+    "start": 160.88501054486835,
+    "end": 161.0650273404056,
+    "confidence": 4.183499273326662
+  },
+  {
+    "word": "LOST",
+    "start": 161.0650273404056,
+    "end": 161.24504413594286,
+    "confidence": 4.40924859046936
+  },
+  {
+    "word": "BOYS",
+    "start": 161.24504413594286,
+    "end": 161.4650646638217,
+    "confidence": 5.76164448261261
+  },
+  {
+    "word": "LOST",
+    "start": 161.4650646638217,
+    "end": 161.58507586084653,
+    "confidence": 3.1042370200157166
+  },
+  {
+    "word": "BOYS",
+    "start": 161.58507586084653,
+    "end": 162.02511691660425,
+    "confidence": 5.784004092216492
+  },
+  {
+    "word": "LOST",
+    "start": 162.02511691660425,
+    "end": 162.2251355783123,
+    "confidence": 5.7999038100242615
+  },
+  {
+    "word": "BOYS",
+    "start": 162.2251355783123,
+    "end": 162.52516357087435,
+    "confidence": 5.025202626362443
+  },
+  {
+    "word": "ITS",
+    "start": 162.52516357087435,
+    "end": 162.88519716194884,
+    "confidence": 6.751790152655707
+  },
+  {
+    "word": "SUCH",
+    "start": 162.88519716194884,
+    "end": 163.2252288868525,
+    "confidence": 5.6519070491194725
+  },
+  {
+    "word": "A",
+    "start": 163.2252288868525,
+    "end": 163.26523261919414,
+    "confidence": 5.448782563209534
+  },
+  {
+    "word": "LONG",
+    "start": 163.26523261919414,
+    "end": 163.5652606117562,
+    "confidence": 5.735404159873724
+  },
+  {
+    "word": "WAY",
+    "start": 163.5652606117562,
+    "end": 163.84528673814748,
+    "confidence": 7.749143549374172
+  },
+  {
+    "word": "DOWN",
+    "start": 163.84528673814748,
+    "end": 164.68536511732128,
+    "confidence": 0.0
+  },
+  {
+    "word": "LOST",
+    "start": 164.68536511732128,
+    "end": 165.06540057456658,
+    "confidence": 6.468392025875418
+  },
+  {
+    "word": "BOYS",
+    "start": 165.06540057456658,
+    "end": 165.32542483478704,
+    "confidence": 4.787428197952417
+  },
+  {
+    "word": "LOST",
+    "start": 165.32542483478704,
+    "end": 165.90547895374038,
+    "confidence": 7.0455284221418975
+  },
+  {
+    "word": "BOYS",
+    "start": 165.90547895374038,
+    "end": 166.4855330726937,
+    "confidence": 6.046288379307451
+  },
+  {
+    "word": "LOST",
+    "start": 166.4855330726937,
+    "end": 166.865568529939,
+    "confidence": 6.557927653193474
+  },
+  {
+    "word": "BOYS",
+    "start": 166.865568529939,
+    "end": 167.22560212101348,
+    "confidence": 5.555515951580471
+  },
+  {
+    "word": "LOST",
+    "start": 167.22560212101348,
+    "end": 167.42562078272152,
+    "confidence": 4.747798004746437
+  },
+  {
+    "word": "BOYS",
+    "start": 167.42562078272152,
+    "end": 167.56563384591715,
+    "confidence": 3.69250457175076
+  },
+  {
+    "word": "LOST",
+    "start": 167.56563384591715,
+    "end": 167.7656525076252,
+    "confidence": 4.746336645550198
+  },
+  {
+    "word": "BOYS",
+    "start": 167.7656525076252,
+    "end": 168.00567490167487,
+    "confidence": 4.921974072089562
+  },
+  {
+    "word": "LOST",
+    "start": 168.00567490167487,
+    "end": 168.1056842325289,
+    "confidence": 2.7079801447689533
+  },
+  {
+    "word": "BOYS",
+    "start": 168.1056842325289,
+    "end": 168.38571035892016,
+    "confidence": 5.005333364009857
+  },
+  {
+    "word": "OH",
+    "start": 168.38571035892016,
+    "end": 168.72574208382383,
+    "confidence": 6.32376065519121
+  },
+  {
+    "word": "YEAH",
+    "start": 168.72574208382383,
+    "end": 168.8857570131903,
+    "confidence": 4.146989971399307
+  },
+  {
+    "word": "YEAH",
+    "start": 168.8857570131903,
+    "end": 170.10587084960937,
+    "confidence": 0.0
+  },
+  {
+    "word": "WHY",
+    "start": 170.10587084960937,
+    "end": 170.22588204663418,
+    "confidence": 4.227703079581261
+  },
+  {
+    "word": "RIDE",
+    "start": 170.22588204663418,
+    "end": 170.38589697600065,
+    "confidence": 3.638352021574974
+  },
+  {
+    "word": "THROUGH",
+    "start": 170.38589697600065,
+    "end": 170.82593803175834,
+    "confidence": 5.3401444066654555
+  },
+  {
+    "word": "THE",
+    "start": 170.82593803175834,
+    "end": 171.5860089462489,
+    "confidence": 0.0
+  },
+  {
+    "word": "SKY",
+    "start": 171.5860089462489,
+    "end": 171.8060294741278,
+    "confidence": 4.877263471484184
+  },
+  {
+    "word": "OF",
+    "start": 171.8060294741278,
+    "end": 171.9060388049818,
+    "confidence": 6.114201903343201
+  },
+  {
+    "word": "BLACK",
+    "start": 171.9060388049818,
+    "end": 172.14606119903146,
+    "confidence": 5.224862436453502
+  },
+  {
+    "word": "MIST",
+    "start": 172.14606119903146,
+    "end": 172.4260873254227,
+    "confidence": 5.710357840572085
+  },
+  {
+    "word": "RIDE",
+    "start": 172.4260873254227,
+    "end": 173.46618436630456,
+    "confidence": 0.0
+  },
+  {
+    "word": "THROUGH",
+    "start": 173.46618436630456,
+    "end": 173.9662310205747,
+    "confidence": 7.063614842983393
+  },
+  {
+    "word": "THE",
+    "start": 173.9662310205747,
+    "end": 174.08624221759953,
+    "confidence": 5.7123507261276245
+  },
+  {
+    "word": "SKY",
+    "start": 174.08624221759953,
+    "end": 174.24625714696595,
+    "confidence": 4.020556002855301
+  },
+  {
+    "word": "OF",
+    "start": 174.24625714696595,
+    "end": 174.4262739425032,
+    "confidence": 5.603200554847717
+  },
+  {
+    "word": "BLACK",
+    "start": 174.4262739425032,
+    "end": 174.76630566740687,
+    "confidence": 5.520485481795142
+  },
+  {
+    "word": "MIST",
+    "start": 174.76630566740687,
+    "end": 175.36636165253105,
+    "confidence": 0.0
+  },
+  {
+    "word": "RIDE",
+    "start": 175.36636165253105,
+    "end": 175.60638404658067,
+    "confidence": 5.627087891101837
+  },
+  {
+    "word": "THROUGH",
+    "start": 175.60638404658067,
+    "end": 177.22653520641586,
+    "confidence": 0.0
+  },
+  {
+    "word": "THE",
+    "start": 177.22653520641586,
+    "end": 177.46655760046553,
+    "confidence": 6.106246670087178
+  },
+  {
+    "word": "SKY",
+    "start": 177.46655760046553,
+    "end": 177.6465743960028,
+    "confidence": 5.167614993453026
+  },
+  {
+    "word": "OF",
+    "start": 177.6465743960028,
+    "end": 177.86659492388162,
+    "confidence": 7.522860956192017
+  },
+  {
+    "word": "BLACK",
+    "start": 177.86659492388162,
+    "end": 178.34663971198094,
+    "confidence": 6.417958080768585
+  },
+  {
+    "word": "MIST",
+    "start": 178.34663971198094,
+    "end": 179.18671809115475,
+    "confidence": 0.0
+  },
+  {
+    "word": "RIDE",
+    "start": 179.18671809115475,
+    "end": 179.52674981605844,
+    "confidence": 5.903985076480442
+  },
+  {
+    "word": "THROUGH",
+    "start": 179.52674981605844,
+    "end": 180.2468169982074,
+    "confidence": 0.0
+  },
+  {
+    "word": "THE",
+    "start": 180.2468169982074,
+    "end": 180.44683565991545,
+    "confidence": 5.8401994705200195
+  },
+  {
+    "word": "SKY",
+    "start": 180.44683565991545,
+    "end": 180.54684499076947,
+    "confidence": 2.9669474735856056
+  },
+  {
+    "word": "OF",
+    "start": 180.54684499076947,
+    "end": 180.68685805396512,
+    "confidence": 5.201396211981773
+  },
+  {
+    "word": "BLACK",
+    "start": 180.77691310600386,
+    "end": 181.4069252361141,
+    "confidence": 0.0
+  },
+  {
+    "word": "MIST",
+    "start": 181.4069252361141,
+    "end": 181.74695696101776,
+    "confidence": 6.002310656011105
+  },
+  {
+    "word": "TWO",
+    "start": 181.74695696101776,
+    "end": 182.20699988294626,
+    "confidence": 6.3080911586682005
+  },
+  {
+    "word": "THREE",
+    "start": 182.20699988294626,
+    "end": 182.50702787550836,
+    "confidence": 5.380221537181309
+  },
+  {
+    "word": "FOUR",
+    "start": 182.50702787550836,
+    "end": 182.96707079743686,
+    "confidence": 5.567021956046422
   }
- ]
-}
+]
