@@ -58,7 +58,7 @@ def render_video(alignment_json, sync_points_json, background_path, instrumental
 			white_word_after = TextClip(
 				text=word + " ",
 				font_size=60,
-				color="yellow",
+				color="white",
 				stroke_color="black",
 				stroke_width=2
 			).with_position((current_x, y)).with_start(sp['end']).with_end(end)
