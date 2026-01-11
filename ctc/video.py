@@ -11,8 +11,7 @@ def render_video(alignment_json, sync_points_json, background_path, instrumental
 
 	bg_clip = ImageClip(background_path, duration=total_duration)
 
-	text_clips = []
-	text_clips = []
+	all_clips = []
 
 	for line in alignment['lines']:
 		print(f"Rendering line: {line['words']} from {line['start']} to {line['end']}")
@@ -22,100 +21,67 @@ def render_video(alignment_json, sync_points_json, background_path, instrumental
 		end = line['end']
 		first_idx = line['firstWordIndex']
 		line_sync = sync_points[first_idx:first_idx + len(words)]
-		duration = end - start
 
+		# Center Y position for the line
 		line_text = " ".join(words)
+		ref_clip = TextClip(text=line_text, font_size=60, stroke_width=2)
+		y = (bg_clip.h - ref_clip.h) / 2
 
-		# --- render base & highlight text ONCE ---
-		base = TextClip(
-			text=line_text,
-			font_size=60,
-			color="white",
-			stroke_color="black",
-			stroke_width=2
-		).with_start(start).with_duration(duration)
+		# Calculate starting X to center the entire line
+		line_width = ref_clip.w
+		start_x = (bg_clip.w - line_width) / 2
 
-		highlight = TextClip(
-			text=line_text,
-			font_size=60,
-			color="yellow",
-			stroke_color="black",
-			stroke_width=2
-		).with_start(start).with_duration(duration)
-
-		# --- center position ---
-		x = (bg_clip.w - base.w) / 2
-		y = (bg_clip.h - base.h) / 2
-
-		base = base.with_position((x, y))
-		highlight = highlight.with_position((x, y))
-
-		# --- measure cumulative word widths ---
-		def word_width(txt):
-			return TextClip(
-				text=txt,
+		# Render each word individually
+		current_x = start_x
+		for i, word in enumerate(words):
+			sp = line_sync[i]
+			
+			# White version (shows before word is sung)
+			white_word = TextClip(
+				text=word + " ",
 				font_size=60,
+				color="white",
+				stroke_color="black",
 				stroke_width=2
-			).w
+			).with_position((current_x, y)).with_start(start).with_end(sp['start'])
+			
+			# Yellow version (shows during word)
+			yellow_word = TextClip(
+				text=word + " ",
+				font_size=60,
+				color="yellow",
+				stroke_color="black",
+				stroke_width=2
+			).with_position((current_x, y)).with_start(sp['start']).with_end(sp['end'])
+			
+			# White version again (shows after word is sung)
+			white_word_after = TextClip(
+				text=word + " ",
+				font_size=60,
+				color="yellow",
+				stroke_color="black",
+				stroke_width=2
+			).with_position((current_x, y)).with_start(sp['end']).with_end(end)
+			
+			all_clips.extend([white_word, yellow_word, white_word_after])
+			
+			# Move x position for next word
+			word_clip = TextClip(text=word + " ", font_size=60, stroke_width=2)
+			current_x += word_clip.w
 
-		cumulative_widths = []
-		current = ""
-		for w in words:
-			current += w + " "
-			cumulative_widths.append(word_width(current))
-
-		# --- animated mask ---
-		h, w = base.h, base.w
-
-		def make_mask(t):
-			absolute_t = t + start
-
-			reveal_width = 0
-			for i, sp in enumerate(line_sync):
-				if absolute_t >= sp["end"]:
-					reveal_width = cumulative_widths[i]
-				elif sp["start"] <= absolute_t < sp["end"]:
-					progress = (
-						(absolute_t - sp["start"]) /
-						(sp["end"] - sp["start"])
-					)
-					reveal_width = (
-						cumulative_widths[i - 1] if i > 0 else 0
-					) + progress * (
-						cumulative_widths[i] -
-						(cumulative_widths[i - 1] if i > 0 else 0)
-					)
-					break
-
-			mask = np.zeros((h, w))
-			mask[:, :int(reveal_width)] = 1
-			return mask
-
-		mask_clip = VideoClip(
-			make_mask,
-			is_mask=True
-		).with_start(start).with_duration(duration)
-
-		highlight = highlight.with_mask(mask_clip)
-
-		text_clips.extend([base, highlight])
-		
-	video = CompositeVideoClip([bg_clip, *text_clips])
+	video = CompositeVideoClip([bg_clip] + all_clips)
 
 	instrumental_clip = AudioFileClip(instrumental_path)
 	vocal_clip = AudioFileClip(vocal_path)
-	print(instrumental_path, instrumental_clip.duration)
 	audio = CompositeAudioClip([instrumental_clip, vocal_clip])
 
 	final_video = video.with_audio(audio)
-
 	final_video.write_videofile(output_path, fps=fps, codec="libx264")
 
 	print(f"Rendered video → {output_path}")
 
 
 if __name__ == "__main__":
-	print("here")
 	parser = argparse.ArgumentParser(description="Generate video from alignment and audio")
 	parser.add_argument("alignment_json", help="JSON string of ResolvedAlignment")
 	parser.add_argument("sync_points_json", help="JSON string of sync points")
