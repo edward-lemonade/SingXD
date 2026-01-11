@@ -19,14 +19,14 @@ def clean_lyrics_file(input_path: str, output_path: str):
         number = int(match.group(1))
         return num2words(number, ordinal=True)
     
-    text = re.sub(r'\b(\d+)(?:st|nd|rd|th)\b', replace_ordinal, text, flags=re.IGNORECASE)
+    #text = re.sub(r'\b(\d+)(?:st|nd|rd|th)\b', replace_ordinal, text, flags=re.IGNORECASE)
 
     # replace regular numbers with spelled-out versions
     def replace_number(match):
         number = int(match.group())
         return num2words(number)
     
-    text = re.sub(r'\b\d+\b', replace_number, text)
+    #text = re.sub(r'\b\d+\b', replace_number, text)
 
     # remove ALL non-alphanumeric characters
     clean_text = re.sub(r'[^a-zA-Z0-9\s]', '', text)

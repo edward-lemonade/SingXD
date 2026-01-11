@@ -1,213 +1,232 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useRef, useState } from "react";
 import axios from "axios";
-import Box from "@/components/box";
 import Wallpaper from "@/components/wallpaper";
+import AudioStep from "@/app/create/steps/AudioStep";
+import LyricsStep from "@/app/create/steps/LyricsStep";
+import VideoStep from "@/app/create/steps/VideoStep";
+import ExportStep from "@/app/create/steps/ExportStep";
+import { AudioFiles, ResolvedAlignment, ResolvedAlignmentLine, SyncPoint } from "./types";
 
-type FormValues = {
-	mode: "single" | "split";
-	singleFile: FileList | null;
-	vocalFile: FileList | null;
-	instrumentalFile: FileList | null;
-	lyrics: string;
-};
+const steps = [
+	{ id: 1, name: "Audio" },
+	{ id: 2, name: "Lyrics" },
+	{ id: 3, name: "Video" },
+	{ id: 4, name: "Export" },
+];
+
+interface VideoSettings {
+	font: string;
+	textSize: number;
+	textColor: string;
+	backgroundImage?: File;
+}
+
 
 export default function CreatePage() {
-	const [submitting, setSubmitting] = useState(false);
-	const [message, setMessage] = useState<string | null>(null);
-
-	const {
-		register,
-		handleSubmit,
-		watch,
-		setError,
-		clearErrors,
-		reset,
-		formState: { errors },
-	} = useForm<FormValues>({
-		defaultValues: {
-			mode: "single",
-			singleFile: null,
-			vocalFile: null,
-			instrumentalFile: null,
-			lyrics: "",
-		},
+	const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
+	const [audio, setAudio] = useState<AudioFiles>({});
+	const [lyrics, setLyrics] = useState('');
+	const [alignment, setAlignment] = useState<SyncPoint[]>([]);
+	const [videoSettings, setVideoSettings] = useState<VideoSettings>({
+		font: 'Arial',
+		textSize: 24,
+		textColor: '#000000',
 	});
+	const [videoUrl, setVideoUrl] = useState<string | null>(null);
+	const sessionId = useRef<string | null>(null);
 
-	const mode = watch("mode");
-	const singleFile = watch("singleFile");
-	const vocalFile = watch("vocalFile");
-	const instrumentalFile = watch("instrumentalFile");
+	const resolvedAlignment: ResolvedAlignment = {
+		lines: lyrics.split("\n").reduce<ResolvedAlignmentLine[]>(
+			(lines, line) => {
+				const words = line.trim().split(/\s+/).filter(Boolean);
 
-	const onSubmit = async (data: FormValues) => {
-		setMessage(null);
-		clearErrors();
+				const firstWordIndex = lines.reduce(
+					(sum, l) => sum + l.words.length,
+					0
+				);
 
-		// Validation
-		if (!data.lyrics.trim()) {
-			setError("lyrics", { message: "Please add the song lyrics." });
-			setMessage("Please add the song lyrics.");
-			return;
-		}
-
-		if (data.mode === "single" && (!data.singleFile || data.singleFile.length === 0)) {
-			setError("singleFile", { message: "Please upload the audio file." });
-			setMessage("Please upload the audio file.");
-			return;
-		}
-
-		if (data.mode === "split") {
-			if (!data.vocalFile || data.vocalFile.length === 0 || !data.instrumentalFile || data.instrumentalFile.length === 0) {
-				setMessage("Please upload both vocal and instrumental files.");
-				return;
-			}
-		}
-
-		setSubmitting(true);
-		try {
-			// Prepare form data
-			const fd = new FormData();
-			fd.append("lyrics", data.lyrics);
-			
-			if (data.mode === "single" && data.singleFile && data.singleFile.length > 0) {
-				fd.append("audio", data.singleFile[0]);
-			}
-			
-			if (data.mode === "split") {
-				if (data.vocalFile && data.vocalFile.length > 0) {
-					fd.append("vocal", data.vocalFile[0]);
-				}
-				if (data.instrumentalFile && data.instrumentalFile.length > 0) {
-					fd.append("instrumental", data.instrumentalFile[0]);
-				}
-			}
-
-			try {
-				const response = await axios.post('/api/maps', fd, {
-					headers: { 'Content-Type': 'multipart/form-data' },
+				lines.push({
+					words,
+					firstWordIndex,
+					start: alignment[firstWordIndex]?.start ?? 0,
+					end: alignment[firstWordIndex + words.length - 1]?.end ?? 0,
 				});
 
-				if (response.status >= 200 && response.status < 300) {
-					setMessage(response.data?.message ?? 'Submitted successfully.');
-					reset({ mode: 'single', singleFile: null, vocalFile: null, instrumentalFile: null, lyrics: '' });
-				} else {
-					setMessage('Submission failed.');
-				}
-			} catch (err:any) {
-				console.error(err);
-				setMessage(err?.response?.data?.message ?? err?.message ?? 'Submission failed.');
-			}
+				return lines;
+			},
+			[]
+		),
+	};
+
+	const [separateAudioLoading, setSeparateAudioLoading] = useState(false);
+	const handleSeparateAudio = async () => {
+		if (!audio.combined) return;
+		setSeparateAudioLoading(true);
+		try {
+			const formData = new FormData();
+			formData.append('audio', audio.combined);
+
+			const response = await axios.post(
+				`${process.env.NEXT_PUBLIC_API_URL}/separate-audio`, 
+				formData, 
+				{ timeout: 5 * 60 * 1000 } // 5 min timeout
+			);
+
+			sessionId.current = response.data.sessionId;
+
+			// Fetch audio files from URLs
+			const [vocalsResponse, instResponse] = await Promise.all([
+				fetch(response.data.vocals),
+				fetch(response.data.instrumental),
+			]);
+			const vocalsBlob = await vocalsResponse.blob();
+			const vocalsFile = new File([vocalsBlob], 'vocals.wav', { type: 'audio/wav' });
+			const instBlob = await instResponse.blob();
+			const instFile = new File([instBlob], 'inst.wav', { type: 'audio/wav' });
+			setAudio(prev => ({ 
+				...prev, 
+				vocals: vocalsFile, 
+				instrumental: instFile, 
+				vocalsURL: response.data.vocals, 
+				instrumentalURL: response.data.instrumental
+			}));
+		} catch (error) {
+			console.error('Failed to separate audio', error);
 		} finally {
-			setSubmitting(false);
+			setSeparateAudioLoading(false);
+		}
+	};
+
+	const [generateAlignmentLoading, setGenerateAlignmentLoading] = useState(false);
+	const handleGenerateAlignment = async() => {
+		if (!audio.vocals || !lyrics) return;
+		setGenerateAlignmentLoading(true);
+		try {
+			const formData = new FormData();
+			formData.append('sessionID', sessionId.current!);
+			formData.append('lyrics', lyrics);
+
+			const response = await axios.post(
+				`${process.env.NEXT_PUBLIC_API_URL}/generate-alignment`, 
+				formData, 
+				{ timeout: 5 * 60 * 1000 } // 5 min timeout
+			);
+
+			setAlignment(response.data);
+			console.log(response.data);
+		} catch (error) {
+			console.error('Failed to generate alignment', error);
+		} finally {
+			setGenerateAlignmentLoading(false);
+		}
+	}
+
+	const [exportLoading, setExportLoading] = useState(false);
+	const handleExport = async () => {
+		setExportLoading(true);
+		try {
+			const formData = new FormData();
+			if (!audio.instrumental || !audio.vocals || !resolvedAlignment || !videoSettings.backgroundImage) {
+				throw new Error('Missing required data for export');
+			} 
+
+			formData.append('instrumental', audio.instrumental);
+			formData.append('vocals', audio.vocals);
+			formData.append('backgroundImage', videoSettings.backgroundImage);
+			formData.append('alignment', JSON.stringify(resolvedAlignment));
+			formData.append('syncPoints', JSON.stringify(alignment));
+
+			//formData.append('font', video.font);
+			//formData.append('textSize', video.textSize.toString());
+			//formData.append('textColor', video.textColor);
+			
+			const response = await axios.post(
+				`${process.env.NEXT_PUBLIC_API_URL}/generate-video`, 
+				formData,
+				{ timeout: 20 * 60 * 1000 } 
+			);
+			
+			// Handle download
+			const url = response.data.videoUrl;
+			setVideoUrl(url);
+			//window.open(url, '_blank');
+		} catch (error) {
+			console.error('Failed to generate video', error);
+		} finally {
+			setExportLoading(false);
 		}
 	};
 
 	return (
 		<Wallpaper color="lavender">
-			<div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
-				<div>
-					<h2 className="text-4xl md:text-6xl font-bold text-gray-800">Create Karaoke Map</h2>
+			<div className="flex flex-col h-screen">
+				{/* Topbar */}
+				<div className=" bg-purple-800 text-white p-4 flex-shrink-0">
+					<h1 className="text-2xl font-bold">
+						{steps.find(step => step.id === currentStep)?.name}
+					</h1>
 				</div>
 
-				<section>
-					<h3 className="text-2xl font-semibold mb-3 text-gray-600">Audio</h3>
-					<div className="flex flex-col md:flex-row gap-4">
-						<Box className="p-6 flex-1">
-							<label className="flex items-center gap-3">
-								<input
-									{...register("mode")}
-									type="radio"
-									value="single"
-									className="mr-2"
-								/>
-								<span className="font-medium">Upload a single audio file</span>
-							</label>
-							<div className="mt-4 flex items-center justify-between gap-4">
-								<span className="text-sm text-black">
-									{singleFile && singleFile.length > 0 ? `Selected: ${singleFile[0].name}` : "No file selected"}
-								</span>
-								<input
-									{...register("singleFile")}
-									className="text-sm text-gray-700 file:border-0 file:bg-black file:text-white file:px-3 file:py-1 file:rounded"
-									type="file"
-									accept="audio/*"
-									disabled={mode !== "single"}
-								/>
-							</div>
-						</Box>
-
-						<Box className="p-6 flex-1">
-							<label className="flex items-center gap-3">
-								<input
-									{...register("mode")}
-									type="radio"
-									value="split"
-									className="mr-2"
-								/>
-								<span className="font-medium">Upload vocal and instrumental</span>
-							</label>
-							<div className="mt-4 flex flex-col gap-3">
-								<div className="flex items-center justify-between gap-4">
-									<span className="text-sm text-black">Vocals</span>
-									<input
-										{...register("vocalFile")}
-										className="text-sm text-gray-700 file:border-0 file:bg-black file:text-white file:px-3 file:py-1 file:rounded ml-4"
-										type="file"
-										accept="audio/*"
-										disabled={mode !== "split"}
-									/>
-									{vocalFile && vocalFile.length > 0 && (
-										<span className="ml-2 text-sm text-gray-600 truncate max-w-48">{vocalFile[0].name}</span>
-									)}
-								</div>
-								<div className="flex items-center justify-between gap-4">
-									<span className="text-sm text-black">Instrumental</span>
-									<input
-										{...register("instrumentalFile")}
-										className="text-sm text-gray-700 file:border-0 file:bg-black file:text-white file:px-3 file:py-1 file:rounded ml-4"
-										type="file"
-										accept="audio/*"
-										disabled={mode !== "split"}
-									/>
-									{instrumentalFile && instrumentalFile.length > 0 && (
-										<span className="ml-2 text-sm text-gray-600 truncate max-w-48">{instrumentalFile[0].name}</span>
-									)}
-								</div>
-								{((vocalFile && vocalFile.length > 0) || (instrumentalFile && instrumentalFile.length > 0)) && (
-									<p className="mt-2 text-sm text-gray-600">
-										{vocalFile && vocalFile.length > 0 ? `Vocal: ${vocalFile[0].name}` : ""}{" "}
-										{instrumentalFile && instrumentalFile.length > 0 ? `Instrumental: ${instrumentalFile[0].name}` : ""}
-									</p>
-								)}
-							</div>
-						</Box>
+				{/* Container with Navbar and Content */}
+				<div className="flex flex-1 overflow-hidden">
+					{/* Vertical Navbar - Fixed Left */}
+					<div className="w-40 bg-linear-to-b from-purple-900 to-blue-900 p-4 flex-shrink-0">
+						<nav className="space-y-2">
+							{steps.map((step) => (
+								<button
+									key={step.id}
+									onClick={() => setCurrentStep(step.id as 1 | 2 | 3 | 4)}
+									className={`w-full text-left px-4 py-2 rounded-md ${
+										currentStep === step.id
+											? 'bg-black text-white'
+											: 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+									}`}
+								>
+									{step.id}. {step.name}
+								</button>
+							))}
+						</nav>
 					</div>
-				</section>
 
-				<section>
-					<h3 className="text-2xl font-semibold mb-3 text-gray-600">Lyrics</h3>
-					<Box className="p-6">
-						<textarea
-							{...register("lyrics")}
-							className="w-full min-h-48 p-4 border-2 border-gray-200 rounded-md resize-y text-black"
-							placeholder="Paste or enter lyrics. Use blank lines to separate verses."
-						/>
-						<p className="mt-2 text-sm text-gray-500">You can also paste cleaned lyrics from the samples folder.</p>
-					</Box>
-				</section>
+					{/* Content - Fills remaining space */}
+					<div className="flex-1 overflow-auto p-8">
+						{currentStep === 1 && (
+							<AudioStep
+								audio={audio}
+								setAudio={setAudio}
+								loading={separateAudioLoading}
+								onSeparate={handleSeparateAudio}
+							/>
+						)}
 
-				<div className="flex items-center justify-center gap-4">
-					<button
-						className="bg-black text-white px-6 py-2 rounded-md hover:opacity-90 disabled:opacity-50"
-						type="button"
-						disabled={submitting}
-						onClick={handleSubmit(onSubmit)}
-					>
-						{submitting ? "Submitting…" : "Create Map"}
-					</button>
-					{message && <p className="text-sm text-gray-700">{message}</p>}
+						{currentStep === 2 && (
+							<LyricsStep
+								lyrics={lyrics}
+								setLyrics={setLyrics}
+								audio={audio}
+								alignment={alignment}
+								loading={generateAlignmentLoading}
+								onAlign={handleGenerateAlignment}
+							/>
+						)}
+
+						{currentStep === 3 && (
+							<VideoStep
+								videoSettings={videoSettings}
+								setVideoSettings={setVideoSettings}
+							/>
+						)}
+
+						{currentStep === 4 && (
+							<ExportStep
+								videoUrl={videoUrl}
+								loading={exportLoading}
+								onExport={handleExport}
+							/>
+						)}
+					</div>
 				</div>
 			</div>
 		</Wallpaper>

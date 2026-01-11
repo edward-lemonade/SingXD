@@ -7,9 +7,9 @@ const wallpaperColorMap: Record<WallpaperColors, string> = {
 
 export default function Wallpaper({ children, color }: { children: React.ReactNode; color: WallpaperColors }) {
   return (
-    <div className={`flex flex-col min-h-screen items-center justify-center bg-linear-to-b ${wallpaperColorMap[color]} font-sans dark:bg-black`}>
+    <div className={`min-h-screen bg-linear-to-b ${wallpaperColorMap[color]} font-sans dark:bg-black`}>
       <div className="absolute inset-0 bg-diamond-overlay pointer-events-none"></div>
-      <div className="relative z-10 text-center">{children}</div>
+      <div className="relative z-10 h-screen">{children}</div>
     </div>
   );
 }

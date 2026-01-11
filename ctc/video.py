@@ -1,67 +1,128 @@
 import json
-import os
-from moviepy import TextClip, CompositeVideoClip, CompositeAudioClip, ImageClip, AudioFileClip
+import argparse
+import numpy as np
+from moviepy import TextClip, VideoClip, CompositeVideoClip, CompositeAudioClip, ImageClip, AudioFileClip
 
+def render_video(alignment_json, sync_points_json, background_path, instrumental_path, vocal_path, output_path, fps=30):
+	alignment = json.loads(alignment_json)
+	sync_points = json.loads(sync_points_json)
 
-def render_video(song_folder, fps=30):
-	json_path = f"{song_folder}/map.json"
-	background_image_path = f"{song_folder}/cover.jpg"
-	audio_path = f"{song_folder}/raw.mp3"
-	output_path = f"{song_folder}/video.mp4"
+	total_duration = max(sp['end'] for sp in sync_points) if sync_points else 0
 
-	with open(json_path, "r", encoding="utf-8") as f:
-		data = json.load(f)
-
-	# alignment.json style: [ {"word":..., "start":..., "end":..., "confidence":...}, ... ]
-	if isinstance(data, list):
-		if not data:
-			raise ValueError("Alignment JSON contains no entries")
-
-		words = []
-		for entry in data:
-			start = float(entry.get("start", 0.0))
-			end = float(entry.get("end", start + 0.5))
-			word = entry.get("word", entry.get("text", ""))
-			words.append({"start": start, "end": end, "lines": [word]})
-
-
-	total_duration = float(words[-1]["end"])
-
-	bg_clip = ImageClip(background_image_path, duration=total_duration)
+	bg_clip = ImageClip(background_path, duration=total_duration)
 
 	text_clips = []
-	for word in words:
-		start = float(word["start"])
-		end = float(word["end"])
+	text_clips = []
+
+	for line in alignment['lines']:
+		print(f"Rendering line: {line['words']} from {line['start']} to {line['end']}")
+
+		words = line['words']
+		start = line['start']
+		end = line['end']
+		first_idx = line['firstWordIndex']
+		line_sync = sync_points[first_idx:first_idx + len(words)]
 		duration = end - start
 
-		text = " ".join(word.get("lines", []))
+		line_text = " ".join(words)
 
-		text_clip = TextClip(
-			text=text,
+		# --- render base & highlight text ONCE ---
+		base = TextClip(
+			text=line_text,
 			font_size=60,
 			color="white",
 			stroke_color="black",
-			stroke_width=2,
-			method="caption",
-			size=(int(bg_clip.w * 0.8), None),
-			text_align="center",
-			duration=duration 
-		)
+			stroke_width=2
+		).with_start(start).with_duration(duration)
 
-		text_clip = text_clip.with_position(("center", "center")).with_start(start)
-		text_clips.append(text_clip)
+		highlight = TextClip(
+			text=line_text,
+			font_size=60,
+			color="yellow",
+			stroke_color="black",
+			stroke_width=2
+		).with_start(start).with_duration(duration)
 
+		# --- center position ---
+		x = (bg_clip.w - base.w) / 2
+		y = (bg_clip.h - base.h) / 2
+
+		base = base.with_position((x, y))
+		highlight = highlight.with_position((x, y))
+
+		# --- measure cumulative word widths ---
+		def word_width(txt):
+			return TextClip(
+				text=txt,
+				font_size=60,
+				stroke_width=2
+			).w
+
+		cumulative_widths = []
+		current = ""
+		for w in words:
+			current += w + " "
+			cumulative_widths.append(word_width(current))
+
+		# --- animated mask ---
+		h, w = base.h, base.w
+
+		def make_mask(t):
+			absolute_t = t + start
+
+			reveal_width = 0
+			for i, sp in enumerate(line_sync):
+				if absolute_t >= sp["end"]:
+					reveal_width = cumulative_widths[i]
+				elif sp["start"] <= absolute_t < sp["end"]:
+					progress = (
+						(absolute_t - sp["start"]) /
+						(sp["end"] - sp["start"])
+					)
+					reveal_width = (
+						cumulative_widths[i - 1] if i > 0 else 0
+					) + progress * (
+						cumulative_widths[i] -
+						(cumulative_widths[i - 1] if i > 0 else 0)
+					)
+					break
+
+			mask = np.zeros((h, w))
+			mask[:, :int(reveal_width)] = 1
+			return mask
+
+		mask_clip = VideoClip(
+			make_mask,
+			is_mask=True
+		).with_start(start).with_duration(duration)
+
+		highlight = highlight.with_mask(mask_clip)
+
+		text_clips.extend([base, highlight])
+		
 	video = CompositeVideoClip([bg_clip, *text_clips])
-	audio = CompositeAudioClip([AudioFileClip(audio_path)])
+
+	instrumental_clip = AudioFileClip(instrumental_path)
+	vocal_clip = AudioFileClip(vocal_path)
+	print(instrumental_path, instrumental_clip.duration)
+	audio = CompositeAudioClip([instrumental_clip, vocal_clip])
+
 	final_video = video.with_audio(audio)
 
 	final_video.write_videofile(output_path, fps=fps, codec="libx264")
 
 	print(f"Rendered video → {output_path}")
 
-# -----------------------------------------------------------
 
 if __name__ == "__main__":
-	song_folder = "samples/lucy"
-	render_video(song_folder)
+	print("here")
+	parser = argparse.ArgumentParser(description="Generate video from alignment and audio")
+	parser.add_argument("alignment_json", help="JSON string of ResolvedAlignment")
+	parser.add_argument("sync_points_json", help="JSON string of sync points")
+	parser.add_argument("background_path", help="Path to background image")
+	parser.add_argument("instrumental_path", help="Path to instrumental audio")
+	parser.add_argument("vocal_path", help="Path to vocal audio")
+	parser.add_argument("output_path", help="Path to output video")
+	args = parser.parse_args()
+
+	render_video(args.alignment_json, args.sync_points_json, args.background_path, args.instrumental_path, args.vocal_path, args.output_path)

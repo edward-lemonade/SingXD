@@ -1,20 +1,42 @@
 import re
 import argparse
 import torch
-import torchaudio
-import numpy as np
 import soundfile as sf
 import json
+import string
+import num2words
+from collections import defaultdict
 
 from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
 from ctc_segmentation import *
-from moviepy import TextClip, CompositeVideoClip, CompositeAudioClip, ImageClip, AudioFileClip
 
 
-def load_word_transcript(path):
+def load_transcript(path):
 	with open(path, "r", encoding="utf-8") as f:
-		words = [line.strip().upper() for line in f if line.strip()]
-	return words
+		return f.read()
+
+def preprocess_text(text):
+	# split into original words (keeping punctuation)
+	original_words = text.split()
+	cleaned_words = []
+	mapping = []  # mapping[cleaned_idx] = original_idx
+	
+	for i, word in enumerate(original_words):
+		# remove punctuation and lowercase
+		cleaned = re.sub(r'[^\w\s]', '', word).lower()
+		# remove double spaces just in case (though split should handle)
+		cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+		
+		if cleaned.isdigit():
+			spelled = num2words.num2words(int(cleaned)).replace('-', ' ')
+			spelled_words = spelled.split()
+			cleaned_words.extend([w.upper() for w in spelled_words])
+			mapping.extend([i] * len(spelled_words))
+		else:
+			cleaned_words.append(cleaned.upper())
+			mapping.append(i)
+	
+	return original_words, cleaned_words, mapping
 
 def load_audio(path: str, target_sr=16000):
 	audio, sr = sf.read(path)
@@ -61,7 +83,8 @@ def ctc_align_words(logits, input_len, words, char_list):
 	return segments
 
 def align_long_audio(
-	song_folder,
+	audio_path,
+	text_path,
 	model_name="facebook/wav2vec2-large-960h",
 	device="cuda" if torch.cuda.is_available() else "cpu"
 ):
@@ -71,12 +94,11 @@ def align_long_audio(
 	model.eval()
 
 	print("Loading audio")
-	audio_path = f"{song_folder}/vocals.wav"
 	waveform, sr = load_audio(audio_path)
 
 	print("Loading transcript")
-	transcript_path = f"{song_folder}/lyrics-clean.txt"
-	words = load_word_transcript(transcript_path)
+	text = load_transcript(text_path)
+	original_words, cleaned_words, mapping = preprocess_text(text)
 
 	results = []
 
@@ -86,29 +108,41 @@ def align_long_audio(
 		char_list[idx] = char
 
 	logits, input_len = wav2vec_logits(model, processor, waveform, sr, device)
-	segments = ctc_align_words(logits, input_len, words, char_list)
-		
+	segments = ctc_align_words(logits, input_len, cleaned_words, char_list)
+	
+	# Group segments by original word
+	grouped = defaultdict(list)
 	for idx, seg in enumerate(segments):
-		# seg is a tuple: (start, end, min_avg)
-		start, end, min_avg = seg
-
-		print(start, end, idx, words[idx])
-		results.append({
-			"word": words[idx],
-			"start": start,
-			"end": end,
-			"confidence": float(min_avg)
-		})
+		orig_idx = mapping[idx]
+		grouped[orig_idx].append(seg)
+	
+	for orig_idx in range(len(original_words)):
+		if orig_idx in grouped:
+			segs = grouped[orig_idx]
+			start = min(s[0] for s in segs)
+			end = max(s[1] for s in segs)
+			confidence = sum(s[2] for s in segs) / len(segs)
+			results.append({
+				"text": original_words[orig_idx],
+				"start": start,
+				"end": end,
+				"confidence": float(confidence)
+			})
 	
 	return results
 
 # -----------------------------------------
 
 if __name__ == "__main__":
-	song_folder = "samples/lucy"
-	results = align_long_audio(song_folder)
+	parser = argparse.ArgumentParser(description="Align audio with text using CTC segmentation")
+	parser.add_argument("input_audio", help="Path to input audio file")
+	parser.add_argument("input_text", help="Path to input text file")
+	parser.add_argument("output_json", help="Path to output JSON file")
+	args = parser.parse_args()
 
-	with open(f"{song_folder}/map.json", "w", encoding="utf-8") as f:
+	results = align_long_audio(args.input_audio, args.input_text)
+
+	with open(args.output_json, "w", encoding="utf-8") as f:
 		json.dump(results, f, ensure_ascii=False, indent=2)
 
-	print(f"Wrote word-level alignment to {song_folder}/map.json")
+	print(f"Wrote word-level alignment to {args.output_json}")
