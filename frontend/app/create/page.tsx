@@ -115,7 +115,6 @@ export default function CreatePage() {
 			);
 
 			setAlignment(response.data);
-			console.log(response.data);
 		} catch (error) {
 			console.error('Failed to generate alignment', error);
 		} finally {

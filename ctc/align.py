@@ -17,25 +17,39 @@ def load_transcript(path):
 
 def preprocess_text(text):
 	# split into original words (keeping punctuation)
+	text = text.replace("-", "- ")
+	text = text.replace("—", "— ")
 	original_words = text.split()
 	cleaned_words = []
 	mapping = []  # mapping[cleaned_idx] = original_idx
 	
 	for i, word in enumerate(original_words):
-		# remove punctuation and lowercase
-		cleaned = re.sub(r'[^\w\s]', '', word).lower()
-		# remove double spaces just in case (though split should handle)
-		cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+		cleaned = re.sub(r'[^a-zA-Z0-9\s]', '', word) # remove all non-alphanumeric
+		cleaned = re.sub(r'\s+', ' ', cleaned).strip() # remove double space
+		cleaned = cleaned.upper() # do lowercase
 		
-		if cleaned.isdigit():
-			spelled = num2words.num2words(int(cleaned)).replace('-', ' ')
-			spelled_words = spelled.split()
-			cleaned_words.extend([w.upper() for w in spelled_words])
+		# try to extract numeric prefix (e.g., "14TH" -> "14")
+		num_match = re.match(r'^(\d+)', cleaned)
+		if num_match:
+			num_str = num_match.group(1)
+			rest = cleaned[len(num_str):]
+			# check if ordinal (th, st, nd, rd)
+			is_ordinal = rest in ['TH', 'ST', 'ND', 'RD']
+			
+			spelled_arr = num2words.num2words(int(num_str), ordinal=is_ordinal)
+			spelled_words = spelled_arr.split()
+			cleaned_words.extend([
+				w.upper()
+				.replace('-', ' ')
+				.replace('—', ' ') for w in spelled_words
+			])
 			mapping.extend([i] * len(spelled_words))
 		else:
 			cleaned_words.append(cleaned.upper())
 			mapping.append(i)
 	
+	print(cleaned_words)
+	#print('\n'.join(cleaned_words))
 	return original_words, cleaned_words, mapping
 
 def load_audio(path: str, target_sr=16000):
