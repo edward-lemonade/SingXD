@@ -182,9 +182,9 @@ func SeparateAudio(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"vocals":       vocalsURL,
-		"instrumental": instURL,
-		"sessionId":    sessionID,
+		"vocalsUrl":       vocalsURL,
+		"instrumentalUrl": instURL,
+		"sessionId":       sessionID,
 	})
 }
 

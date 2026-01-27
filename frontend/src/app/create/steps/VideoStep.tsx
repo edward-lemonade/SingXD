@@ -1,6 +1,6 @@
 "use client";
 
-import Box from "@/components/box";
+import Box from "@/src/components/box";
 import { SetStateAction } from "react";
 
 interface VideoSettings {

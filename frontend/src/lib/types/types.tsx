@@ -12,12 +12,12 @@ export interface SyncPoint {
     end: number 
 }
 
-export interface ResolvedAlignmentLine {
+export interface SyncLine {
     words: string[];
     start: number; // first word start time
     end: number;   // last word end time
     firstWordIndex: number;
 }
-export interface ResolvedAlignment {
-    lines: ResolvedAlignmentLine[];
+export interface SyncLines {
+    lines: SyncLine[];
 } 

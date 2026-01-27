@@ -2,12 +2,13 @@
 
 import { useRef, useState } from "react";
 import axios from "axios";
-import Wallpaper from "@/components/wallpaper";
-import AudioStep from "@/app/create/steps/AudioStep";
-import LyricsStep from "@/app/create/steps/LyricsStep";
-import VideoStep from "@/app/create/steps/VideoStep";
-import ExportStep from "@/app/create/steps/ExportStep";
-import { AudioFiles, ResolvedAlignment, ResolvedAlignmentLine, SyncPoint } from "./types";
+import Wallpaper from "@/src/components/wallpaper";
+import AudioStep from "@/src/app/create/steps/AudioStep";
+import LyricsStep from "@/src/app/create/steps/LyricsStep";
+import VideoStep from "@/src/app/create/steps/VideoStep";
+import ExportStep from "@/src/app/create/steps/ExportStep";
+import { AudioFiles, SyncLines, SyncLine, SyncPoint } from "../../lib/types/types";
+import * as CreateAPI from "@/src/lib/api/CreateAPI";
 
 const steps = [
 	{ id: 1, name: "Audio" },
@@ -37,8 +38,8 @@ export default function CreatePage() {
 	const [videoUrl, setVideoUrl] = useState<string | null>(null);
 	const sessionId = useRef<string | null>(null);
 
-	const resolvedAlignment: ResolvedAlignment = {
-		lines: lyrics.split("\n").reduce<ResolvedAlignmentLine[]>(
+	const lineSyncs: SyncLines = {
+		lines: lyrics.split(/[.,!?;\n]/).reduce<SyncLine[]>(
 			(lines, line) => {
 				const words = line.trim().split(/\s+/).filter(Boolean);
 
@@ -65,21 +66,14 @@ export default function CreatePage() {
 		if (!audio.combined) return;
 		setSeparateAudioLoading(true);
 		try {
-			const formData = new FormData();
-			formData.append('audio', audio.combined);
+			const res = await CreateAPI.separateAudio(audio.combined);
 
-			const response = await axios.post(
-				`${process.env.NEXT_PUBLIC_API_URL}/separate-audio`, 
-				formData, 
-				{ timeout: 5 * 60 * 1000 } // 5 min timeout
-			);
-
-			sessionId.current = response.data.sessionId;
+			sessionId.current = res.sessionId;
 
 			// Fetch audio files from URLs
 			const [vocalsResponse, instResponse] = await Promise.all([
-				fetch(response.data.vocals),
-				fetch(response.data.instrumental),
+				fetch(res.vocalsUrl),
+				fetch(res.instrumentalUrl),
 			]);
 			const vocalsBlob = await vocalsResponse.blob();
 			const vocalsFile = new File([vocalsBlob], 'vocals.wav', { type: 'audio/wav' });
@@ -89,8 +83,8 @@ export default function CreatePage() {
 				...prev, 
 				vocals: vocalsFile, 
 				instrumental: instFile, 
-				vocalsURL: response.data.vocals, 
-				instrumentalURL: response.data.instrumental
+				vocalsURL: res.vocalsUrl, 
+				instrumentalURL: res.instrumentalUrl
 			}));
 		} catch (error) {
 			console.error('Failed to separate audio', error);
@@ -104,17 +98,8 @@ export default function CreatePage() {
 		if (!audio.vocals || !lyrics) return;
 		setGenerateAlignmentLoading(true);
 		try {
-			const formData = new FormData();
-			formData.append('sessionID', sessionId.current!);
-			formData.append('lyrics', lyrics);
-
-			const response = await axios.post(
-				`${process.env.NEXT_PUBLIC_API_URL}/generate-alignment`, 
-				formData, 
-				{ timeout: 5 * 60 * 1000 } // 5 min timeout
-			);
-
-			setAlignment(response.data);
+			const syncPoints = await CreateAPI.generateAlignment(sessionId.current!, lyrics);
+			setAlignment(syncPoints);
 		} catch (error) {
 			console.error('Failed to generate alignment', error);
 		} finally {
@@ -122,39 +107,28 @@ export default function CreatePage() {
 		}
 	}
 
-	const [exportLoading, setExportLoading] = useState(false);
-	const handleExport = async () => {
-		setExportLoading(true);
+	const [generateVideoLoading, setGenerateVideoLoading] = useState(false);
+	const handleGenerateVideo = async () => {
+		setGenerateVideoLoading(true);
 		try {
-			const formData = new FormData();
-			if (!audio.instrumental || !audio.vocals || !resolvedAlignment || !videoSettings.backgroundImage) {
+			if (!audio.instrumental || !audio.vocals || !lineSyncs || !videoSettings.backgroundImage) {
 				throw new Error('Missing required data for export');
 			} 
 
-			formData.append('instrumental', audio.instrumental);
-			formData.append('vocals', audio.vocals);
-			formData.append('backgroundImage', videoSettings.backgroundImage);
-			formData.append('alignment', JSON.stringify(resolvedAlignment));
-			formData.append('syncPoints', JSON.stringify(alignment));
+            const url = await CreateAPI.generateVideo(
+                audio.instrumental,
+                audio.vocals,
+                videoSettings.backgroundImage,
+                lineSyncs,
+                alignment
+            )
 
-			//formData.append('font', video.font);
-			//formData.append('textSize', video.textSize.toString());
-			//formData.append('textColor', video.textColor);
-			
-			const response = await axios.post(
-				`${process.env.NEXT_PUBLIC_API_URL}/generate-video`, 
-				formData,
-				{ timeout: 20 * 60 * 1000 } 
-			);
-			
-			// Handle download
-			const url = response.data.videoUrl;
 			setVideoUrl(url);
 			//window.open(url, '_blank');
 		} catch (error) {
 			console.error('Failed to generate video', error);
 		} finally {
-			setExportLoading(false);
+			setGenerateVideoLoading(false);
 		}
 	};
 
@@ -221,8 +195,8 @@ export default function CreatePage() {
 						{currentStep === 4 && (
 							<ExportStep
 								videoUrl={videoUrl}
-								loading={exportLoading}
-								onExport={handleExport}
+								loading={generateVideoLoading}
+								onExport={handleGenerateVideo}
 							/>
 						)}
 					</div>

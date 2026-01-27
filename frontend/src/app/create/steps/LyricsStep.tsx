@@ -1,7 +1,7 @@
 "use client";
 
-import Box from "@/components/box";
-import { AudioFiles, SyncPoint } from "../types";
+import Box from "@/src/components/box";
+import { AudioFiles, SyncPoint } from "../../../lib/types/types";
 
 interface LyricsStepProps {
 	lyrics: string;

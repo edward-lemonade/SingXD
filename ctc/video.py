@@ -2,6 +2,35 @@ import json
 import argparse
 import numpy as np
 from moviepy import TextClip, VideoClip, CompositeVideoClip, CompositeAudioClip, ImageClip, AudioFileClip
+from PIL import Image
+
+# Standard video dimensions
+STANDARD_WIDTH = 1920
+STANDARD_HEIGHT = 1080
+
+def resize_and_pad(image_path, target_width, target_height):
+	"""Resize image to fit within target dimensions and pad to exact size"""
+	image = Image.open(image_path)
+	
+	# Calculate scaling to fit within bounds
+	width_ratio = target_width / image.width
+	height_ratio = target_height / image.height
+	scale_ratio = min(width_ratio, height_ratio)
+	
+	# Resize image
+	new_width = int(image.width * scale_ratio)
+	new_height = int(image.height * scale_ratio)
+	resized = image.resize((new_width, new_height), Image.LANCZOS)
+	
+	# Create new image with padding (black bars)
+	padded = Image.new('RGB', (target_width, target_height), (0, 0, 0))
+	
+	# Center the resized image
+	x_offset = (target_width - new_width) // 2
+	y_offset = (target_height - new_height) // 2
+	padded.paste(resized, (x_offset, y_offset))
+	
+	return np.array(padded)
 
 def render_video(alignment_json, sync_points_json, background_path, instrumental_path, vocal_path, output_path, fps=30):
 	alignment = json.loads(alignment_json)
@@ -9,11 +38,14 @@ def render_video(alignment_json, sync_points_json, background_path, instrumental
 
 	total_duration = max(sp['end'] for sp in sync_points) if sync_points else 0
 
-	bg_clip = ImageClip(background_path, duration=total_duration)
+	# Resize and pad background to standard dimensions
+	bg_array = resize_and_pad(background_path, STANDARD_WIDTH, STANDARD_HEIGHT)
+	bg_clip = ImageClip(bg_array, duration=total_duration)
 
 	all_clips = []
 	
 	MARGIN = 50  # Adjust this to prevent cropping
+	VERTICAL_POSITION = 0.75  # 0.0 = top, 0.5 = center, 1.0 = bottom
 
 	for line in alignment['lines']:
 		print(f"Rendering line: {line['words']} from {line['start']} to {line['end']}")
@@ -32,12 +64,12 @@ def render_video(alignment_json, sync_points_json, background_path, instrumental
 			stroke_width=2
 		)
 		
-		# Center the line vertically
-		line_y = (bg_clip.h - ref_clip.h) / 2
+		# Position the line lower on the screen (75% down from top) - use STANDARD_HEIGHT
+		line_y = STANDARD_HEIGHT * VERTICAL_POSITION - ref_clip.h / 2
 		
-		# Calculate starting X to center the entire line
+		# Calculate starting X to center the entire line - use STANDARD_WIDTH
 		line_width = ref_clip.w
-		start_x = (bg_clip.w - line_width) / 2
+		start_x = (STANDARD_WIDTH - line_width) / 2
 
 		# Render each word individually with consistent positioning
 		current_x = start_x
@@ -86,14 +118,15 @@ def render_video(alignment_json, sync_points_json, background_path, instrumental
 			# Move x position for next word (using width WITHOUT margin)
 			current_x += word_width_no_margin
 
-	video = CompositeVideoClip([bg_clip] + all_clips)
+	# Create composite with explicit size set to standard dimensions
+	video = CompositeVideoClip([bg_clip] + all_clips, size=(STANDARD_WIDTH, STANDARD_HEIGHT))
 
 	instrumental_clip = AudioFileClip(instrumental_path)
 	vocal_clip = AudioFileClip(vocal_path)
 	audio = CompositeAudioClip([instrumental_clip, vocal_clip])
 
 	final_video = video.with_audio(audio)
-	final_video.write_videofile(output_path, fps=fps, codec="libx264")
+	final_video.write_videofile(output_path, fps=fps, codec="libx264", preset='medium', bitrate='8000k')
 
 	print(f"Rendered video → {output_path}")
 

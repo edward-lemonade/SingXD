@@ -1,7 +1,7 @@
 "use client";
 
-import Box from "@/components/box";
-import { AudioFiles } from "../types";
+import Box from "@/src/components/box";
+import { AudioFiles } from "../../../lib/types/types";
 
 interface AudioStepProps {
 	audio: AudioFiles;
