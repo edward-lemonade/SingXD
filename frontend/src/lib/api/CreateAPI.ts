@@ -1,10 +1,10 @@
 import axios from "axios";
 import { GenerateAlignmentResponse, GenerateVideoResponse, SeparateAudioResponse } from "../types/api";
-import { SyncLines, SyncPoint } from "../types/types";
+import { SyncMap, SyncPoint } from "../types/types";
 
 
 export const separateAudio = async (
-    audioCombined: File
+    audioCombined: Blob
 ): Promise<SeparateAudioResponse> => {
     const formData = new FormData();
     formData.append('audio', audioCombined);
@@ -31,14 +31,14 @@ export const generateAlignment = async (
         formData, 
         { timeout: 5 * 60 * 1000 } // 5 min timeout
     );
-    return response.data.syncPoints
+    return response.data.syncPoints;
 }
 
 export const generateVideo = async (
     instrumental: File,
     vocals: File,
     backgroundImage: File,
-    syncLines: SyncLines,
+    syncLines: SyncMap,
     syncPoints: SyncPoint[],
 ): Promise<string> => {
     const formData = new FormData();

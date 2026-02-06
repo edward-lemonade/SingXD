@@ -1,18 +1,19 @@
 "use client";
 
-import Box from "@/src/components/box";
-import { AudioFiles, SyncPoint } from "../../../lib/types/types";
+import Box from "@/src/components/Box";
+import { SyncPoint } from "../../../lib/types/types";
+import { AudioUrls } from "../page";
 
 interface LyricsStepProps {
 	lyrics: string;
 	setLyrics: (lyrics: string) => void;
-	audio: AudioFiles;
+	audioUrls: AudioUrls;
 	alignment: SyncPoint[];
 	loading: boolean;
 	onAlign: () => void;
 }
 
-export default function LyricsStep({ lyrics, setLyrics, audio, loading, onAlign }: LyricsStepProps) {
+export default function LyricsStep({ lyrics, setLyrics, audioUrls, loading, onAlign }: LyricsStepProps) {
 	return (
 		<section>
 			<Box className="p-6">

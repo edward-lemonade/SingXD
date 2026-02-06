@@ -1,16 +1,55 @@
 "use client";
 
-import Box from "@/src/components/box";
-import { AudioFiles } from "../../../lib/types/types";
+import Box from "@/src/components/Box";
+import { AudioUrls } from "../page";
 
 interface AudioStepProps {
-	audio: AudioFiles;
-	setAudio: (audio: any) => void;
+	audioUrls: AudioUrls;
+	setAudioUrls: React.Dispatch<React.SetStateAction<AudioUrls>>;
 	loading: boolean;
 	onSeparate: () => void;
 }
 
-export default function AudioStep({ audio, setAudio, loading, onSeparate }: AudioStepProps) {
+export default function AudioStep({ audioUrls, setAudioUrls, loading, onSeparate }: AudioStepProps) {
+    const onCombinedFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setAudioUrls((prev) => {
+                return {
+                    ...prev,
+                    combined: url,
+                }
+            })
+        }
+    }
+
+    const onInstrumentalFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setAudioUrls((prev) => {
+                return {
+                    ...prev,
+                    instrumental: url,
+                }
+            })
+        }
+    }
+
+    const onVocalsFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setAudioUrls((prev) => {
+                return {
+                    ...prev,
+                    vocals: url,
+                }
+            })
+        }
+    }
+
 	return (
 		<section>
 			<div className="space-y-6">
@@ -19,17 +58,22 @@ export default function AudioStep({ audio, setAudio, loading, onSeparate }: Audi
 					<input
 						type="file"
 						accept="audio/*"
-						onChange={(e) => setAudio((prev: any) => ({ ...prev, combined: e.target.files?.[0] }))}
+						onChange={onCombinedFileInputChange}
 						className="mb-4"
 					/>
-					{audio.combined && (
-						<button
-							onClick={onSeparate}
-							disabled={loading}
-							className="bg-blue-500 text-white px-4 py-2 rounded"
-						>
-							{loading ? 'Separating...' : 'Separate into Stems'}
-						</button>
+					{audioUrls.combined && (
+                        <>
+                            <div className="mt-2">
+                                <audio controls src={audioUrls.combined} className="mt-1" />
+                            </div>
+                            <button
+                                onClick={onSeparate}
+                                disabled={loading}
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                            >
+                                {loading ? 'Separating...' : 'Separate into Stems'}
+                            </button>
+                        </>
 					)}
 				</Box>
 				<Box className="p-6">
@@ -40,12 +84,11 @@ export default function AudioStep({ audio, setAudio, loading, onSeparate }: Audi
 							<input
 								type="file"
 								accept="audio/*"
-								onChange={(e) => setAudio((prev: any) => ({ ...prev, instrumental: e.target.files?.[0] }))}
+								onChange={onInstrumentalFileInputChange}
 							/>
-							{audio.instrumental && (
+							{audioUrls.instrumental && (
 								<div className="mt-2">
-									<p className="text-sm text-gray-600">{audio.instrumental.name}</p>
-									<audio controls src={URL.createObjectURL(audio.instrumental)} className="mt-1" />
+									<audio controls src={audioUrls.instrumental} className="mt-1" />
 								</div>
 							)}
 						</div>
@@ -54,12 +97,11 @@ export default function AudioStep({ audio, setAudio, loading, onSeparate }: Audi
 							<input
 								type="file"
 								accept="audio/*"
-								onChange={(e) => setAudio((prev: any) => ({ ...prev, vocals: e.target.files?.[0] }))}
+								onChange={onVocalsFileInputChange}
 							/>
-							{audio.vocals && (
+							{audioUrls.vocals && (
 								<div className="mt-2">
-									<p className="text-sm text-gray-600">{audio.vocals.name}</p>
-									<audio controls src={URL.createObjectURL(audio.vocals)} className="mt-1" />
+									<audio controls src={audioUrls.vocals} className="mt-1" />
 								</div>
 							)}
 						</div>

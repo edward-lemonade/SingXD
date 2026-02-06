@@ -269,6 +269,8 @@ func GenerateAlignment(c *gin.Context) {
 		return
 	}
 
+	//fmt.Println(output)
+
 	// Read and parse the output JSON
 	jsonData, err := os.ReadFile(outputJson)
 	if err != nil {
@@ -284,12 +286,9 @@ func GenerateAlignment(c *gin.Context) {
 		return
 	}
 
-	// remove "text" field from each point, only care about the times
-	//for i := range alignment {
-	//	delete(alignment[i], "text")
-	//}
-
-	c.JSON(200, alignment)
+	c.JSON(200, gin.H{
+		"syncPoints": alignment,
+	})
 }
 
 // GenerateVideo handles video generation request

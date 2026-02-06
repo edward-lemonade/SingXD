@@ -1,4 +1,4 @@
-import Wallpaper from "@/src/components/wallpaper";
+import Wallpaper from "@/src/components/Wallpaper";
 import Image from "next/image";
 import Link from "next/link";
 
