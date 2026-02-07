@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import axios from "axios";
 import Wallpaper from "@/src/components/Wallpaper";
 import AudioStep from "@/src/app/create/steps/AudioStep";
 import LyricsStep from "@/src/app/create/steps/LyricsStep";
@@ -22,25 +21,35 @@ export interface AudioUrls {
 }
 
 const assembleSyncLines = (lyrics: string, syncPoints: SyncPoint[]) => {
-	const lines = lyrics.split(/[.,!?;\n]/);
+	const lines = lyrics.split(/[.!?;\r\n]+/)
+		.map(line => line.trim())
+		.filter(Boolean);
 
+	console.log(lines)
 	let syncPointIdx = 0;
 	const syncMapLines: SyncLine[] = lines.map((line) => { // mapping words to syncPoints
 		const firstWordIndex = syncPointIdx;
-		const words = line.trim().split(/\s+/).filter(Boolean);
+		const words = line
+			.trim()
+			.split(/\s+/)
+			.filter(Boolean);
+
+		console.log(line, words)
 		const wordSyncPoints = words.map((word) => {
 			return {
-				text: word,
 				...syncPoints[syncPointIdx++]
 			}
-		})
+		});
 		return {
 			words: wordSyncPoints,
 			start: wordSyncPoints[0]?.start ?? 0,
 			end: wordSyncPoints[wordSyncPoints.length - 1]?.end ?? 0,
 			firstWordIndex
-		}
+		};
 	})
+
+	console.log(syncMapLines.map(line => line.words.map(word => word.text)))
+	console.log(syncMapLines);
 
 	return syncMapLines;
 }
@@ -48,7 +57,13 @@ const assembleSyncLines = (lyrics: string, syncPoints: SyncPoint[]) => {
 export default function CreatePage() {
 	const sessionId = useRef<string | null>(null);
 	const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
-	const [lyrics, setLyrics] = useState('');
+
+	const [lyrics, _setLyrics] = useState('');
+	const cleanAndSetLyrics = (lyrics: string) => {
+		lyrics.replaceAll("-", "- ");
+		lyrics.replaceAll("—", "- ");
+		_setLyrics(lyrics);
+	}
 
 	const [syncPoints, setSyncPoints] = useState<SyncPoint[]>([]);
 	const [syncMapSettings, setSyncMapSettings] = useState<SyncMapSettings>(DEFAULT_SYNC_MAP_SETTINGS);
@@ -58,7 +73,7 @@ export default function CreatePage() {
 		combined: null,
 		instrumental: null,
 		vocals: null,
-	})
+	});
 
 	const syncLines = useMemo(() => {
 		return assembleSyncLines(lyrics, syncPoints);
@@ -86,6 +101,11 @@ export default function CreatePage() {
 			if (audioUrls.vocals) URL.revokeObjectURL(audioUrls.vocals);
 		}
 	}, [audioUrls.vocals]);
+	useEffect(() => {
+		return () => { 
+			if (syncMapSettings.backgroundImageUrl) URL.revokeObjectURL(syncMapSettings.backgroundImageUrl);
+		}
+	}, [syncMapSettings.backgroundImageUrl])
 
 	useEffect(() => {
 		const setMetadataAndSettings = async () => {
@@ -114,25 +134,25 @@ export default function CreatePage() {
 
   const [separateAudioLoading, setSeparateAudioLoading] = useState(false);
   const handleSeparateAudio = async () => {
-		if (!audioUrls.combined) return;
-			setSeparateAudioLoading(true);
-		try {
-			const combinedFile = await fetch(audioUrls.combined);
-			const blob = await combinedFile.blob()
-			const res = await CreateAPI.separateAudio(blob);
+	if (!audioUrls.combined) return;
+		setSeparateAudioLoading(true);
+	try {
+		const combinedFile = await fetch(audioUrls.combined);
+		const blob = await combinedFile.blob()
+		const res = await CreateAPI.separateAudio(blob);
 
-			sessionId.current = res.sessionId;
+		sessionId.current = res.sessionId;
 
-			setAudioUrls(prev => ({ 
-				...prev, 
-				vocals: res.vocalsUrl, 
-				instrumental: res.instrumentalUrl, 
-			}));
-		} catch (error) {
-			console.error('Failed to separate audio', error);
-		} finally {
-			setSeparateAudioLoading(false);
-		}
+		setAudioUrls(prev => ({ 
+			...prev, 
+			vocals: res.vocalsUrl, 
+			instrumental: res.instrumentalUrl, 
+		}));
+	} catch (error) {
+		console.error('Failed to separate audio', error);
+	} finally {
+		setSeparateAudioLoading(false);
+	}
   };
 
   const [generateAlignmentLoading, setGenerateAlignmentLoading] = useState(false);
@@ -194,7 +214,7 @@ export default function CreatePage() {
 						{currentStep === 2 && (
 							<LyricsStep
 								lyrics={lyrics}
-								setLyrics={setLyrics}
+								setLyrics={cleanAndSetLyrics}
 								audioUrls={audioUrls}
 								alignment={syncPoints}
 								loading={generateAlignmentLoading}
@@ -205,8 +225,8 @@ export default function CreatePage() {
 						{currentStep === 3 && (
 							<VideoStep
 								syncMap={syncMap}
-								videoSettings={syncMapSettings}
-								setVideoSettings={setSyncMapSettings}
+								syncMapSettings={syncMapSettings}
+								setSyncMapSettings={setSyncMapSettings}
 							/>
 						)}
 					</div>

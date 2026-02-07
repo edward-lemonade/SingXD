@@ -1,12 +1,10 @@
 export interface SyncPoint {
     start: number; 
-    end: number 
-}
-export interface SyncPointWithText extends SyncPoint {
+    end: number;
     text: string;
 }
 export interface SyncLine {
-    words: SyncPointWithText[];
+    words: SyncPoint[];
     start: number; // first word start time
     end: number;   // last word end time
     firstWordIndex: number;
@@ -38,5 +36,4 @@ export interface SyncMap {
     lines: SyncLine[];
     settings: SyncMapSettings;
     metadata: SyncMapMetadata;
-    
 } 

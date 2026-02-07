@@ -17,8 +17,6 @@ def load_transcript(path):
 
 def preprocess_text(text):
 	# split into original words (keeping punctuation)
-	text = text.replace("-", "- ")
-	text = text.replace("—", "— ")
 	original_words = text.split()
 	cleaned_words = []
 	mapping = []  # mapping[cleaned_idx] = original_idx

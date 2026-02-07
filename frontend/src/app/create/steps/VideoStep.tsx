@@ -8,19 +8,19 @@ import { AudioUrls } from "../page";
 
 interface VideoStepProps {
 	syncMap: SyncMap;
-	videoSettings: SyncMapSettings;
-	setVideoSettings: (video: SetStateAction<SyncMapSettings>) => void;
+	syncMapSettings: SyncMapSettings;
+	setSyncMapSettings: (video: SetStateAction<SyncMapSettings>) => void;
 }
 
-export default function VideoStep({ syncMap, videoSettings, setVideoSettings }: VideoStepProps) {
+export default function VideoStep({ syncMap, syncMapSettings, setSyncMapSettings }: VideoStepProps) {
     const onBackgroundImageFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
         const fileUrl = URL.createObjectURL(file);
-        setVideoSettings((prev) => ({
+        setSyncMapSettings((prev) => ({
             ...prev,
-            backgroundImage: fileUrl,
+            backgroundImageUrl: fileUrl,
         }));
     }
 
@@ -30,8 +30,8 @@ export default function VideoStep({ syncMap, videoSettings, setVideoSettings }: 
 				<div>
 					<label className="block mb-2">Font</label>
 					<select
-						value={videoSettings.font}
-						onChange={(e) => setVideoSettings((prev) => ({ ...prev, font: e.target.value }))}
+						value={syncMapSettings.font}
+						onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, font: e.target.value }))}
 						className="border p-2 rounded"
 					>
 						<option value="Arial">Arial</option>
@@ -43,8 +43,8 @@ export default function VideoStep({ syncMap, videoSettings, setVideoSettings }: 
 					<label className="block mb-2">Text Size</label>
 					<input
 						type="number"
-						value={videoSettings.textSize}
-						onChange={(e) => setVideoSettings((prev) => ({ ...prev, textSize: parseInt(e.target.value) }))}
+						value={syncMapSettings.textSize}
+						onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, textSize: parseInt(e.target.value) }))}
 						className="border p-2 rounded"
 					/>
 				</div>
@@ -52,8 +52,8 @@ export default function VideoStep({ syncMap, videoSettings, setVideoSettings }: 
 					<label className="block mb-2">Text Color</label>
 					<input
 						type="color"
-						value={videoSettings.textColor}
-						onChange={(e) => setVideoSettings((prev) => ({ ...prev, textColor: e.target.value }))}
+						value={syncMapSettings.textColor}
+						onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, textColor: e.target.value }))}
 						className="border p-2 rounded"
 					/>
 				</div>

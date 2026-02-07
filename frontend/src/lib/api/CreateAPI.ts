@@ -1,6 +1,6 @@
 import axios from "axios";
 import { GenerateAlignmentResponse, GenerateVideoResponse, SeparateAudioResponse } from "../types/api";
-import { SyncMap, SyncPoint } from "../types/types";
+import { SyncMap, SyncPoint, SyncPointWithText } from "../types/types";
 
 
 export const separateAudio = async (
@@ -21,7 +21,7 @@ export const separateAudio = async (
 export const generateAlignment = async (
     sessionId: string, 
     lyrics: string
-): Promise<SyncPoint[]> => {
+): Promise<SyncPointWithText[]> => {
     const formData = new FormData();
     formData.append('sessionID', sessionId);
     formData.append('lyrics', lyrics);

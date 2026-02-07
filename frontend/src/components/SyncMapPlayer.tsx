@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { SyncMap, SyncLine, SyncPointWithText } from "../lib/types/types";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { SyncMap, SyncLine } from "../lib/types/types";
 
 export interface SyncMapPlayerSettings {
     width: number;
@@ -47,13 +47,13 @@ export default function SyncMapPlayer({
 
     // Get lines to display (current + context)
     const getDisplayLines = () => {
-        if (currentLineIndex === -1) return syncMap.lines.slice(0, 3);
+        if (currentLineIndex === -1) return [];
         
         const start = Math.max(0, currentLineIndex - 1);
         const end = Math.min(syncMap.lines.length, currentLineIndex + 2);
         return syncMap.lines.slice(start, end);
     };
-    const displayLines = getDisplayLines();
+    const displayLines = useMemo(getDisplayLines, [syncMap, currentLineIndex]);
 
     // Update current time on animation frame
     const updateTime = () => {
@@ -80,7 +80,6 @@ export default function SyncMapPlayer({
     }, [isPlaying]);
 
     const togglePlayPause = () => {
-        console.log("bruh", audioRef.current);
         if (audioRef.current) {
             if (isPlaying) {
                 audioRef.current.pause();

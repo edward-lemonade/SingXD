@@ -286,6 +286,13 @@ func GenerateAlignment(c *gin.Context) {
 		return
 	}
 
+	//fmt.Println(alignment)
+
+	// remove "text" field from each point, only care about the times
+	//for i := range alignment {
+	//	delete(alignment[i], "text")
+	//}
+
 	c.JSON(200, gin.H{
 		"syncPoints": alignment,
 	})
