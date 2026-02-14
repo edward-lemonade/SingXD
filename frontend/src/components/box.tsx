@@ -10,7 +10,7 @@ export default function Box({
 	return (
 		<div
 			className={clsx(
-				"bg-white border-4 border-black rounded-lg text-black flex flex-col",
+				"bg-white border-4 border-black text-black flex flex-col",
 				className
 			)}
 		>

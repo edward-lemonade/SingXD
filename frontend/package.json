@@ -19,6 +19,7 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-hook-form": "^7.67.0",
+    "wavesurfer.js": "^7.12.1",
     "zustand": "^5.0.9"
   },
   "devDependencies": {
@@ -26,6 +27,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/wavesurfer.js": "^6.0.12",
     "baseline-browser-mapping": "^2.9.7",
     "eslint": "^9",
     "eslint-config-next": "16.0.5",

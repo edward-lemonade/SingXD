@@ -25,7 +25,6 @@ const assembleSyncLines = (lyrics: string, syncPoints: SyncPoint[]) => {
 		.map(line => line.trim())
 		.filter(Boolean);
 
-	console.log(lines)
 	let syncPointIdx = 0;
 	const syncMapLines: SyncLine[] = lines.map((line) => { // mapping words to syncPoints
 		const firstWordIndex = syncPointIdx;
@@ -34,7 +33,6 @@ const assembleSyncLines = (lyrics: string, syncPoints: SyncPoint[]) => {
 			.split(/\s+/)
 			.filter(Boolean);
 
-		console.log(line, words)
 		const wordSyncPoints = words.map((word) => {
 			return {
 				...syncPoints[syncPointIdx++]
@@ -47,9 +45,6 @@ const assembleSyncLines = (lyrics: string, syncPoints: SyncPoint[]) => {
 			firstWordIndex
 		};
 	})
-
-	console.log(syncMapLines.map(line => line.words.map(word => word.text)))
-	console.log(syncMapLines);
 
 	return syncMapLines;
 }
@@ -132,33 +127,33 @@ export default function CreatePage() {
 		setMetadataAndSettings();
 	}, [audioUrls.combined]); 
 
-  const [separateAudioLoading, setSeparateAudioLoading] = useState(false);
-  const handleSeparateAudio = async () => {
-	if (!audioUrls.combined) return;
-		setSeparateAudioLoading(true);
-	try {
-		const combinedFile = await fetch(audioUrls.combined);
-		const blob = await combinedFile.blob()
-		const res = await CreateAPI.separateAudio(blob);
+	const [separateAudioLoading, setSeparateAudioLoading] = useState(false);
+	const handleSeparateAudio = async () => {
+		if (!audioUrls.combined) return;
+			setSeparateAudioLoading(true);
+		try {
+			const combinedFile = await fetch(audioUrls.combined);
+			const blob = await combinedFile.blob()
+			const res = await CreateAPI.separateAudio(blob);
 
-		sessionId.current = res.sessionId;
+			sessionId.current = res.sessionId;
 
-		setAudioUrls(prev => ({ 
-			...prev, 
-			vocals: res.vocalsUrl, 
-			instrumental: res.instrumentalUrl, 
-		}));
-	} catch (error) {
-		console.error('Failed to separate audio', error);
-	} finally {
-		setSeparateAudioLoading(false);
-	}
-  };
+			setAudioUrls(prev => ({ 
+				...prev, 
+				vocals: res.vocalsUrl, 
+				instrumental: res.instrumentalUrl, 
+			}));
+		} catch (error) {
+			console.error('Failed to separate audio', error);
+		} finally {
+			setSeparateAudioLoading(false);
+		}
+	};
 
-  const [generateAlignmentLoading, setGenerateAlignmentLoading] = useState(false);
-  const handleGenerateAlignment = async() => {
+	const [generateAlignmentLoading, setGenerateAlignmentLoading] = useState(false);
+	const handleGenerateAlignment = async() => {
 		if (!audioUrls.vocals || !lyrics) return;
-		setGenerateAlignmentLoading(true);
+			setGenerateAlignmentLoading(true);
 		try {
 			const syncPoints = await CreateAPI.generateAlignment(sessionId.current!, lyrics);
 			setSyncPoints(syncPoints);
@@ -167,9 +162,9 @@ export default function CreatePage() {
 		} finally {
 			setGenerateAlignmentLoading(false);
 		}
-  }
+	}
 
-  return (
+  	return (
 		<Wallpaper color="lavender">
 			<div className="flex flex-col h-screen">
 				{/* Topbar */}
@@ -216,7 +211,8 @@ export default function CreatePage() {
 								lyrics={lyrics}
 								setLyrics={cleanAndSetLyrics}
 								audioUrls={audioUrls}
-								alignment={syncPoints}
+								syncPoints={syncPoints}
+								setSyncPoints={setSyncPoints}
 								loading={generateAlignmentLoading}
 								onAlign={handleGenerateAlignment}
 							/>
@@ -233,5 +229,5 @@ export default function CreatePage() {
 				</div>
 			</div>
 		</Wallpaper>
-  );
+  	);
 }
