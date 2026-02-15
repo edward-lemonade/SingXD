@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"singish/controllers"
+	"singxd/controllers"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,7 +10,6 @@ func SetupRoutes(router *gin.Engine) {
 	api := router.Group("/api")
 	{
 		api.POST("/separate-audio", controllers.SeparateAudio)
-		api.POST("/generate-alignment", controllers.GenerateAlignment)
-		api.POST("/generate-video", controllers.GenerateVideo)
+		api.POST("/generate-timings", controllers.GenerateTimings)
 	}
 }

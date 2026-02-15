@@ -1,4 +1,4 @@
-module singish
+module singxd
 
 go 1.25.3
 

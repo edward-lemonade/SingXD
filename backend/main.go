@@ -9,9 +9,9 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/joho/godotenv"
 
-	"singish/controllers"
-	"singish/db"
-	"singish/routes"
+	"singxd/controllers"
+	"singxd/db"
+	"singxd/routes"
 
 	"github.com/gin-gonic/gin"
 )

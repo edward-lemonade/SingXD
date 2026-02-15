@@ -7,9 +7,11 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
-	db "singish/db"
+	"singxd/db"
+	"singxd/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -21,23 +23,19 @@ func SetS3Client(client *db.S3Client) {
 	s3Client = client
 }
 
-type SyncPoint struct {
-	Start float64 `json:"start"`
-	End   float64 `json:"end"`
+// SeparateAudioResponse represents the response structure for audio separation
+type SeparateAudioResponse struct {
+	VocalsURL       string `json:"vocalsUrl"`
+	InstrumentalURL string `json:"instrumentalUrl"`
+	SessionID       string `json:"sessionId"`
 }
 
-type ResolvedAlignmentLine struct {
-	Words          []string `json:"words"`
-	Start          float64  `json:"start"`
-	End            float64  `json:"end"`
-	FirstWordIndex int      `json:"firstWordIndex"`
+// GenerateTimingsResponse represents the response structure for timing generation
+type GenerateTimingsResponse struct {
+	Timings []models.Timing `json:"timings"`
 }
 
-type ResolvedAlignment struct {
-	Lines []ResolvedAlignmentLine `json:"lines"`
-}
-
-// SeparateAudio handles audio file separation request
+// handles audio file separation request
 func SeparateAudio(c *gin.Context) {
 	fmt.Println("SeparateAudio request received")
 
@@ -181,21 +179,26 @@ func SeparateAudio(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"vocalsUrl":       vocalsURL,
-		"instrumentalUrl": instURL,
-		"sessionId":       sessionID,
-	})
+	response := SeparateAudioResponse{
+		VocalsURL:       vocalsURL,
+		InstrumentalURL: instURL,
+		SessionID:       sessionID,
+	}
+
+	c.JSON(200, response)
 }
 
-func GenerateAlignment(c *gin.Context) {
+// handles generating timings for lyrics and audio
+func GenerateTimings(c *gin.Context) {
 	sessionID := c.PostForm("sessionID")
 	lyrics := c.PostForm("lyrics")
-
 	if sessionID == "" || lyrics == "" {
 		c.JSON(400, gin.H{"error": "Missing sessionID or lyrics"})
 		return
 	}
+
+	// -------------------------------------------------------------------------
+	// Create temp folder
 
 	tempDir := fmt.Sprintf("/tmp/alignment_%d", time.Now().Unix())
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
@@ -205,7 +208,9 @@ func GenerateAlignment(c *gin.Context) {
 	}
 	defer os.RemoveAll(tempDir)
 
-	// Download vocals from S3
+	// -------------------------------------------------------------------------
+	// Download vocals from S3 (use cache in the future)
+
 	vocalsKey := fmt.Sprintf("creates/%s/vocals.wav", sessionID)
 	vocalsData, err := s3Client.DownloadFile(context.TODO(), vocalsKey)
 	if err != nil {
@@ -221,15 +226,37 @@ func GenerateAlignment(c *gin.Context) {
 		return
 	}
 
+	// -------------------------------------------------------------------------
 	// Save lyrics to temp file
+
 	lyricsPath := filepath.Join(tempDir, "lyrics.txt")
-	if err := os.WriteFile(lyricsPath, []byte(lyrics), 0644); err != nil {
+
+	// Parse the JSON lines array using proper types
+	var lines []models.Line
+	if err := json.Unmarshal([]byte(lyrics), &lines); err != nil {
+		fmt.Println("Failed to parse lyrics JSON:", err)
+		c.JSON(500, gin.H{"error": "Failed to parse lyrics"})
+		return
+	}
+
+	var allWords []string
+	for _, line := range lines {
+		for _, word := range line.Words {
+			allWords = append(allWords, word.Text)
+		}
+	}
+
+	lyricsText := strings.Join(allWords, "\n")
+
+	if err := os.WriteFile(lyricsPath, []byte(lyricsText), 0644); err != nil {
 		fmt.Println("Failed to save lyrics:", err)
 		c.JSON(500, gin.H{"error": "Failed to save lyrics"})
 		return
 	}
 
-	// Prepare paths for align.py
+	// -------------------------------------------------------------------------
+	// Find Python script and interpreter
+
 	alignScript, err := filepath.Abs("../ctc/align.py")
 	if err != nil {
 		fmt.Println("Failed to resolve align script path:", err)
@@ -243,16 +270,19 @@ func GenerateAlignment(c *gin.Context) {
 		c.JSON(500, gin.H{"error": "Python path resolution failed"})
 		return
 	}
-
 	if _, err := os.Stat(venvPython); err != nil {
 		fmt.Println("Python interpreter not found:", venvPython)
 		c.JSON(500, gin.H{"error": "Python interpreter not found"})
 		return
 	}
 
-	outputJson := filepath.Join(tempDir, "alignment.json")
+	// -------------------------------------------------------------------------
+	// Execute
+
+	outputJson := filepath.Join(tempDir, "timings.json")
 
 	fmt.Println("Running alignment script:", alignScript)
+
 	// Run align.py
 	cmd := exec.Command(venvPython, alignScript, vocalsPath, lyricsPath, outputJson)
 	cmd.Env = os.Environ()
@@ -269,161 +299,26 @@ func GenerateAlignment(c *gin.Context) {
 		return
 	}
 
-	//fmt.Println(output)
+	// -------------------------------------------------------------------------
+	// Reformat Output using proper types
 
-	// Read and parse the output JSON
 	jsonData, err := os.ReadFile(outputJson)
 	if err != nil {
-		fmt.Println("Failed to read alignment JSON:", err)
-		c.JSON(500, gin.H{"error": "Failed to read alignment"})
+		fmt.Println("Failed to read timings JSON:", err)
+		c.JSON(500, gin.H{"error": "Failed to read timings"})
 		return
 	}
 
-	var alignment []map[string]interface{}
-	if err := json.Unmarshal(jsonData, &alignment); err != nil {
-		fmt.Println("Failed to parse alignment JSON:", err)
-		c.JSON(500, gin.H{"error": "Failed to parse alignment"})
+	var timings []models.Timing
+	if err := json.Unmarshal(jsonData, &timings); err != nil {
+		fmt.Println("Failed to parse timings JSON:", err)
+		c.JSON(500, gin.H{"error": "Failed to parse timings"})
 		return
 	}
 
-	//fmt.Println(alignment)
-
-	// remove "text" field from each point, only care about the times
-	//for i := range alignment {
-	//	delete(alignment[i], "text")
-	//}
-
-	c.JSON(200, gin.H{
-		"syncPoints": alignment,
-	})
-}
-
-// GenerateVideo handles video generation request
-func GenerateVideo(c *gin.Context) {
-	alignmentStr := c.PostForm("alignment")
-	syncPointsStr := c.PostForm("syncPoints")
-
-	if alignmentStr == "" || syncPointsStr == "" {
-		c.JSON(400, gin.H{"error": "Missing alignment or syncPoints"})
-		return
+	response := GenerateTimingsResponse{
+		Timings: timings,
 	}
 
-	var resolvedAlignment ResolvedAlignment
-	if err := json.Unmarshal([]byte(alignmentStr), &resolvedAlignment); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid alignment JSON"})
-		return
-	}
-
-	var syncPoints []SyncPoint
-	if err := json.Unmarshal([]byte(syncPointsStr), &syncPoints); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid syncPoints JSON"})
-		return
-	}
-
-	tempDir := fmt.Sprintf("/tmp/video_%d", time.Now().Unix())
-	if err := os.MkdirAll(tempDir, 0755); err != nil {
-		fmt.Println("Failed to create temp dir:", err)
-		c.JSON(500, gin.H{"error": "Failed to create temp directory"})
-		return
-	}
-	defer os.RemoveAll(tempDir)
-
-	instrumentalFile, err := c.FormFile("instrumental")
-	if err != nil {
-		c.JSON(400, gin.H{"error": "Missing instrumental"})
-		return
-	}
-	instrumentalPath := filepath.Join(tempDir, "instrumental.wav")
-	if err := c.SaveUploadedFile(instrumentalFile, instrumentalPath); err != nil {
-		c.JSON(500, gin.H{"error": "Failed to save instrumental"})
-		return
-	}
-
-	vocalFile, err := c.FormFile("vocals")
-	if err != nil {
-		c.JSON(400, gin.H{"error": "Missing vocals"})
-		return
-	}
-	vocalPath := filepath.Join(tempDir, "vocals.wav")
-	if err := c.SaveUploadedFile(vocalFile, vocalPath); err != nil {
-		c.JSON(500, gin.H{"error": "Failed to save vocals"})
-		return
-	}
-
-	backgroundFile, err := c.FormFile("backgroundImage")
-	if err != nil {
-		c.JSON(400, gin.H{"error": "Missing backgroundImage"})
-		return
-	}
-	backgroundPath := filepath.Join(tempDir, "background.jpg")
-	if err := c.SaveUploadedFile(backgroundFile, backgroundPath); err != nil {
-		c.JSON(500, gin.H{"error": "Failed to save background"})
-		return
-	}
-
-	videoScript, err := filepath.Abs("../ctc/video.py")
-	if err != nil {
-		fmt.Println("Failed to resolve video script path:", err)
-		c.JSON(500, gin.H{"error": "Script path resolution failed"})
-		return
-	}
-
-	venvPython, err := filepath.Abs("../ctc/.venv/bin/python")
-	if err != nil {
-		fmt.Println("Failed to resolve venv Python path:", err)
-		c.JSON(500, gin.H{"error": "Python path resolution failed"})
-		return
-	}
-
-	if _, err := os.Stat(venvPython); err != nil {
-		fmt.Println("Python interpreter not found:", venvPython)
-		c.JSON(500, gin.H{"error": "Python interpreter not found"})
-		return
-	}
-
-	outputPath := filepath.Join(tempDir, "video.mp4")
-
-	fmt.Println("Running video generation script:", videoScript)
-	//cmd := exec.Command(venvPython, videoScript)
-	cmd := exec.Command(venvPython, videoScript, alignmentStr, syncPointsStr, backgroundPath, instrumentalPath, vocalPath, outputPath)
-	cmd.Env = os.Environ()
-
-	output, err := cmd.CombinedOutput()
-	fmt.Println("Video Python output:\n", string(output))
-
-	if err != nil {
-		fmt.Println("Video generation failed:", err)
-		c.JSON(500, gin.H{
-			"error":   "Video generation failed",
-			"details": string(output),
-		})
-		return
-	}
-
-	sessionID := uuid.New().String()
-	ctx := context.TODO()
-
-	videoFile, err := os.Open(outputPath)
-	if err != nil {
-		fmt.Println("Failed to open video file:", err)
-		c.JSON(500, gin.H{"error": "Failed to open video"})
-		return
-	}
-	defer videoFile.Close()
-
-	videoKey := fmt.Sprintf("creates/%s/video.mp4", sessionID)
-	if err := s3Client.UploadFile(ctx, videoKey, videoFile); err != nil {
-		fmt.Println("Failed to upload video:", err)
-		c.JSON(500, gin.H{"error": "Failed to upload video"})
-		return
-	}
-
-	videoURL, err := s3Client.GetPresignedURL(ctx, videoKey, 3600)
-	if err != nil {
-		fmt.Println("Failed to get video URL:", err)
-		c.JSON(500, gin.H{"error": "Failed to get video URL"})
-		return
-	}
-
-	c.JSON(200, gin.H{"videoUrl": videoURL})
+	c.JSON(200, response)
 }
