@@ -1,19 +1,19 @@
 import { SetStateAction, useEffect, useRef, useState } from "react";
 import Box from "./Box";
 import WaveSurfer from "wavesurfer.js";
-import { SyncMapMetadata, SyncPoint } from "../lib/types/types";
+import { SyncMapMetadata, Timing } from "../lib/types/types";
 import SyncMapAlignmentEditorRegion from "./SyncMapAlignmentEditorRegion";
 
 interface SyncMapAlignmentEditorProps {
     audioUrl: string | null;
-    syncPoints: SyncPoint[];
-    setSyncPoints: (syncPoints: SetStateAction<SyncPoint[]>) => void;
+    timings: Timing[];
+    setTimings: (syncPoints: SetStateAction<Timing[]>) => void;
 }
 
 export default function SyncMapAlignmentEditor({
     audioUrl,
-    syncPoints,
-    setSyncPoints,
+    timings,
+    setTimings,
 }: SyncMapAlignmentEditorProps) {
 
     // Refs
@@ -62,13 +62,13 @@ export default function SyncMapAlignmentEditor({
 
     const handleDrag = (index: number, newStart: number) => {
         // Calculate offset from the dragged region
-        const draggedPoint = syncPoints[index];
+        const draggedPoint = timings[index];
         if (!draggedPoint) return;
         
         const offset = newStart - draggedPoint.start;
         
         // Update all selected regions by the same offset
-        setSyncPoints(prev => prev.map((sp, i) => 
+        setTimings(prev => prev.map((sp, i) => 
             selectedIndices.has(i) 
                 ? { ...sp, time: sp.start + offset }
                 : sp
@@ -89,9 +89,9 @@ export default function SyncMapAlignmentEditor({
     useEffect(() => {
         const ws = WaveSurfer.create({
             container: wsContainerRef.current!,
-            waveColor: '#ddd',
-            progressColor: '#4a90e2',
-            cursorColor: '#4a90e2',
+            waveColor: '#f5dae5',
+            progressColor: '#a17485',
+            cursorColor: '#f54789',
             barWidth: 5,
             barGap: 2,
             barRadius: 5,
@@ -105,7 +105,6 @@ export default function SyncMapAlignmentEditor({
         setWsCreated(true);
 
         return () => {
-            ws.empty();
             ws.unAll();
             ws.destroy();
         }
@@ -127,7 +126,6 @@ export default function SyncMapAlignmentEditor({
 
         return () => {
             ws.unAll();
-            ws.empty();
             setWsReady(false);
         };
     }, [isWsCreated, audioUrl]);
@@ -137,7 +135,6 @@ export default function SyncMapAlignmentEditor({
         const wsScroll = wsScrollContainerRef.current;
         const regionsScroll = regionsScrollContainerRef.current;
 
-        console.log(wsScroll, regionsScroll)
         if (!wsScroll || !regionsScroll) return;
 
         let isWsSyncing = false;
@@ -169,11 +166,11 @@ export default function SyncMapAlignmentEditor({
             wsScroll.removeEventListener('scroll', syncWsToRegions);
             //regionsScroll.removeEventListener('scroll', syncRegionsToWs);
         };
-    }, [isWsCreated]);
+    }, [isWsReady]);
 
-    
+    // Sync scroll container widths
     useEffect(() => {
-        if (!isWsCreated || !wsRef.current) return;
+        if (!wsRef.current) return;
 
         const ws = wsRef.current;
         const waveformElement = ws.getWrapper();
@@ -194,7 +191,7 @@ export default function SyncMapAlignmentEditor({
             ws.un('redraw', updateWidth);
             window.removeEventListener('resize', updateWidth);
         };
-    }, [isWsCreated, isWsReady]);
+    }, [isWsReady]);
     
 
     return (
@@ -216,7 +213,7 @@ export default function SyncMapAlignmentEditor({
                     }}
                 >
                     <div ref={regionsContainerRef} style={{ width: waveformWidth || '100%', height: '100%' }}>
-                        {isWsReady && syncPoints.map((syncPoint, index) => 
+                        {isWsReady && timings.map((syncPoint, index) => 
                             <SyncMapAlignmentEditorRegion 
                                 key={index}
                                 index={index}

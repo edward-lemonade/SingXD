@@ -1,4 +1,4 @@
-import { SyncPoint } from "./types";
+import { Timing } from "./types";
 
 export interface SeparateAudioResponse {
     vocalsUrl: string,
@@ -6,8 +6,8 @@ export interface SeparateAudioResponse {
     sessionId: string,
 }
 
-export interface GenerateAlignmentResponse {
-    syncPoints: SyncPoint[]
+export interface GenerateTimingsResponse {
+    timings: Timing[],
 }
 
 export interface GenerateVideoResponse {

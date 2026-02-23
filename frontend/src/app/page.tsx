@@ -6,7 +6,7 @@ export default function HomePage() {
 	return (
 		<Wallpaper color="peach">
 			<h1 className="tall-outline md:text-8xl">
-				Singish
+				SingXD
 			</h1>
 
 			<h2 className="text-black text-lg md:text-2xl font-semibold mt-6 max-w-2xl">

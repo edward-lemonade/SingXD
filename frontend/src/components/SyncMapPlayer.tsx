@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { SyncMap, SyncLine } from "../lib/types/types";
+import { SyncMap } from "../lib/types/types";
 
 export interface SyncMapPlayerSettings {
     width: number;
@@ -26,20 +26,46 @@ export default function SyncMapPlayer({
     const animationFrameRef = useRef<number>(null);
 
     // Find current line and word based on time
-    const getCurrentIndices = (time: number) => {
-        const lineIndex = syncMap.lines.findIndex(
-            line => time >= line.start && time <= line.end
-        );
-        
-        if (lineIndex === -1) return { lineIndex: -1, wordIndex: -1 };
-        
-        const line = syncMap.lines[lineIndex];
-        const wordIndex = line.words.findIndex(
-            word => time >= word.start && time <= word.end
-        );
-        
-        return { lineIndex, wordIndex };
-    };
+    const getCurrentIndices = useMemo(() => {
+        return (time: number) => {
+            const lines = syncMap.lines;
+            const timings = syncMap.timings;
+            let lineIndex = -1;
+            let wordIndex = -1;
+            let globalWordIndex = -1;
+            
+            // Find the current word based on timing
+            for (let i = 0; i < timings.length; i++) {
+                if (time >= timings[i].start && time < timings[i].end) {
+                    globalWordIndex = i;
+                    break;
+                }
+            }
+            
+            // If no active word found, check if we're past all timings
+            if (globalWordIndex === -1 && timings.length > 0) {
+                if (time >= timings[timings.length - 1].end) {
+                    globalWordIndex = timings.length - 1;
+                }
+            }
+            
+            // If we found a word, determine which line and word index it belongs to
+            if (globalWordIndex !== -1) {
+                let wordCount = 0;
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (globalWordIndex < wordCount + line.words.length) {
+                        lineIndex = i;
+                        wordIndex = globalWordIndex - wordCount;
+                        break;
+                    }
+                    wordCount += line.words.length;
+                }
+            }
+            
+            return { lineIndex, wordIndex };
+        };
+    }, [syncMap.lines, syncMap.timings]);
     const { 
         lineIndex: currentLineIndex, 
         wordIndex: currentWordIndex 

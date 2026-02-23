@@ -1,6 +1,6 @@
 import axios from "axios";
-import { GenerateAlignmentResponse, GenerateVideoResponse, SeparateAudioResponse } from "../types/api";
-import { SyncMap, SyncPoint, SyncPointWithText } from "../types/types";
+import { GenerateTimingsResponse, GenerateVideoResponse, SeparateAudioResponse } from "../types/api";
+import { Line, SyncMap, Timing } from "../types/types";
 
 
 export const separateAudio = async (
@@ -18,46 +18,20 @@ export const separateAudio = async (
     return response.data
 }
 
-export const generateAlignment = async (
+export const generateTimings = async (
     sessionId: string, 
-    lyrics: string
-): Promise<SyncPointWithText[]> => {
+    lines: Line[],
+): Promise<Timing[]> => {
     const formData = new FormData();
     formData.append('sessionID', sessionId);
-    formData.append('lyrics', lyrics);
+    formData.append('lyrics', JSON.stringify(lines));
 
-    const response = await axios.post<GenerateAlignmentResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/generate-alignment`, 
+    const response = await axios.post<GenerateTimingsResponse>(
+        `${process.env.NEXT_PUBLIC_API_URL}/generate-timings`, 
         formData, 
         { timeout: 5 * 60 * 1000 } // 5 min timeout
     );
-    return response.data.syncPoints;
-}
 
-export const generateVideo = async (
-    instrumental: File,
-    vocals: File,
-    backgroundImage: File,
-    syncLines: SyncMap,
-    syncPoints: SyncPoint[],
-): Promise<string> => {
-    const formData = new FormData();
-
-    formData.append('instrumental', instrumental);
-    formData.append('vocals', vocals);
-    formData.append('backgroundImage', backgroundImage);
-    formData.append('alignment', JSON.stringify(syncLines));
-    formData.append('syncPoints', JSON.stringify(syncPoints));
-
-    //formData.append('font', video.font);
-    //formData.append('textSize', video.textSize.toString());
-    //formData.append('textColor', video.textColor);
-    
-    const response = await axios.post<GenerateVideoResponse>(
-        `${process.env.NEXT_PUBLIC_API_URL}/generate-video`, 
-        formData,
-        { timeout: 20 * 60 * 1000 } 
-    );
-
-    return response.data.videoUrl;
+    console.log(response.data.timings)
+    return response.data.timings;
 }

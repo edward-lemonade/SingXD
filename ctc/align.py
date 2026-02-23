@@ -16,39 +16,13 @@ def load_transcript(path):
 		return f.read()
 
 def preprocess_text(text):
-	# split into original words (keeping punctuation)
-	original_words = text.split()
-	cleaned_words = []
-	mapping = []  # mapping[cleaned_idx] = original_idx
-	
-	for i, word in enumerate(original_words):
-		cleaned = re.sub(r'[^a-zA-Z0-9\s]', '', word) # remove all non-alphanumeric
-		cleaned = re.sub(r'\s+', ' ', cleaned).strip() # remove double space
-		cleaned = cleaned.upper() # do lowercase
-		
-		# try to extract numeric prefix (e.g., "14TH" -> "14")
-		num_match = re.match(r'^(\d+)', cleaned)
-		if num_match:
-			num_str = num_match.group(1)
-			rest = cleaned[len(num_str):]
-			# check if ordinal (th, st, nd, rd)
-			is_ordinal = rest in ['TH', 'ST', 'ND', 'RD']
-			
-			spelled_arr = num2words.num2words(int(num_str), ordinal=is_ordinal)
-			spelled_words = spelled_arr.split()
-			cleaned_words.extend([
-				w.upper()
-				.replace('-', ' ')
-				.replace('—', ' ') for w in spelled_words
-			])
-			mapping.extend([i] * len(spelled_words))
-		else:
-			cleaned_words.append(cleaned.upper())
-			mapping.append(i)
-	
-	print(cleaned_words)
-	#print('\n'.join(cleaned_words))
-	return original_words, cleaned_words, mapping
+	words = text.split('\n') 
+	for i in range(len(words)):
+		word = words[i]
+		word = re.sub(r'[^a-zA-Z\s]', '', word) # delete non-alphabet
+		word = word.upper()
+		words[i] = word
+	return words
 
 def load_audio(path: str, target_sr=16000):
 	audio, sr = sf.read(path)
@@ -110,9 +84,7 @@ def align_long_audio(
 
 	print("Loading transcript")
 	text = load_transcript(text_path)
-	original_words, cleaned_words, mapping = preprocess_text(text)
-
-	results = []
+	words = preprocess_text(text)
 
 	vocab = processor.tokenizer.get_vocab()
 	char_list = [None] * len(vocab)
@@ -120,27 +92,15 @@ def align_long_audio(
 		char_list[idx] = char
 
 	logits, input_len = wav2vec_logits(model, processor, waveform, sr, device)
-	segments = ctc_align_words(logits, input_len, cleaned_words, char_list)
-	
-	# Group segments by original word
-	grouped = defaultdict(list)
+	segments = ctc_align_words(logits, input_len, words, char_list)
+
+	results = []
 	for idx, seg in enumerate(segments):
-		orig_idx = mapping[idx]
-		grouped[orig_idx].append(seg)
-	
-	for orig_idx in range(len(original_words)):
-		if orig_idx in grouped:
-			segs = grouped[orig_idx]
-			start = min(s[0] for s in segs)
-			end = max(s[1] for s in segs)
-			confidence = sum(s[2] for s in segs) / len(segs)
-			results.append({
-				"text": original_words[orig_idx],
-				"start": start,
-				"end": end,
-				"confidence": float(confidence)
-			})
-	
+		results.append({
+			"start": seg[0],
+			"end": seg[1],
+		})
+
 	return results
 
 # -----------------------------------------

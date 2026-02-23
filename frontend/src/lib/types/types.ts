@@ -1,15 +1,13 @@
-export interface SyncPoint {
+export interface Line {
+    words: {
+        text: string,
+        index: number,
+    }[];
+};
+export interface Timing {
     start: number; 
     end: number;
-    text: string;
 }
-export interface SyncLine {
-    words: SyncPoint[];
-    start: number; // first word start time
-    end: number;   // last word end time
-    firstWordIndex: number;
-}
-
 export interface SyncMapSettings {
 	font: string;
 	textSize: number;
@@ -33,7 +31,8 @@ export const DEFAULT_SYNC_MAP_METADATA : SyncMapMetadata = {
 }
 
 export interface SyncMap {
-    lines: SyncLine[];
+    lines: Line[];
+    timings: Timing[];
     settings: SyncMapSettings;
     metadata: SyncMapMetadata;
 } 

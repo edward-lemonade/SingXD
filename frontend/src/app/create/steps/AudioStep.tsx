@@ -7,10 +7,10 @@ interface AudioStepProps {
 	audioUrls: AudioUrls;
 	setAudioUrls: React.Dispatch<React.SetStateAction<AudioUrls>>;
 	loading: boolean;
-	onSeparate: () => void;
+	handleSeparateAudio: () => void;
 }
 
-export default function AudioStep({ audioUrls, setAudioUrls, loading, onSeparate }: AudioStepProps) {
+export default function AudioStep({ audioUrls, setAudioUrls, loading, handleSeparateAudio }: AudioStepProps) {
     const onCombinedFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -67,7 +67,7 @@ export default function AudioStep({ audioUrls, setAudioUrls, loading, onSeparate
                                 <audio controls src={audioUrls.combined} className="mt-1" />
                             </div>
                             <button
-                                onClick={onSeparate}
+                                onClick={handleSeparateAudio}
                                 disabled={loading}
                                 className="bg-blue-500 text-white px-4 py-2 rounded"
                             >

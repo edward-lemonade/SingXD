@@ -1,29 +1,31 @@
 "use client";
 
 import Box from "@/src/components/Box";
-import { SyncMapMetadata, SyncPoint } from "../../../lib/types/types";
+import { Line, SyncMapMetadata, Timing } from "../../../lib/types/types";
 import { AudioUrls } from "../page";
 import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import SyncMapAlignmentEditor from "@/src/components/SyncMapAlignmentEditor";
 
 interface LyricsStepProps {
-	lyrics: string;
-	setLyrics: (lyrics: string) => void;
+	lyricsString: string;
+	setLyricsString: (lyrics: string) => void;
+	lines: Line[];
 	audioUrls: AudioUrls;
-	syncPoints: SyncPoint[];
-	setSyncPoints: (syncPoints: SetStateAction<SyncPoint[]>) => void;
+	timings: Timing[];
+	setTimings: (syncPoints: SetStateAction<Timing[]>) => void;
 	loading: boolean;
-	onAlign: () => void;
+	generateAlignment: () => void;
 }
 
 export default function LyricsStep({ 
-	lyrics, 
-	setLyrics, 
+	lyricsString, 
+	setLyricsString, 
+	lines,
 	audioUrls, 
-	syncPoints, 
-	setSyncPoints, 
+	timings, 
+	setTimings, 
 	loading, 
-	onAlign,
+	generateAlignment,
 }: LyricsStepProps) {
 	const [useInstrumental, setUseInstrumental] = useState(false);
 	const audioUrl = useInstrumental ? audioUrls.instrumental : audioUrls.combined;
@@ -33,14 +35,14 @@ export default function LyricsStep({
 			<div className="space-y-6">
 				<Box className="p-6">
 					<textarea
-						value={lyrics}
-						onChange={(e) => setLyrics(e.target.value)}
+						value={lyricsString}
+						onChange={(e) => setLyricsString(e.target.value)}
 						className="w-full min-h-48 p-4 border-2 border-gray-200 rounded-md resize-y"
 						placeholder="Paste or enter lyrics here..."
 					/>
-					{lyrics && (
+					{lyricsString && (
 						<button
-							onClick={onAlign}
+							onClick={generateAlignment}
 							disabled={loading}
 							className="bg-blue-500 text-white px-4 py-2 rounded"
 						>
@@ -51,8 +53,8 @@ export default function LyricsStep({
 
 				<SyncMapAlignmentEditor
 					audioUrl={audioUrl}
-					syncPoints={syncPoints}
-					setSyncPoints={setSyncPoints}
+					timings={timings}
+					setTimings={setTimings}
 				/>
 			</div>
 		</section>

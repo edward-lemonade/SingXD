@@ -5,7 +5,7 @@ import Wallpaper from "@/src/components/Wallpaper";
 import AudioStep from "@/src/app/create/steps/AudioStep";
 import LyricsStep from "@/src/app/create/steps/LyricsStep";
 import VideoStep from "@/src/app/create/steps/VideoStep";
-import { SyncMap, SyncLine, SyncPoint, SyncMapSettings, SyncMapMetadata, DEFAULT_SYNC_MAP_SETTINGS, DEFAULT_SYNC_MAP_METADATA } from "@/src/lib/types/types" ;
+import { SyncMap, Timing, SyncMapSettings, SyncMapMetadata, DEFAULT_SYNC_MAP_SETTINGS, DEFAULT_SYNC_MAP_METADATA, Line } from "@/src/lib/types/types" ;
 import * as CreateAPI from "@/src/lib/api/CreateAPI";
 
 const steps = [
@@ -20,47 +20,33 @@ export interface AudioUrls {
 	vocals: string | null;
 }
 
-const assembleSyncLines = (lyrics: string, syncPoints: SyncPoint[]) => {
-	const lines = lyrics.split(/[.!?;\r\n]+/)
-		.map(line => line.trim())
-		.filter(Boolean);
-
-	let syncPointIdx = 0;
-	const syncMapLines: SyncLine[] = lines.map((line) => { // mapping words to syncPoints
-		const firstWordIndex = syncPointIdx;
-		const words = line
-			.trim()
-			.split(/\s+/)
-			.filter(Boolean);
-
-		const wordSyncPoints = words.map((word) => {
-			return {
-				...syncPoints[syncPointIdx++]
-			}
-		});
-		return {
-			words: wordSyncPoints,
-			start: wordSyncPoints[0]?.start ?? 0,
-			end: wordSyncPoints[wordSyncPoints.length - 1]?.end ?? 0,
-			firstWordIndex
-		};
-	})
-
-	return syncMapLines;
-}
-
 export default function CreatePage() {
+
+	// Page state
+
 	const sessionId = useRef<string | null>(null);
 	const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 
-	const [lyrics, _setLyrics] = useState('');
-	const cleanAndSetLyrics = (lyrics: string) => {
-		lyrics.replaceAll("-", "- ");
-		lyrics.replaceAll("—", "- ");
-		_setLyrics(lyrics);
-	}
+	// Syncmap Construction
 
-	const [syncPoints, setSyncPoints] = useState<SyncPoint[]>([]);
+	const [lyricsString, setLyricsString] = useState('');
+	const lines: Line[] = lyricsString.split('\n').map(line => {
+		let wordIndex = 0;
+		return {
+			words: line
+				.replaceAll("-", "- ")
+				.replaceAll("—", "- ")
+				.split(' ')
+				.map((word) => {
+					return {
+						text: word,
+						index: wordIndex++,
+					}
+				}),
+		}
+	})
+	const [timings, setTimings] = useState<Timing[]>([]);
+
 	const [syncMapSettings, setSyncMapSettings] = useState<SyncMapSettings>(DEFAULT_SYNC_MAP_SETTINGS);
 	const [syncMapMetadata, setSyncMapMetadata] = useState<SyncMapMetadata>(DEFAULT_SYNC_MAP_METADATA);
 
@@ -70,17 +56,15 @@ export default function CreatePage() {
 		vocals: null,
 	});
 
-	const syncLines = useMemo(() => {
-		return assembleSyncLines(lyrics, syncPoints);
-	}, [lyrics, syncPoints]);
-
 	const syncMap: SyncMap = {
-		lines: syncLines,
+		lines: lines,
+		timings: timings,
 		settings: syncMapSettings,
 		metadata: syncMapMetadata,
 	};
 
 	// Cleanup
+
 	useEffect(() => { 
 		return () => { 
 			if (audioUrls.combined) URL.revokeObjectURL(audioUrls.combined);
@@ -130,7 +114,7 @@ export default function CreatePage() {
 	const [separateAudioLoading, setSeparateAudioLoading] = useState(false);
 	const handleSeparateAudio = async () => {
 		if (!audioUrls.combined) return;
-			setSeparateAudioLoading(true);
+		setSeparateAudioLoading(true);
 		try {
 			const combinedFile = await fetch(audioUrls.combined);
 			const blob = await combinedFile.blob()
@@ -152,11 +136,11 @@ export default function CreatePage() {
 
 	const [generateAlignmentLoading, setGenerateAlignmentLoading] = useState(false);
 	const handleGenerateAlignment = async() => {
-		if (!audioUrls.vocals || !lyrics) return;
-			setGenerateAlignmentLoading(true);
+		if (!audioUrls.vocals || !lines) return;
+		setGenerateAlignmentLoading(true);
 		try {
-			const syncPoints = await CreateAPI.generateAlignment(sessionId.current!, lyrics);
-			setSyncPoints(syncPoints);
+			const timings = await CreateAPI.generateTimings(sessionId.current!, lines);
+			setTimings(timings);
 		} catch (error) {
 			console.error('Failed to generate alignment', error);
 		} finally {
@@ -202,19 +186,20 @@ export default function CreatePage() {
 								audioUrls={audioUrls}
 								setAudioUrls={setAudioUrls}
 								loading={separateAudioLoading}
-								onSeparate={handleSeparateAudio}
+								handleSeparateAudio={handleSeparateAudio}
 							/>
 						)}
 
 						{currentStep === 2 && (
 							<LyricsStep
-								lyrics={lyrics}
-								setLyrics={cleanAndSetLyrics}
+								lyricsString={lyricsString}
+								setLyricsString={setLyricsString}
+								lines={lines}
 								audioUrls={audioUrls}
-								syncPoints={syncPoints}
-								setSyncPoints={setSyncPoints}
+								timings={timings}
+								setTimings={setTimings}
 								loading={generateAlignmentLoading}
-								onAlign={handleGenerateAlignment}
+								generateAlignment={handleGenerateAlignment}
 							/>
 						)}
 
