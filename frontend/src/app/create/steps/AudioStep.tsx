@@ -1,6 +1,6 @@
 "use client";
 
-import Box from "@/src/components/Box";
+import Card from "@/src/components/Card";
 import { AudioUrls } from "../page";
 
 interface AudioStepProps {
@@ -53,7 +53,7 @@ export default function AudioStep({ audioUrls, setAudioUrls, loading, handleSepa
 	return (
 		<section>
 			<div className="space-y-6">
-				<Box className="p-6">
+				<Card className="p-6">
 					<h3 className="text-xl font-semibold mb-4">Upload Combined Audio (Optional - for AI Separation)</h3>
 					<input
 						type="file"
@@ -75,8 +75,8 @@ export default function AudioStep({ audioUrls, setAudioUrls, loading, handleSepa
                             </button>
                         </>
 					)}
-				</Box>
-				<Box className="p-6">
+				</Card>
+				<Card className="p-6">
 					<h3 className="text-xl font-semibold mb-4">Audio Stems</h3>
 					<div className="space-y-4">
 						<div>
@@ -106,7 +106,7 @@ export default function AudioStep({ audioUrls, setAudioUrls, loading, handleSepa
 							)}
 						</div>
 					</div>
-				</Box>
+				</Card>
 			</div>
 		</section>
 	);

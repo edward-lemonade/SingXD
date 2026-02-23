@@ -1,6 +1,6 @@
 "use client";
 
-import Box from "@/src/components/Box";
+import Card from "@/src/components/Card";
 import SyncMapPlayer from "@/src/components/SyncMapPlayer";
 import { SyncMap, SyncMapSettings } from "@/src/lib/types/types";
 import { SetStateAction } from "react";
@@ -26,7 +26,7 @@ export default function VideoStep({ syncMap, syncMapSettings, setSyncMapSettings
 
 	return (
 		<section>
-			<Box className="p-6 space-y-4">
+			<Card className="p-6 space-y-4">
 				<div>
 					<label className="block mb-2">Font</label>
 					<select
@@ -65,7 +65,7 @@ export default function VideoStep({ syncMap, syncMapSettings, setSyncMapSettings
 						onChange={onBackgroundImageFileInputChange}
 					/>
 				</div>
-			</Box>
+			</Card>
 
 			<SyncMapPlayer
 				syncMap={syncMap}

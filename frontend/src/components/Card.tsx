@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-export default function Box({
+export default function Card({
 	children,
 	className,
 }: {

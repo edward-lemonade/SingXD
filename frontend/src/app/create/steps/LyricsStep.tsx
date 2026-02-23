@@ -1,9 +1,9 @@
 "use client";
 
-import Box from "@/src/components/Box";
+import Card from "@/src/components/Card";
 import { Line, SyncMapMetadata, Timing } from "../../../lib/types/types";
 import { AudioUrls } from "../page";
-import React, { SetStateAction, useEffect, useRef, useState } from "react";
+import React, { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import SyncMapAlignmentEditor from "@/src/components/SyncMapAlignmentEditor";
 
 interface LyricsStepProps {
@@ -30,10 +30,15 @@ export default function LyricsStep({
 	const [useInstrumental, setUseInstrumental] = useState(false);
 	const audioUrl = useInstrumental ? audioUrls.instrumental : audioUrls.combined;
 
+	const flatWords = useMemo(() => 
+    	lines.flatMap((line, lineIndex) => 
+        line.words.map(word => word.text)
+    ), [lines]);
+
 	return (
 		<section>
 			<div className="space-y-6">
-				<Box className="p-6">
+				<Card className="p-6">
 					<textarea
 						value={lyricsString}
 						onChange={(e) => setLyricsString(e.target.value)}
@@ -49,12 +54,13 @@ export default function LyricsStep({
 							{loading ? 'Aligning...' : 'Align lyrics to audio with AI'}
 						</button>
 					)}
-				</Box>
+				</Card>
 
 				<SyncMapAlignmentEditor
 					audioUrl={audioUrl}
 					timings={timings}
 					setTimings={setTimings}
+					words={flatWords}
 				/>
 			</div>
 		</section>

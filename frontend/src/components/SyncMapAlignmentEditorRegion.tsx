@@ -1,126 +1,63 @@
 import WaveSurfer from "wavesurfer.js";
-import { SyncPoint } from "../lib/types/types"
+import { Timing } from "../lib/types/types"
 import { useEffect, useRef, useState } from "react";
 
 interface SyncMapAlignmentEditorRegionProps {
-    syncPoint: SyncPoint;
     index: number;
-    wavesurferRef: React.RefObject<WaveSurfer | null>;
-    
-    // Selection state
-    isSelected: boolean;
-    
-    // Callbacks for user interactions
-    onSelect: (index: number, addToSelection: boolean) => void;
-    onDragStart: (index: number) => void;
-    onDrag: (index: number, newTime: number) => void;
-    onDragEnd: (index: number, newTime: number) => void;
-    
-    // Optional: if you want multi-select drag
-    isDragging?: boolean;
+    start: number;
+    end: number;
+    text: string;
+    duration: number;
+    waveformWidth: number;
 }
 
+// 6 heights that snake up and down (as % from top of the region container)
+const SNAKE_HEIGHTS = [5, 20, 35, 50, 65, 80];
+
 export default function SyncMapAlignmentEditorRegion({
-    syncPoint,
     index,
-    wavesurferRef,
-    isSelected,
-    onSelect,
-    onDragStart,
-    onDrag,
-    onDragEnd,
-    isDragging = false
+    start,
+    end,
+    text,
+    duration,
+    waveformWidth,
 }: SyncMapAlignmentEditorRegionProps) {
     const regionRef = useRef<HTMLDivElement>(null);
-    const dragStartX = useRef<number>(0);
-    const dragStartTime = useRef<number>(0);
+    const [hovered, setHovered] = useState(false);
 
-    const [startPosition, setStartPosition] = useState<number>(0);
-    const [endPosition, setEndPosition] = useState<number>(0);
+    const startPosition = (start / duration) * waveformWidth;
+    const endPosition = (end / duration) * waveformWidth;
 
-    useEffect(() => {
-        const ws = wavesurferRef.current!;        
-        const duration = ws.getDuration();
-
-        const containerWidth = ws.getWrapper().scrollWidth;
-
-        setStartPosition((syncPoint.start / duration) * containerWidth);
-        setEndPosition((syncPoint.end / duration) * containerWidth);
-    }, [syncPoint.start, syncPoint.end]);
-
-    const handleMouseDown = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Check for modifier keys (Ctrl/Cmd for multi-select)
-        const addToSelection = e.ctrlKey || e.metaKey;
-        
-        onSelect(index, addToSelection);
-        onDragStart(index);
-        
-        dragStartX.current = e.clientX;
-        dragStartTime.current = syncPoint.start;
-        
-        // Attach global mouse move and mouse up listeners
-        const handleMouseMove = (e: MouseEvent) => {
-            if (!wavesurferRef.current) return;
-            
-            const ws = wavesurferRef.current;
-            const duration = ws.getDuration();
-            const containerWidth = ws.getWrapper().scrollWidth;
-            
-            // Calculate delta in pixels
-            const deltaX = e.clientX - dragStartX.current;
-            
-            // Convert to time delta
-            const deltaTime = (deltaX / containerWidth) * duration;
-            let newTime = dragStartTime.current + deltaTime;
-            
-            // Clamp to valid range
-            newTime = Math.max(0, Math.min(duration, newTime));
-            
-            onDrag(index, newTime);
-        };
-        
-        const handleMouseUp = (e: MouseEvent) => {
-            if (!wavesurferRef.current) return;
-            
-            const ws = wavesurferRef.current;
-            const duration = ws.getDuration();
-            const containerWidth = ws.getWrapper().scrollWidth;
-            
-            const deltaX = e.clientX - dragStartX.current;
-            const deltaTime = (deltaX / containerWidth) * duration;
-            let newTime = dragStartTime.current + deltaTime;
-            newTime = Math.max(0, Math.min(duration, newTime));
-            
-            onDragEnd(index, newTime);
-            
-            // Clean up listeners
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-        
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
-    };
+    const cycle = (SNAKE_HEIGHTS.length - 1) * 2;
+    const pos = index % cycle;
+    const heightIndex = pos < SNAKE_HEIGHTS.length ? pos : cycle - pos;
+    const topPercent = SNAKE_HEIGHTS[heightIndex];
 
     return (
         <div
             ref={regionRef}
-            onMouseDown={handleMouseDown}
-            className={`absolute top-0 bottom-0 w-1 cursor-ew-resize opacity-30 transition-colors ${
-                isSelected 
-                    ? 'bg-blue-500 hover:bg-blue-600' 
-                    : 'bg-gray-400 hover:bg-gray-500'
-            } ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+            className="absolute top-0 bottom-0 cursor-ew-resize transition-opacity duration-150"
             style={{
                 left: `${startPosition}px`,
                 width: `${endPosition - startPosition}px`,
-                zIndex: isSelected ? 10 : 5,
+                zIndex: hovered ? 20 : 5,
+                opacity: hovered ? 0.7 : 0.5,
+                outline: "1px solid rgba(0, 0, 0, 0.5)",
+                background: hovered
+                    ? `linear-gradient(to right, rgba(0,0,0,0.18) 0%, transparent 18%, transparent 82%, rgba(0,0,0,0.18) 100%),
+                       rgba(234, 179, 8, 0.45)`
+                    : `linear-gradient(to right, rgba(0,0,0,0.18) 0%, transparent 18%, transparent 82%, rgba(0,0,0,0.18) 100%),
+                       rgba(156, 163, 175, 0.25)`,
             }}
-            title={`${syncPoint.start.toFixed(2)}s - ${syncPoint.text || ''}`}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
         >
+            <span
+                className="absolute text-xs whitespace-nowrap pointer-events-none"
+                style={{ top: `${topPercent}%`, left: 4 }}
+            >
+                {text}
+            </span>
         </div>
     );
 }
