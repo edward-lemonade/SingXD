@@ -30,21 +30,25 @@ export default function CreatePage() {
 	// Syncmap Construction
 
 	const [lyricsString, setLyricsString] = useState('');
-	const lines: Line[] = lyricsString.split('\n').map(line => {
-		let wordIndex = 0;
-		return {
-			words: line
-				.replaceAll("-", "- ")
-				.replaceAll("—", "- ")
-				.split(' ')
-				.map((word) => {
-					return {
-						text: word,
-						index: wordIndex++,
-					}
-				}),
-		}
-	})
+	const lines: Line[] = lyricsString
+		.split('\n')
+		.filter(line => line.trim() !== '')   // remove empty/blank lines
+		.map(line => {
+			let wordIndex = 0;
+			return {
+				words: line
+					.replaceAll("-", "- ")
+					.replaceAll("—", "- ")
+					.split(' ')
+					.filter(word => word !== '')  // remove empty strings from consecutive spaces
+					.map((word) => {
+						return {
+							text: word,
+							index: wordIndex++,
+						}
+					}),
+			}
+		})
 	const [timings, setTimings] = useState<Timing[]>([]);
 
 	const [syncMapSettings, setSyncMapSettings] = useState<SyncMapSettings>(DEFAULT_SYNC_MAP_SETTINGS);

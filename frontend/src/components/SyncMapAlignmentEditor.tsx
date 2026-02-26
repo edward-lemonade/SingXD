@@ -43,6 +43,9 @@ export default function SyncMapAlignmentEditor({
     const [minPxPerSec, setMinPxPerSec] = useState<number>(50);
     const minPxPerSecRef = useRef<number>(50);
 
+    // Selection state — holds the index of the selected region, or null
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
     const togglePlayPause = () => {
         if (!wsRef.current) return;
         if (isPlaying) {
@@ -52,6 +55,15 @@ export default function SyncMapAlignmentEditor({
             wsRef.current.play();
             setIsPlaying(true);
         }
+    };
+
+    /** Called by a region when the user drags it or resizes it */
+    const handleTimingChange = (index: number, newStart: number, newEnd: number) => {
+        setTimings((prev) => {
+            const next = [...prev];
+            next[index] = { ...next[index], start: newStart, end: newEnd };
+            return next;
+        });
     };
 
     // Create wavesurfer
@@ -159,7 +171,6 @@ export default function SyncMapAlignmentEditor({
     useEffect(() => {
         if (!isWsReady || !wsRef.current) return;
         const ws = wsRef.current;
-        // After setOptions resolves, WaveSurfer re-renders; read new width next frame
         requestAnimationFrame(() => {
             const width = ws.getWrapper().scrollWidth;
             setWaveformWidth(width);
@@ -202,7 +213,6 @@ export default function SyncMapAlignmentEditor({
 
             if (Math.abs(newPxPerSec - minPxPerSecRef.current) < 0.5) return;
 
-            // Preserve scroll ratio around pinch midpoint
             const container = regionsScrollContainerRef.current!;
             const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
             const rect = container.getBoundingClientRect();
@@ -230,7 +240,6 @@ export default function SyncMapAlignmentEditor({
             }
         };
 
-        // Also support ctrl+wheel (desktop trackpad pinch / mouse wheel zoom)
         const onWheel = (e: WheelEvent) => {
             if (!e.ctrlKey && !e.metaKey) return;
             e.preventDefault();
@@ -286,7 +295,7 @@ export default function SyncMapAlignmentEditor({
                         className="w-12 h-12 rounded-full bg-green-400 hover:bg-green-500 flex items-center justify-center transition-colors"
                         aria-label={isPlaying ? "Pause" : "Play"}
                     >
-                        {isPlaying ? (
+                        {!isPlaying ? (
                             <PlayArrowIcon/>
                         ) : (
                             <PauseIcon/>
@@ -303,6 +312,10 @@ export default function SyncMapAlignmentEditor({
                     if (e.code === 'Space') {
                         e.preventDefault();
                         togglePlayPause();
+                    }
+                    // Pressing Escape deselects
+                    if (e.code === 'Escape') {
+                        setSelectedIndex(null);
                     }
                 }}
                 style={{ backgroundColor: '#F4F4F4', overflow: 'hidden' }}
@@ -328,10 +341,16 @@ export default function SyncMapAlignmentEditor({
                         position: 'absolute',
                         inset: 0,
                         overflow: 'auto',
-                        touchAction: 'pan-x', // allow horizontal pan; pinch handled manually
+                        touchAction: 'pan-x',
                     }}
                     onPointerDown={(e) => {
-                        // Only handle single-touch / mouse clicks (not pinch start)
+                        // Click on empty area: deselect & seek
+                        const target = e.target as HTMLElement;
+                        const isRegionClick = target.closest('[data-region]');
+                        if (!isRegionClick) {
+                            setSelectedIndex(null);
+                        }
+
                         const container = regionsScrollContainerRef.current!;
                         const rect = container.getBoundingClientRect();
                         const clickX = e.clientX - rect.left + container.scrollLeft;
@@ -353,6 +372,11 @@ export default function SyncMapAlignmentEditor({
                                 text={words[index]}
                                 duration={wsRef.current?.getDuration()!}
                                 waveformWidth={waveformWidth}
+                                isSelected={selectedIndex === index}
+                                onSelect={setSelectedIndex}
+                                onTimingChange={handleTimingChange}
+                                prevEnd={index > 0 ? timings[index - 1].end : 0}
+                                nextStart={index < timings.length - 1 ? timings[index + 1].start : wsRef.current?.getDuration()!}
                             />
                         ))}
                     </div>
