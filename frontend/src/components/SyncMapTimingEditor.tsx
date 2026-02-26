@@ -3,17 +3,17 @@ import Card from "./Card";
 import WaveSurfer from "wavesurfer.js";
 import Timeline from "wavesurfer.js/dist/plugins/timeline.js";
 import { Timing } from "../lib/types/types";
-import SyncMapAlignmentEditorRegion from "./SyncMapAlignmentEditorRegion";
+import SyncMapTimingEditorRegion from "./SyncMapTimingEditorRegion";
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 
-export interface SyncMapAlignmentEditorHandle {
+export interface SyncMapTimingEditorHandle {
     seekTo: (time: number) => void;
     selectIndex: (index: number) => void;
 }
 
-interface SyncMapAlignmentEditorProps {
+interface SyncMapTimingEditorProps {
     audioUrl: string | null;
     timings: Timing[];
     setTimings: (syncPoints: SetStateAction<Timing[]>) => void;
@@ -29,14 +29,14 @@ const WAVEFORM_HEIGHT = 100
 const TIMELINE_HEIGHT = 25
 
 
-function SyncMapAlignmentEditor({
+function SyncMapTimingEditor({
     audioUrl,
     timings,
     setTimings,
     words,
     selectedIndex: controlledSelectedIndex,
     onSelectedIndexChange,
-}: SyncMapAlignmentEditorProps) {
+}: SyncMapTimingEditorProps) {
     
     // Refs
     const wsContainerRef = useRef<HTMLDivElement | null>(null);
@@ -486,7 +486,7 @@ function SyncMapAlignmentEditor({
                             }}
                         >
                             {isWsReady && timings.map((timing, index) => (
-                                <SyncMapAlignmentEditorRegion
+                                <SyncMapTimingEditorRegion
                                     key={index}
                                     index={index}
                                     start={timing.start}
@@ -509,4 +509,4 @@ function SyncMapAlignmentEditor({
     );
 }
 
-export default SyncMapAlignmentEditor;
+export default SyncMapTimingEditor;

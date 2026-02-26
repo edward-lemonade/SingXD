@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Timing } from "../lib/types/types";
 
-interface SyncMapAlignmentEditorRegionProps {
+interface SyncMapTimingEditorRegionProps {
     index: number;
     start: number;
     end: number;
@@ -11,7 +11,7 @@ interface SyncMapAlignmentEditorRegionProps {
     isSelected: boolean;
     onSelect: (index: number) => void;
     onTimingChange: (index: number, newStart: number, newEnd: number) => void;
-    /** Neighbouring timing bounds to prevent overlap */
+    // Neighbouring timing bounds to prevent overlap
     prevEnd: number;   // 0 if no previous region
     nextStart: number; // duration if no next region
 }
@@ -21,7 +21,7 @@ const SNAKE_HEIGHTS = [5, 20, 35, 50, 65, 80];
 
 type DragMode = "move" | "resize-left" | "resize-right";
 
-export default function SyncMapAlignmentEditorRegion({
+export default function SyncMapTimingEditorRegion({
     index,
     start,
     end,
@@ -33,7 +33,7 @@ export default function SyncMapAlignmentEditorRegion({
     onTimingChange,
     prevEnd,
     nextStart,
-}: SyncMapAlignmentEditorRegionProps) {
+}: SyncMapTimingEditorRegionProps) {
     const regionRef = useRef<HTMLDivElement>(null);
     const [hovered, setHovered] = useState(false);
 

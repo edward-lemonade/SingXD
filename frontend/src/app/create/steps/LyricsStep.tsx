@@ -4,7 +4,7 @@ import Card from "@/src/components/Card";
 import { Line, SyncMapMetadata, Timing } from "../../../lib/types/types";
 import { AudioUrls } from "../page";
 import React, { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
-import SyncMapAlignmentEditor from "@/src/components/SyncMapAlignmentEditor";
+import SyncMapTimingEditor from "@/src/components/SyncMapTimingEditor";
 
 interface LyricsStepProps {
 	lyricsString: string;
@@ -56,7 +56,7 @@ export default function LyricsStep({
 					)}
 				</Card>
 
-				<SyncMapAlignmentEditor
+				<SyncMapTimingEditor
 					audioUrl={audioUrl}
 					timings={timings}
 					setTimings={setTimings}
