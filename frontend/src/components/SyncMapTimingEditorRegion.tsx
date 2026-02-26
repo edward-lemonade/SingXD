@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
 
+export type DragMode = "move" | "resize-left" | "resize-right";
+
 interface SyncMapTimingEditorRegionProps {
     index: number;
     start: number;
@@ -9,14 +11,12 @@ interface SyncMapTimingEditorRegionProps {
     waveformWidth: number;
     selected: boolean;
     onSelect: (index: number) => void;
-    onTimingChange: (index: number, newStart: number, newEnd: number) => void;
-    prevEnd: number;
-    nextStart: number;
+    onDragStart: (index: number, mode: DragMode, clientX: number, pointerId: number) => void;
+    // Imperative handle so parent can mutate DOM directly during drag
+    regionRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const SNAKE_HEIGHTS = [5, 20, 35, 50, 65, 80];
-
-type DragMode = "move" | "resize-left" | "resize-right";
 
 export default function SyncMapTimingEditorRegion({
     index,
@@ -27,11 +27,9 @@ export default function SyncMapTimingEditorRegion({
     waveformWidth,
     selected,
     onSelect,
-    onTimingChange,
-    prevEnd,
-    nextStart,
+    onDragStart,
+    regionRef,
 }: SyncMapTimingEditorRegionProps) {
-    const regionRef = useRef<HTMLDivElement>(null);
     const [hovered, setHovered] = useState(false);
 
     const startPosition = (start / duration) * waveformWidth;
@@ -42,82 +40,10 @@ export default function SyncMapTimingEditorRegion({
     const heightIndex = pos < SNAKE_HEIGHTS.length ? pos : cycle - pos;
     const topPercent = SNAKE_HEIGHTS[heightIndex];
 
-    // All drag state lives in refs — no setState during drag at all
-    const dragState = useRef<{
-        mode: DragMode;
-        startX: number;
-        origStart: number;
-        origEnd: number;
-        // Live computed values updated each pointermove
-        liveStart: number;
-        liveEnd: number;
-    } | null>(null);
-
-    const pxToSec = (px: number) => (px / waveformWidth) * duration;
-    const secToPx = (sec: number) => (sec / duration) * waveformWidth;
-
-    // Directly mutate the DOM element's style during drag to avoid any React re-render
-    const applyDragStyle = (newStart: number, newEnd: number) => {
-        const el = regionRef.current;
-        if (!el) return;
-        el.style.left = `${secToPx(newStart)}px`;
-        el.style.width = `${secToPx(newEnd - newStart)}px`;
-    };
-
     const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>, mode: DragMode) => {
         e.stopPropagation();
-        if (!selected) {
-            onSelect(index);
-            return;
-        }
-        e.currentTarget.setPointerCapture(e.pointerId);
-        dragState.current = {
-            mode,
-            startX: e.clientX,
-            origStart: start,
-            origEnd: end,
-            liveStart: start,
-            liveEnd: end,
-        };
-    };
-
-    const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-        const ds = dragState.current;
-        if (!ds) return;
-
-        const deltaSec = pxToSec(e.clientX - ds.startX);
-        const regionDuration = ds.origEnd - ds.origStart;
-
-        let newStart = ds.origStart;
-        let newEnd = ds.origEnd;
-
-        if (ds.mode === "move") {
-            newStart = ds.origStart + deltaSec;
-            newEnd = ds.origEnd + deltaSec;
-            if (newStart < prevEnd) { newStart = prevEnd; newEnd = newStart + regionDuration; }
-            if (newEnd > nextStart) { newEnd = nextStart; newStart = newEnd - regionDuration; }
-            newStart = Math.max(0, newStart);
-            newEnd = Math.min(duration, newEnd);
-        } else if (ds.mode === "resize-left") {
-            newStart = Math.max(prevEnd, Math.min(ds.origEnd - 0.01, ds.origStart + deltaSec));
-        } else if (ds.mode === "resize-right") {
-            newEnd = Math.min(nextStart, Math.max(ds.origStart + 0.01, ds.origEnd + deltaSec));
-        }
-
-        ds.liveStart = newStart;
-        ds.liveEnd = newEnd;
-
-        applyDragStyle(newStart, newEnd);
-    };
-
-    const handlePointerUp = () => {
-        const ds = dragState.current;
-        if (!ds) return;
-        dragState.current = null;
-
-        if (ds.liveStart !== ds.origStart || ds.liveEnd !== ds.origEnd) {
-            onTimingChange(index, ds.liveStart, ds.liveEnd);
-        }
+        if (!selected) onSelect(index);
+        onDragStart(index, mode, e.clientX, e.pointerId);
     };
 
     const EDGE_WIDTH = 8;
@@ -135,6 +61,7 @@ export default function SyncMapTimingEditorRegion({
     return (
         <div
             ref={regionRef}
+            data-region
             className="absolute top-0 bottom-0 transition-opacity duration-150"
             style={{
                 left: `${startPosition}px`,
@@ -150,8 +77,6 @@ export default function SyncMapTimingEditorRegion({
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             onPointerDown={(e) => handlePointerDown(e, "move")}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
         >
             {/* Left resize handle */}
             <div

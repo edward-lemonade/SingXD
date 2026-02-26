@@ -3,7 +3,7 @@ import Card from "./Card";
 import WaveSurfer from "wavesurfer.js";
 import Timeline from "wavesurfer.js/dist/plugins/timeline.js";
 import { Timing } from "../lib/types/types";
-import SyncMapTimingEditorRegion from "./SyncMapTimingEditorRegion";
+import SyncMapTimingEditorRegion, { DragMode } from "./SyncMapTimingEditorRegion";
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -47,6 +47,15 @@ function SyncMapTimingEditor({
     const regionsContainerRef = useRef<HTMLDivElement | null>(null);
     const timelineScrollContainerRef = useRef<HTMLDivElement | null>(null);
     const timelineContainerRef = useRef<HTMLDivElement | null>(null);
+
+    // Per-region DOM refs so parent can mutate them directly during drag
+    const regionRefs = useRef<React.RefObject<HTMLDivElement | null>[]>([]);
+    const getRegionRef = (index: number): React.RefObject<HTMLDivElement | null> => {
+        if (!regionRefs.current[index]) {
+            regionRefs.current[index] = { current: null } as React.RefObject<HTMLDivElement | null>;
+        }
+        return regionRefs.current[index];
+    };
 
     // Ghost region DOM element — managed imperatively to avoid re-renders during drag
     const ghostRef = useRef<HTMLDivElement | null>(null);
@@ -318,13 +327,10 @@ function SyncMapTimingEditor({
         let e = Math.min(duration, Math.max(rawStart, rawEnd));
 
         for (const t of sorted) {
-            // If this existing region overlaps our proposed span
             if (t.end > s && t.start < e) {
                 if (rawEnd >= rawStart) {
-                    // Dragging right, trim our end back to the region's start
                     e = Math.min(e, t.start);
                 } else {
-                    // Dragging left, trim our start forward to the region's end
                     s = Math.max(s, t.end);
                 }
             }
@@ -370,7 +376,44 @@ function SyncMapTimingEditor({
         ghost.style.width = `${secToPx(e - s)}px`;
     };
 
-    // Drag-to-create regions
+    // ==================================================================================
+    // Region drag / resize
+
+    const regionDragState = useRef<{
+        index: number;
+        mode: DragMode;
+        pointerId: number;
+        startX: number;
+        origStart: number;
+        origEnd: number;
+        liveStart: number;
+        liveEnd: number;
+    } | null>(null);
+
+    const applyRegionDragStyle = (index: number, newStart: number, newEnd: number) => {
+        const el = regionRefs.current[index]?.current;
+        if (!el) return;
+        el.style.left = `${secToPx(newStart)}px`;
+        el.style.width = `${secToPx(newEnd - newStart)}px`;
+    };
+
+    const handleRegionDragStart = (index: number, mode: DragMode, clientX: number, pointerId: number) => {
+        const t = timingsRef.current[index];
+        // Capture on the scroll container so we keep receiving events regardless of cursor position
+        regionsScrollContainerRef.current?.setPointerCapture(pointerId);
+        regionDragState.current = {
+            index,
+            mode,
+            pointerId,
+            startX: clientX,
+            origStart: t.start,
+            origEnd: t.end,
+            liveStart: t.start,
+            liveEnd: t.end,
+        };
+    };
+
+    // Region move / resize / draw
     useEffect(() => {
         if (!isWsReady) return;
 
@@ -378,10 +421,10 @@ function SyncMapTimingEditor({
 
         const onPointerDown = (e: PointerEvent) => {
             if (e.button !== 0) return;
-            // Do not intercept events that originate on an existing region
             const target = e.target as HTMLElement;
             if (target.closest('[data-region]')) return;
 
+            // Background click — start a draw-to-create drag
             const rect = container.getBoundingClientRect();
             const offsetX = e.clientX - rect.left + container.scrollLeft;
 
@@ -394,6 +437,39 @@ function SyncMapTimingEditor({
         };
 
         const onPointerMove = (e: PointerEvent) => {
+            // Move / resize
+            const rd = regionDragState.current;
+            if (rd && e.pointerId === rd.pointerId) {
+                const duration = wsRef.current?.getDuration() ?? 1;
+                const deltaSec = pxToSec(e.clientX - rd.startX);
+                const regionDuration = rd.origEnd - rd.origStart;
+                const ts = timingsRef.current;
+                const prevEnd = rd.index > 0 ? ts[rd.index - 1].end : 0;
+                const nextStart = rd.index < ts.length - 1 ? ts[rd.index + 1].start : duration;
+
+                let newStart = rd.origStart;
+                let newEnd = rd.origEnd;
+
+                if (rd.mode === "move") {
+                    newStart = rd.origStart + deltaSec;
+                    newEnd = rd.origEnd + deltaSec;
+                    if (newStart < prevEnd) { newStart = prevEnd; newEnd = newStart + regionDuration; }
+                    if (newEnd > nextStart) { newEnd = nextStart; newStart = newEnd - regionDuration; }
+                    newStart = Math.max(0, newStart);
+                    newEnd = Math.min(duration, newEnd);
+                } else if (rd.mode === "resize-left") {
+                    newStart = Math.max(prevEnd, Math.min(rd.origEnd - 0.01, rd.origStart + deltaSec));
+                } else if (rd.mode === "resize-right") {
+                    newEnd = Math.min(nextStart, Math.max(rd.origStart + 0.01, rd.origEnd + deltaSec));
+                }
+
+                rd.liveStart = newStart;
+                rd.liveEnd = newEnd;
+                applyRegionDragStyle(rd.index, newStart, newEnd);
+                return;
+            }
+
+            // Draw to create
             const ds = createDragState.current;
             if (!ds || e.pointerId !== ds.pointerId) return;
 
@@ -410,6 +486,17 @@ function SyncMapTimingEditor({
         };
 
         const onPointerUp = (e: PointerEvent) => {
+            // Move / resize
+            const rd = regionDragState.current;
+            if (rd && e.pointerId === rd.pointerId) {
+                regionDragState.current = null;
+                if (rd.liveStart !== rd.origStart || rd.liveEnd !== rd.origEnd) {
+                    handleTimingChange(rd.index, rd.liveStart, rd.liveEnd);
+                }
+                return;
+            }
+
+            // Draw to create
             const ds = createDragState.current;
             if (!ds || e.pointerId !== ds.pointerId) return;
 
@@ -433,10 +520,17 @@ function SyncMapTimingEditor({
         };
 
         const onPointerCancel = (e: PointerEvent) => {
-            if (createDragState.current?.pointerId !== e.pointerId) return;
-            removeGhost();
-            container.style.cursor = 'default';
-            createDragState.current = null;
+            if (regionDragState.current?.pointerId === e.pointerId) {
+                // Restore original position visually
+                const rd = regionDragState.current;
+                applyRegionDragStyle(rd.index, rd.origStart, rd.origEnd);
+                regionDragState.current = null;
+            }
+            if (createDragState.current?.pointerId === e.pointerId) {
+                removeGhost();
+                container.style.cursor = 'default';
+                createDragState.current = null;
+            }
         };
 
         container.addEventListener('pointerdown', onPointerDown);
@@ -532,7 +626,7 @@ function SyncMapTimingEditor({
                         }}
                     />
 
-                    {/* Regions scroll container — crosshair on empty space hints at draw mode */}
+                    {/* Regions scroll container */}
                     <div
                         ref={regionsScrollContainerRef}
                         style={{
@@ -578,9 +672,8 @@ function SyncMapTimingEditor({
                                     waveformWidth={waveformWidth}
                                     selected={selectedIndex === index}
                                     onSelect={setSelectedIndex}
-                                    onTimingChange={handleTimingChange}
-                                    prevEnd={index > 0 ? timings[index - 1].end : 0}
-                                    nextStart={index < timings.length - 1 ? timings[index + 1].start : wsRef.current?.getDuration()!}
+                                    onDragStart={handleRegionDragStart}
+                                    regionRef={getRegionRef(index)}
                                 />
                             ))}
                         </div>
