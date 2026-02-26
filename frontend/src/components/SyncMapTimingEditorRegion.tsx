@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import { Timing } from "../lib/types/types";
+import { useRef, useState } from "react";
 
 interface SyncMapTimingEditorRegionProps {
     index: number;
@@ -8,15 +7,13 @@ interface SyncMapTimingEditorRegionProps {
     text: string;
     duration: number;
     waveformWidth: number;
-    isSelected: boolean;
+    selected: boolean;
     onSelect: (index: number) => void;
     onTimingChange: (index: number, newStart: number, newEnd: number) => void;
-    // Neighbouring timing bounds to prevent overlap
-    prevEnd: number;   // 0 if no previous region
-    nextStart: number; // duration if no next region
+    prevEnd: number;
+    nextStart: number;
 }
 
-// 6 heights that snake up and down (as % from top of the region container)
 const SNAKE_HEIGHTS = [5, 20, 35, 50, 65, 80];
 
 type DragMode = "move" | "resize-left" | "resize-right";
@@ -28,7 +25,7 @@ export default function SyncMapTimingEditorRegion({
     text,
     duration,
     waveformWidth,
-    isSelected,
+    selected,
     onSelect,
     onTimingChange,
     prevEnd,
@@ -45,19 +42,31 @@ export default function SyncMapTimingEditorRegion({
     const heightIndex = pos < SNAKE_HEIGHTS.length ? pos : cycle - pos;
     const topPercent = SNAKE_HEIGHTS[heightIndex];
 
-    // Drag state stored in refs to avoid re-renders during drag
+    // All drag state lives in refs — no setState during drag at all
     const dragState = useRef<{
         mode: DragMode;
         startX: number;
         origStart: number;
         origEnd: number;
+        // Live computed values updated each pointermove
+        liveStart: number;
+        liveEnd: number;
     } | null>(null);
 
     const pxToSec = (px: number) => (px / waveformWidth) * duration;
+    const secToPx = (sec: number) => (sec / duration) * waveformWidth;
+
+    // Directly mutate the DOM element's style during drag to avoid any React re-render
+    const applyDragStyle = (newStart: number, newEnd: number) => {
+        const el = regionRef.current;
+        if (!el) return;
+        el.style.left = `${secToPx(newStart)}px`;
+        el.style.width = `${secToPx(newEnd - newStart)}px`;
+    };
 
     const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>, mode: DragMode) => {
-        e.stopPropagation(); // prevent wavesurfer seek
-        if (!isSelected) {
+        e.stopPropagation();
+        if (!selected) {
             onSelect(index);
             return;
         }
@@ -67,6 +76,8 @@ export default function SyncMapTimingEditorRegion({
             startX: e.clientX,
             origStart: start,
             origEnd: end,
+            liveStart: start,
+            liveEnd: end,
         };
     };
 
@@ -83,16 +94,8 @@ export default function SyncMapTimingEditorRegion({
         if (ds.mode === "move") {
             newStart = ds.origStart + deltaSec;
             newEnd = ds.origEnd + deltaSec;
-            // clamp to neighbour bounds
-            if (newStart < prevEnd) {
-                newStart = prevEnd;
-                newEnd = newStart + regionDuration;
-            }
-            if (newEnd > nextStart) {
-                newEnd = nextStart;
-                newStart = newEnd - regionDuration;
-            }
-            // clamp to [0, duration]
+            if (newStart < prevEnd) { newStart = prevEnd; newEnd = newStart + regionDuration; }
+            if (newEnd > nextStart) { newEnd = nextStart; newStart = newEnd - regionDuration; }
             newStart = Math.max(0, newStart);
             newEnd = Math.min(duration, newEnd);
         } else if (ds.mode === "resize-left") {
@@ -101,24 +104,33 @@ export default function SyncMapTimingEditorRegion({
             newEnd = Math.min(nextStart, Math.max(ds.origStart + 0.01, ds.origEnd + deltaSec));
         }
 
-        onTimingChange(index, newStart, newEnd);
+        ds.liveStart = newStart;
+        ds.liveEnd = newEnd;
+
+        applyDragStyle(newStart, newEnd);
     };
 
     const handlePointerUp = () => {
+        const ds = dragState.current;
+        if (!ds) return;
         dragState.current = null;
+
+        if (ds.liveStart !== ds.origStart || ds.liveEnd !== ds.origEnd) {
+            onTimingChange(index, ds.liveStart, ds.liveEnd);
+        }
     };
 
-    const EDGE_WIDTH = 8; // px, hit area for resize handles
+    const EDGE_WIDTH = 8;
 
-    const bgColor = isSelected
-        ? "rgba(253, 224, 71, 0.45)"  // yellow-300 @ 45%
+    const bgColor = selected
+        ? "rgba(253, 224, 71, 0.45)"
         : hovered
         ? "rgba(250, 250, 250, 0.25)"
         : "rgba(150, 150, 150, 0.25)";
-
-    const outlineColor = isSelected
-        ? "rgba(202, 138, 4, 0.8)"  // yellow-600
-        : "rgba(0, 0, 0, 0.5)";
+    const bgImage = selected
+        ? "none"
+        : "linear-gradient(to right, rgba(0,0,255,0.18) 0%, transparent 50%, rgba(0,255,255,0.18) 100%)";
+    const outlineColor = selected ? "rgba(202, 138, 4, 0.8)" : "rgba(0, 0, 0, 0.5)";
 
     return (
         <div
@@ -127,11 +139,12 @@ export default function SyncMapTimingEditorRegion({
             style={{
                 left: `${startPosition}px`,
                 width: `${endPosition - startPosition}px`,
-                zIndex: isSelected ? 30 : hovered ? 20 : 5,
-                opacity: hovered || isSelected ? 0.85 : 0.6,
-                outline: `${isSelected ? 2 : 1}px solid ${outlineColor}`,
-                background: `linear-gradient(to right, rgba(0,0,0,0.18) 0%, transparent 18%, transparent 82%, rgba(0,0,0,0.18) 100%), ${bgColor}`,
-                cursor: isSelected ? "grab" : "default",
+                zIndex: selected ? 30 : hovered ? 20 : 5,
+                opacity: hovered || selected ? 0.85 : 0.6,
+                outline: `${selected ? 2 : 1}px solid ${outlineColor}`,
+                backgroundColor: bgColor,
+                backgroundImage: bgImage,
+                cursor: selected ? "grab" : "default",
                 userSelect: "none",
             }}
             onMouseEnter={() => setHovered(true)}
@@ -143,24 +156,14 @@ export default function SyncMapTimingEditorRegion({
             {/* Left resize handle */}
             <div
                 className="absolute top-0 bottom-0"
-                style={{
-                    left: 0,
-                    width: EDGE_WIDTH,
-                    cursor: isSelected ? "ew-resize" : "default",
-                    zIndex: 2,
-                }}
+                style={{ left: 0, width: EDGE_WIDTH, cursor: selected ? "ew-resize" : "default", zIndex: 2 }}
                 onPointerDown={(e) => handlePointerDown(e, "resize-left")}
             />
 
             {/* Right resize handle */}
             <div
                 className="absolute top-0 bottom-0"
-                style={{
-                    right: 0,
-                    width: EDGE_WIDTH,
-                    cursor: isSelected ? "ew-resize" : "default",
-                    zIndex: 2,
-                }}
+                style={{ right: 0, width: EDGE_WIDTH, cursor: selected ? "ew-resize" : "default", zIndex: 2 }}
                 onPointerDown={(e) => handlePointerDown(e, "resize-right")}
             />
 
@@ -169,8 +172,8 @@ export default function SyncMapTimingEditorRegion({
                 style={{
                     top: `${topPercent}%`,
                     left: 4,
-                    fontWeight: isSelected ? 600 : 400,
-                    color: isSelected ? "#713f12" : "inherit", // yellow-900
+                    fontWeight: selected ? 600 : 400,
+                    color: selected ? "#713f12" : "inherit",
                 }}
             >
                 {text}

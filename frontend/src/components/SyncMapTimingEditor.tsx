@@ -112,7 +112,7 @@ function SyncMapTimingEditor({
 
         const ws = WaveSurfer.create({
             container: wsContainerRef.current!,
-            waveColor: '#d9c1ca',
+            waveColor: '#ebd8df',
             progressColor: '#a17485',
             cursorColor: '#f54789',
             height: 100,
@@ -494,7 +494,7 @@ function SyncMapTimingEditor({
                                     text={words[index]}
                                     duration={wsRef.current?.getDuration()!}
                                     waveformWidth={waveformWidth}
-                                    isSelected={selectedIndex === index}
+                                    selected={selectedIndex === index}
                                     onSelect={setSelectedIndex}
                                     onTimingChange={handleTimingChange}
                                     prevEnd={index > 0 ? timings[index - 1].end : 0}
