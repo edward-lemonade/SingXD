@@ -409,25 +409,18 @@ export default function SyncMapLyricsEditor({
 	// Paste
 
 	function handlePaste(e: ClipboardEvent) {
-		e.preventDefault();
-		const text = e.clipboardData?.getData("text/plain");
-		if (!text) return;
-		clampCursor();
-		if (hasSel()) deleteSelection();
-		const insertAt = cursorRef.current;
-		const pasted: Token[] = [];
-		text.split(/\r?\n/).forEach((line, i) => {
-			if (i > 0) pasted.push({ kind: "newline" });
-			line.split(/[ \t]+/).filter(Boolean)
-				.forEach((w) => pasted.push({ kind: "word", text: w }));
-		});
-		tokensRef.current.splice(insertAt, 0, ...pasted);
-		if (draftElRef.current) draftElRef.current.textContent = "";
-		cursorRef.current = insertAt + pasted.length;
-		anchorRef.current = null;
-		emitChange();
-		renderDOM();
-	}
+        e.preventDefault();
+        const text = e.clipboardData?.getData("text/plain");
+        if (!text) return;
+        clampCursor();
+        if (hasSel()) deleteSelection();
+        const insertAt = cursorRef.current;
+        // Serialize current tokens up to insertAt and after, splice pasted text between them
+        const before = serializeTokens(tokensRef.current.slice(0, insertAt));
+        const after = serializeTokens(tokensRef.current.slice(insertAt));
+        const joined = [before, text, after].filter(Boolean).join(" ");
+        onChangeRef.current(joined);
+    }
 
 	// Brick click
 
