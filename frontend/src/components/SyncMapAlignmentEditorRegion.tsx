@@ -58,7 +58,6 @@ export default function SyncMapAlignmentEditorRegion({
     const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>, mode: DragMode) => {
         e.stopPropagation(); // prevent wavesurfer seek
         if (!isSelected) {
-            // First click just selects — no drag initiated
             onSelect(index);
             return;
         }
