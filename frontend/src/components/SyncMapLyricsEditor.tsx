@@ -1,16 +1,7 @@
 "use client";
 
-import React, {
-	useRef,
-	useCallback,
-	useEffect,
-	useState,
-	KeyboardEvent,
-	ClipboardEvent,
-	MouseEvent,
-} from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import { Timing } from "@/src/lib/types/types";
-import SyncMapLyricsEditorBrick from "@/src/components/SyncMapLyricsEditorBrick";
 
 interface SyncMapLyricsEditorProps {
 	lyricsString: string;
@@ -21,21 +12,20 @@ interface SyncMapLyricsEditorProps {
 	className?: string;
 }
 
-type WordToken = { kind: "word"; text: string };
-type NewlineToken = { kind: "newline" };
-type Token = WordToken | NewlineToken;
+// ── Token model ───────────────────────────────────────────────────────────────
+
+type Token = { kind: "word"; text: string } | { kind: "newline" };
 
 function parseTokens(raw: string): Token[] {
 	const tokens: Token[] = [];
-	const rawLines = raw.split("\n");
-	rawLines.forEach((line, li) => {
-		const words = line
+	raw.split("\n").forEach((line, li, arr) => {
+		line
 			.replaceAll("-", "- ")
 			.replaceAll("—", "- ")
 			.split(" ")
-			.filter((w) => w !== "");
-		words.forEach((w) => tokens.push({ kind: "word", text: w }));
-		if (li < rawLines.length - 1) tokens.push({ kind: "newline" });
+			.filter(Boolean)
+			.forEach((w) => tokens.push({ kind: "word", text: w }));
+		if (li < arr.length - 1) tokens.push({ kind: "newline" });
 	});
 	return tokens;
 }
@@ -47,10 +37,58 @@ function serializeTokens(tokens: Token[]): string {
 			out += "\n";
 		} else {
 			const text = t.text.replaceAll("- ", "-").replaceAll("- ", "—");
-			out += (out.length === 0 || out.endsWith("\n") ? "" : " ") + text;
+			out += (out === "" || out.endsWith("\n") ? "" : " ") + text;
 		}
 	});
 	return out;
+}
+
+
+function positionFromPoint(
+	x: number,
+	y: number,
+	brickRects: Array<{ tokenIdx: number; rect: DOMRect }>,
+	lineDivs: HTMLElement[]
+): number {
+	// Find the visual line whose vertical band contains y (or is closest)
+	let bestLineIdx = 0;
+	let bestLineDist = Infinity;
+	lineDivs.forEach((div, li) => {
+		const r = div.getBoundingClientRect();
+		const yClamped = Math.max(r.top, Math.min(r.bottom, y));
+		const dist = Math.abs(yClamped - y);
+		if (dist < bestLineDist) { bestLineDist = dist; bestLineIdx = li; }
+	});
+
+	// Collect bricks on that line
+	const lineDiv = lineDivs[bestLineIdx];
+	if (!lineDiv) return 0;
+
+	const bricksOnLine = brickRects.filter(({ rect }) => {
+		const lineDivRect = lineDiv.getBoundingClientRect();
+		return rect.top >= lineDivRect.top - 4 && rect.bottom <= lineDivRect.bottom + 4;
+	});
+
+	if (bricksOnLine.length === 0) {
+		// Empty line — find token position corresponding to start of this line
+		// by using data-line-end on the lineDiv
+		const lineEnd = lineDiv.dataset.lineEnd;
+		return lineEnd !== undefined ? parseInt(lineEnd) : 0;
+	}
+
+	// Find the brick whose center x is closest to the mouse x,
+	// choosing "before" or "after" based on which half the mouse is in.
+	let best = bricksOnLine[0];
+	let bestDist = Infinity;
+	for (const b of bricksOnLine) {
+		const cx = (b.rect.left + b.rect.right) / 2;
+		const dist = Math.abs(cx - x);
+		if (dist < bestDist) { bestDist = dist; best = b; }
+	}
+
+	const cx = (best.rect.left + best.rect.right) / 2;
+	// If mouse is to the right of center → position after this brick
+	return x >= cx ? best.tokenIdx + 1 : best.tokenIdx;
 }
 
 
@@ -62,19 +100,90 @@ export default function SyncMapLyricsEditor({
 	placeholder = "Paste or type lyrics here…",
 	className = "",
 }: SyncMapLyricsEditorProps) {
-	const tokens = parseTokens(lyricsString);
+	const containerRef	= useRef<HTMLDivElement>(null);
+	const contentRef		= useRef<HTMLDivElement>(null);
 
-	// cursorPos as STATE — changing it triggers a re-render so the draft span moves in the DOM
-	const [cursorPos, setCursorPos] = useState<number>(tokens.length);
-	const draftRef = useRef<HTMLSpanElement | null>(null);
-	const containerRef = useRef<HTMLDivElement>(null);
+	const tokensRef		 = useRef<Token[]>(parseTokens(lyricsString));
+	const cursorRef		 = useRef<number>(tokensRef.current.length);
+	const anchorRef		 = useRef<number | null>(null);
+	const draftElRef		= useRef<HTMLSpanElement | null>(null);
+	const onChangeRef	 = useRef(onChange);
+	const timingsRef		= useRef(timings);
+	const onWordClickRef = useRef(onWordTimingClick);
 
-	// Always keep cursor in bounds
-	const clampedCursor = Math.min(cursorPos, tokens.length);
+	// For drag-to-select hit testing
+	const brickRectsRef = useRef<Array<{ tokenIdx: number; rect: DOMRect }>>([]);
+	const lineDivsRef	 = useRef<HTMLElement[]>([]);
+	const isDraggingRef = useRef(false);
 
-	// Focus helpers
-	const focusDraft = useCallback(() => {
-		const draft = draftRef.current;
+	// Keep refs fresh
+	useEffect(() => { onChangeRef.current = onChange; }, [onChange]);
+	useEffect(() => { onWordClickRef.current = onWordTimingClick; }, [onWordTimingClick]);
+	useEffect(() => { timingsRef.current = timings; renderDOM(); }, [timings]);
+
+	useEffect(() => {
+		const current = serializeTokens(tokensRef.current);
+		if (current !== lyricsString) {
+			tokensRef.current = parseTokens(lyricsString);
+			cursorRef.current = tokensRef.current.length;
+			anchorRef.current = null;
+			renderDOM();
+		}
+	}, [lyricsString]);
+
+	// Selection helpers
+
+	function selStart() {
+		const a = anchorRef.current, c = cursorRef.current;
+		return a === null ? c : Math.min(a, c);
+	}
+	function selEnd() {
+		const a = anchorRef.current, c = cursorRef.current;
+		return a === null ? c : Math.max(a, c);
+	}
+	function hasSel() {
+		return anchorRef.current !== null && anchorRef.current !== cursorRef.current;
+	}
+	function clampCursor() {
+		cursorRef.current = Math.min(cursorRef.current, tokensRef.current.length);
+	}
+
+	// Edit helpers
+
+	function deleteSelection() {
+		const ss = selStart(), se = selEnd();
+		tokensRef.current.splice(ss, se - ss);
+		cursorRef.current = ss;
+		anchorRef.current = null;
+	}
+
+	function emitChange() {
+		onChangeRef.current(serializeTokens(tokensRef.current));
+	}
+
+	function commitDraft(appendNewline = false) {
+		const raw = draftElRef.current?.textContent ?? "";
+		const words = raw.split(/[ \t]+/).filter(Boolean);
+		if (words.length === 0 && !appendNewline) return;
+
+		clampCursor();
+		if (hasSel()) deleteSelection();
+		const insertAt = cursorRef.current;
+
+		const newToks: Token[] = words.map((w) => ({ kind: "word", text: w }));
+		if (appendNewline) newToks.push({ kind: "newline" });
+		tokensRef.current.splice(insertAt, 0, ...newToks);
+		if (draftElRef.current) draftElRef.current.textContent = "";
+		cursorRef.current = insertAt + newToks.length;
+		anchorRef.current = null;
+		emitChange();
+		renderDOM();
+	}
+
+	// Focus draft
+
+	function focusDraft() {
+		const draft = draftElRef.current;
 		if (!draft) return;
 		draft.focus();
 		const range = document.createRange();
@@ -83,210 +192,386 @@ export default function SyncMapLyricsEditor({
 		const sel = window.getSelection();
 		sel?.removeAllRanges();
 		sel?.addRange(range);
-	}, []);
+	}
 
-	// After every render keep caret at end of draft if it's focused
-	useEffect(() => {
-		const draft = draftRef.current;
-		if (!draft || document.activeElement !== draft) return;
-		const range = document.createRange();
-		range.selectNodeContents(draft);
-		range.collapse(false);
-		const sel = window.getSelection();
-		sel?.removeAllRanges();
-		sel?.addRange(range);
-	});
+	// Imperative DOM render
 
-	// Draft text helpers
-	const getDraftText = () => draftRef.current?.textContent ?? "";
-	const clearDraft = () => { if (draftRef.current) draftRef.current.textContent = ""; };
+	function renderDOM() {
+		const content = contentRef.current;
+		if (!content) return;
 
-	// Commit draft at current cursor position
-	const commitDraft = useCallback(
-		(appendNewline = false) => {
-			const raw = getDraftText();
-			const words = raw.split(/[ \t]+/).filter(Boolean);
-			if (words.length === 0 && !appendNewline) return;
+		clampCursor();
+		const tokens = tokensRef.current;
+		const cp = cursorRef.current;
+		const ss = selStart(), se = selEnd(), sel = hasSel();
+		const currentTimings = timingsRef.current;
 
-			const newWords: Token[] = words.map((w) => ({ kind: "word", text: w }));
-			if (appendNewline) newWords.push({ kind: "newline" });
+		const draftWasFocused = document.activeElement === draftElRef.current;
+		const draftText = draftElRef.current?.textContent ?? "";
 
-			const newTokens = [...tokens];
-			newTokens.splice(clampedCursor, 0, ...newWords);
-			clearDraft();
-			setCursorPos(clampedCursor + newWords.length);
-			onChange(serializeTokens(newTokens));
-		},
-		[tokens, clampedCursor, onChange]
-	);
+		// Build flat item list
+		type Item =
+			| { type: "brick"; idx: number; text: string; wi: number }
+			| { type: "newline" }
+			| { type: "draft" };
 
-	// Delete before cursor
-	const deleteBeforeCursor = useCallback(() => {
-		if (clampedCursor === 0) return;
-		const newTokens = [...tokens];
-		const removed = newTokens[clampedCursor - 1];
-		newTokens.splice(clampedCursor - 1, 1);
-		if (removed.kind === "word" && draftRef.current) {
-			draftRef.current.textContent = removed.text;
-		}
-		setCursorPos(clampedCursor - 1);
-		onChange(serializeTokens(newTokens));
-	}, [tokens, clampedCursor, onChange]);
+		const items: Item[] = [];
+		let wc = 0;
+		tokens.forEach((t, i) => {
+			if (i === cp) items.push({ type: "draft" });
+			if (t.kind === "newline") items.push({ type: "newline" });
+			else items.push({ type: "brick", idx: i, text: t.text, wi: wc++ });
+		});
+		if (cp >= tokens.length) items.push({ type: "draft" });
 
-	// Delete after cursor
-	const deleteAfterCursor = useCallback(() => {
-		if (clampedCursor >= tokens.length) return;
-		const newTokens = [...tokens];
-		newTokens.splice(clampedCursor, 1);
-		onChange(serializeTokens(newTokens));
-	}, [tokens, clampedCursor, onChange]);
-
-	// Keyboard
-	const handleKeyDown = useCallback(
-		(e: KeyboardEvent<HTMLSpanElement>) => {
-			const draftEmpty = !getDraftText();
-
-			if (e.key === " ") { e.preventDefault(); commitDraft(); return; }
-			if (e.key === "Enter") { e.preventDefault(); commitDraft(true); return; }
-			if (e.key === "Backspace" && draftEmpty) { e.preventDefault(); deleteBeforeCursor(); return; }
-			if (e.key === "Delete" && draftEmpty) { e.preventDefault(); deleteAfterCursor(); return; }
-			if (e.key === "ArrowLeft" && draftEmpty) {
-				e.preventDefault();
-				setCursorPos((p) => Math.max(0, p - 1));
-				return;
+		// Split into visual lines, tracking the last token idx per line
+		type Line = { items: Item[]; lineEndTokenIdx: number };
+		const lines: Line[] = [{ items: [], lineEndTokenIdx: 0 }];
+		let lastTokenIdx = -1;
+		items.forEach((item) => {
+			if (item.type === "newline") {
+				lines[lines.length - 1].lineEndTokenIdx = lastTokenIdx + 1; // position after last word = before newline
+				lines.push({ items: [], lineEndTokenIdx: lastTokenIdx + 1 });
+			} else {
+				if (item.type === "brick") lastTokenIdx = item.idx;
+				lines[lines.length - 1].items.push(item);
 			}
-			if (e.key === "ArrowRight" && draftEmpty) {
-				e.preventDefault();
-				setCursorPos((p) => Math.min(tokens.length, p + 1));
-				return;
-			}
-		},
-		[commitDraft, deleteBeforeCursor, deleteAfterCursor, tokens.length]
-	);
+		});
+		// Last line end is after its last brick (or current cp if draft is last)
+		lines[lines.length - 1].lineEndTokenIdx = Math.max(lastTokenIdx + 1, cp);
 
-	// Paste
-	const handlePaste = useCallback(
-		(e: ClipboardEvent<HTMLSpanElement>) => {
-			e.preventDefault();
-			const text = e.clipboardData.getData("text/plain");
-			if (!text) return;
+		// Rebuild DOM
+		content.innerHTML = "";
+		draftElRef.current = null;
+		brickRectsRef.current = [];
+		lineDivsRef.current = [];
 
-			const pastedTokens: Token[] = [];
-			text.split(/\r?\n/).forEach((lineText, i) => {
-				if (i > 0) pastedTokens.push({ kind: "newline" });
-				lineText.split(/[ \t]+/).filter(Boolean)
-					.forEach((w) => pastedTokens.push({ kind: "word", text: w }));
+		lines.forEach((line, li) => {
+			const lineDiv = document.createElement("div");
+			lineDiv.className = "flex flex-wrap items-center gap-0 min-h-8";
+			lineDiv.dataset.lineIndex = String(li);
+			lineDiv.dataset.lineEnd = String(line.lineEndTokenIdx);
+
+			line.items.forEach((item) => {
+				if (item.type === "draft") {
+					const span = document.createElement("span");
+					span.contentEditable = "true";
+					span.spellcheck = false;
+					span.dataset.draft = "1";
+					span.textContent = draftText;
+					span.className = [
+						"inline-block min-w-[4px] outline-none",
+						"px-1 py-0.5 mx-0.5 my-0.5 text-sm text-gray-800",
+						"border-b-2 border-transparent",
+						"transition-colors duration-100 whitespace-pre",
+					].join(" ");
+					span.addEventListener("keydown", handleKeyDown);
+					span.addEventListener("paste", handlePaste);
+					span.addEventListener("focus", () => { span.style.borderBottomColor = "#a855f7"; });
+					span.addEventListener("blur",	() => { span.style.borderBottomColor = "transparent"; });
+					lineDiv.appendChild(span);
+					draftElRef.current = span;
+				} else if (item.type === "brick") {
+					const timing = currentTimings[item.wi];
+					const isSelected = sel && item.idx >= ss && item.idx < se;
+
+					const span = document.createElement("span");
+					span.dataset.tokenIdx = String(item.idx);
+					span.className = [
+						"inline-flex items-center",
+						"px-2 py-0.5 mx-0.5 my-0.5 rounded border text-sm font-medium select-none",
+						"transition-colors duration-100 cursor-text",
+						isSelected
+							? "bg-blue-200 border-blue-400 text-blue-900"
+							: timing
+							? "bg-purple-100 border-purple-300 text-purple-900"
+							: "bg-gray-100 border-gray-300 text-gray-700",
+					].join(" ");
+					span.textContent = item.text;
+					if (timing) span.title = `${timing.start.toFixed(2)}s – ${timing.end.toFixed(2)}s`;
+
+					// mousedown: don't steal focus, but start tracking for drag
+					span.addEventListener("mousedown", (e) => {
+						e.preventDefault(); // keep draft focused
+					});
+					span.addEventListener("click", (e) => {
+						e.stopPropagation();
+						handleBrickClick(item.idx, timing, e as MouseEvent);
+					});
+
+					lineDiv.appendChild(span);
+				}
 			});
 
-			const newTokens = [...tokens];
-			newTokens.splice(clampedCursor, 0, ...pastedTokens);
-			clearDraft();
-			setCursorPos(clampedCursor + pastedTokens.length);
-			onChange(serializeTokens(newTokens));
-		},
-		[tokens, clampedCursor, onChange]
-	);
+			content.appendChild(lineDiv);
+			lineDivsRef.current.push(lineDiv);
+		});
 
-	// Brick click: move cursor to after that brick
-	const handleBrickClick = useCallback(
-		(tokenIdx: number, timing: Timing | undefined, e: MouseEvent) => {
-			e.stopPropagation();
+		// After DOM is painted, record brick rects for hit-testing
+		requestAnimationFrame(() => {
+			brickRectsRef.current = [];
+			lineDivsRef.current.forEach((lineDiv) => {
+				lineDiv.querySelectorAll<HTMLElement>("[data-token-idx]").forEach((el) => {
+					brickRectsRef.current.push({
+						tokenIdx: parseInt(el.dataset.tokenIdx!),
+						rect: el.getBoundingClientRect(),
+					});
+				});
+			});
+		});
 
-			// Commit any pending draft first
-			const raw = getDraftText();
-			if (raw.trim()) {
+		if (draftWasFocused && draftElRef.current) {
+			(draftElRef.current as HTMLSpanElement).focus();
+			const range = document.createRange();
+			range.selectNodeContents(draftElRef.current);
+			range.collapse(false);
+			window.getSelection()?.removeAllRanges();
+			window.getSelection()?.addRange(range);
+		}
+	}
+
+	// Keyboard
+
+	function handleKeyDown(e: KeyboardEvent) {
+		const draftEmpty = !draftElRef.current?.textContent;
+		const isMac = navigator.platform.toUpperCase().includes("MAC");
+		const ctrl = isMac ? e.metaKey : e.ctrlKey;
+		clampCursor();
+		const cp = cursorRef.current;
+
+		if (ctrl && e.key === "a") {
+			e.preventDefault();
+			anchorRef.current = 0;
+			cursorRef.current = tokensRef.current.length;
+			renderDOM();
+			return;
+		}
+		if (e.key === " ") { e.preventDefault(); commitDraft(); return; }
+		if (e.key === "Enter") { e.preventDefault(); commitDraft(true); return; }
+
+		if (e.key === "Backspace" && draftEmpty) {
+			e.preventDefault();
+			if (hasSel()) { deleteSelection(); }
+			else {
+				if (cp === 0) return;
+				const removed = tokensRef.current[cp - 1];
+				tokensRef.current.splice(cp - 1, 1);
+				cursorRef.current = cp - 1;
+				anchorRef.current = null;
+				if (removed.kind === "word" && draftElRef.current)
+					draftElRef.current.textContent = removed.text;
+			}
+			emitChange(); renderDOM(); return;
+		}
+
+		if (e.key === "Delete" && draftEmpty) {
+			e.preventDefault();
+			if (hasSel()) { deleteSelection(); }
+			else {
+				if (cp >= tokensRef.current.length) return;
+				tokensRef.current.splice(cp, 1);
+				anchorRef.current = null;
+			}
+			emitChange(); renderDOM(); return;
+		}
+
+		if (e.key === "ArrowLeft" && draftEmpty) {
+			e.preventDefault();
+			if (e.shiftKey) {
+				if (anchorRef.current === null) anchorRef.current = cp;
+				cursorRef.current = Math.max(0, cursorRef.current - 1);
+			} else {
+				cursorRef.current = hasSel() ? selStart() : Math.max(0, cp - 1);
+				anchorRef.current = null;
+			}
+			renderDOM(); return;
+		}
+
+		if (e.key === "ArrowRight" && draftEmpty) {
+			e.preventDefault();
+			if (e.shiftKey) {
+				if (anchorRef.current === null) anchorRef.current = cp;
+				cursorRef.current = Math.min(tokensRef.current.length, cursorRef.current + 1);
+			} else {
+				cursorRef.current = hasSel() ? selEnd() : Math.min(tokensRef.current.length, cp + 1);
+				anchorRef.current = null;
+			}
+			renderDOM(); return;
+		}
+
+		if (hasSel() && e.key.length === 1 && !ctrl) {
+			deleteSelection();
+			emitChange();
+			renderDOM();
+		}
+	}
+
+	// Paste
+
+	function handlePaste(e: ClipboardEvent) {
+		e.preventDefault();
+		const text = e.clipboardData?.getData("text/plain");
+		if (!text) return;
+		clampCursor();
+		if (hasSel()) deleteSelection();
+		const insertAt = cursorRef.current;
+		const pasted: Token[] = [];
+		text.split(/\r?\n/).forEach((line, i) => {
+			if (i > 0) pasted.push({ kind: "newline" });
+			line.split(/[ \t]+/).filter(Boolean)
+				.forEach((w) => pasted.push({ kind: "word", text: w }));
+		});
+		tokensRef.current.splice(insertAt, 0, ...pasted);
+		if (draftElRef.current) draftElRef.current.textContent = "";
+		cursorRef.current = insertAt + pasted.length;
+		anchorRef.current = null;
+		emitChange();
+		renderDOM();
+	}
+
+	// Brick click
+
+	function handleBrickClick(tokenIdx: number, timing: Timing | undefined, e: MouseEvent) {
+		if (isDraggingRef.current) return;
+
+		clampCursor();
+		const cp = cursorRef.current;
+		const newCursor = tokenIdx + 1;
+
+		if (e.shiftKey) {
+			if (anchorRef.current === null) anchorRef.current = cp;
+			cursorRef.current = newCursor;
+		} else {
+			const raw = draftElRef.current?.textContent?.trim() ?? "";
+			if (raw) {
 				const newWords: Token[] = raw.split(/[ \t]+/).filter(Boolean)
 					.map((w) => ({ kind: "word", text: w }));
-				const newTokens = [...tokens];
-				newTokens.splice(clampedCursor, 0, ...newWords);
-				clearDraft();
-				const shift = clampedCursor <= tokenIdx ? newWords.length : 0;
-				setCursorPos(tokenIdx + shift + 1);
-				onChange(serializeTokens(newTokens));
+				tokensRef.current.splice(cp, 0, ...newWords);
+				if (draftElRef.current) draftElRef.current.textContent = "";
+				const shift = cp <= tokenIdx ? newWords.length : 0;
+				cursorRef.current = tokenIdx + shift + 1;
+				emitChange();
 			} else {
-				setCursorPos(tokenIdx + 1);
+				cursorRef.current = newCursor;
 			}
+			anchorRef.current = null;
 
-			if (timing && onWordTimingClick) {
+			if (timing && onWordClickRef.current) {
 				let fi = 0;
 				for (let i = 0; i < tokenIdx; i++) {
-					if (tokens[i].kind === "word") fi++;
+					if (tokensRef.current[i].kind === "word") fi++;
 				}
-				onWordTimingClick(timing, fi);
+				onWordClickRef.current(timing, fi);
 			}
-
-			setTimeout(focusDraft, 0);
-		},
-		[tokens, clampedCursor, onChange, onWordTimingClick, focusDraft]
-	);
-
-	// Container click: move cursor to end
-	const handleContainerClick = useCallback(
-		(e: MouseEvent<HTMLDivElement>) => {
-			if ((e.target as HTMLElement).closest("[data-brick]")) return;
-			if ((e.target as HTMLElement).closest("[data-draft]")) return;
-			setCursorPos(tokens.length);
-			setTimeout(focusDraft, 0);
-		},
-		[tokens.length, focusDraft]
-	);
-
-	// Build render items
-	type RenderItem =
-		| { type: "brick"; tokenIdx: number; word: string; flatWordIdx: number }
-		| { type: "newline" }
-		| { type: "draft" };
-
-	const items: RenderItem[] = [];
-	let wordCount = 0;
-	tokens.forEach((token, i) => {
-		if (i === clampedCursor) items.push({ type: "draft" });
-		if (token.kind === "newline") {
-			items.push({ type: "newline" });
-		} else {
-			items.push({ type: "brick", tokenIdx: i, word: token.text, flatWordIdx: wordCount });
-			wordCount++;
 		}
-	});
-	if (clampedCursor >= tokens.length) items.push({ type: "draft" });
 
-	// Split into visual lines
-	const visualLines: RenderItem[][] = [[]];
-	items.forEach((item) => {
-		if (item.type === "newline") visualLines.push([]);
-		else visualLines[visualLines.length - 1].push(item);
-	});
+		renderDOM();
+		setTimeout(focusDraft, 0);
+	}
 
-	const draftSpan = (
-		<span
-			ref={draftRef}
-			contentEditable
-			suppressContentEditableWarning
-			onKeyDown={handleKeyDown}
-			onPaste={handlePaste}
-			spellCheck={false}
-			data-draft
-			className={[
-				"inline-block min-w-[4px] outline-none",
-				"px-1 py-0.5 mx-0.5 my-0.5 text-sm text-gray-800",
-				"border-b-2 border-transparent focus:border-purple-400",
-				"transition-colors duration-100 whitespace-pre",
-			].join(" ")}
-		/>
-	);
+	// Mouse drag-to-select
+
+	const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+		if (e.button !== 0) return;
+		const target = e.target as HTMLElement;
+		if (target.closest("[data-draft]")) return;
+
+		e.preventDefault();
+
+		// Refresh brick rects immediately (they may have shifted since last render)
+		brickRectsRef.current = [];
+		lineDivsRef.current.forEach((lineDiv) => {
+			lineDiv.querySelectorAll<HTMLElement>("[data-token-idx]").forEach((el) => {
+				brickRectsRef.current.push({
+					tokenIdx: parseInt(el.dataset.tokenIdx!),
+					rect: el.getBoundingClientRect(),
+				});
+			});
+		});
+
+		// For a plain click on a brick, place cursor directly after it.
+		// Only use positionFromPoint for drags and clicks on empty space.
+		const clickedBrick = target.closest<HTMLElement>("[data-token-idx]");
+		const startPos = clickedBrick
+			? parseInt(clickedBrick.dataset.tokenIdx!) + 1
+			: positionFromPoint(e.clientX, e.clientY, brickRectsRef.current, lineDivsRef.current);
+
+		if (e.shiftKey) {
+			clampCursor();
+			if (anchorRef.current === null) anchorRef.current = cursorRef.current;
+			cursorRef.current = startPos;
+		} else {
+			anchorRef.current = startPos;
+			cursorRef.current = startPos;
+		}
+
+		isDraggingRef.current = false;
+		const mouseDownX = e.clientX;
+		const mouseDownY = e.clientY;
+		renderDOM();
+		focusDraft();
+
+		// Drag
+
+		const onMouseMove = (me: globalThis.MouseEvent) => {
+			// Only start drag mode after moving a few pixels (avoids accidental selections)
+			const dx = me.clientX - mouseDownX;
+			const dy = me.clientY - mouseDownY;
+			if (!isDraggingRef.current && Math.sqrt(dx * dx + dy * dy) < 5) return;
+
+			isDraggingRef.current = true;
+			const newPos = positionFromPoint(
+				me.clientX, me.clientY,
+				brickRectsRef.current,
+				lineDivsRef.current
+			);
+			if (newPos !== cursorRef.current) {
+				cursorRef.current = newPos;
+				renderDOM();
+				if (draftElRef.current && document.activeElement !== draftElRef.current) {
+					draftElRef.current.focus();
+				}
+			}
+		};
+
+		const onMouseUp = () => {
+			window.removeEventListener("mousemove", onMouseMove);
+			window.removeEventListener("mouseup", onMouseUp);
+			// Simple click (no drag) — collapse selection
+			if (!isDraggingRef.current) {
+				anchorRef.current = null;
+				cursorRef.current = startPos;
+			} else if (anchorRef.current === cursorRef.current) {
+				anchorRef.current = null;
+			}
+			isDraggingRef.current = false;
+			renderDOM();
+			focusDraft();
+		};
+
+		window.addEventListener("mousemove", onMouseMove);
+		window.addEventListener("mouseup", onMouseUp);
+	}, []);
+
+	// Mount
+
+	useEffect(() => {
+		renderDOM();
+		draftElRef.current?.focus();
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<div
 			ref={containerRef}
-			onClick={handleContainerClick}
+			onMouseDown={handleMouseDown}
 			className={[
 				"relative min-h-32 w-full rounded-md border-2 border-gray-200 p-3",
-				"cursor-text focus-within:border-purple-400 focus-within:ring-2 focus-within:ring-purple-100",
-				"transition-colors duration-150",
+				"cursor-text transition-colors duration-150 select-none",
+				"focus-within:border-purple-400 focus-within:ring-2 focus-within:ring-purple-100",
 				className,
 			].join(" ")}
 		>
-			{tokens.length === 0 && (
+			{tokensRef.current.length === 0 && (
 				<span
 					className="pointer-events-none absolute left-3 top-3 text-sm text-gray-400 select-none"
 					aria-hidden
@@ -294,35 +579,7 @@ export default function SyncMapLyricsEditor({
 					{placeholder}
 				</span>
 			)}
-
-			<div className="flex flex-col gap-1">
-				{visualLines.map((lineItems, li) => (
-					<div key={li} className="flex flex-wrap items-center gap-0 min-h-8">
-						{lineItems.map((item) => {
-							if (item.type === "draft") {
-								return <React.Fragment key="__draft">{draftSpan}</React.Fragment>;
-							}
-							if (item.type != "brick") {return;}
-							const t = timings[item.flatWordIdx];
-							return (
-								<span
-									key={`${item.tokenIdx}-${item.word}`}
-									data-brick
-									onClick={(e) => handleBrickClick(item.tokenIdx, t, e)}
-									className="cursor-text"
-								>
-									<SyncMapLyricsEditorBrick
-										word={item.word}
-										timing={t}
-										hasTiming={!!t}
-										onClickTiming={undefined}
-									/>
-								</span>
-							);
-						})}
-					</div>
-				))}
-			</div>
+			<div ref={contentRef} className="flex flex-col gap-1" />
 		</div>
 	);
 }
