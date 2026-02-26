@@ -12,8 +12,6 @@ interface SyncMapLyricsEditorProps {
 	className?: string;
 }
 
-// ── Token model ───────────────────────────────────────────────────────────────
-
 type Token = { kind: "word"; text: string } | { kind: "newline" };
 
 function parseTokens(raw: string): Token[] {
@@ -43,14 +41,12 @@ function serializeTokens(tokens: Token[]): string {
 	return out;
 }
 
-
 function positionFromPoint(
 	x: number,
 	y: number,
 	brickRects: Array<{ tokenIdx: number; rect: DOMRect }>,
 	lineDivs: HTMLElement[]
 ): number {
-	// Find the visual line whose vertical band contains y (or is closest)
 	let bestLineIdx = 0;
 	let bestLineDist = Infinity;
 	lineDivs.forEach((div, li) => {
@@ -60,7 +56,6 @@ function positionFromPoint(
 		if (dist < bestLineDist) { bestLineDist = dist; bestLineIdx = li; }
 	});
 
-	// Collect bricks on that line
 	const lineDiv = lineDivs[bestLineIdx];
 	if (!lineDiv) return 0;
 
@@ -70,14 +65,10 @@ function positionFromPoint(
 	});
 
 	if (bricksOnLine.length === 0) {
-		// Empty line — find token position corresponding to start of this line
-		// by using data-line-end on the lineDiv
 		const lineEnd = lineDiv.dataset.lineEnd;
 		return lineEnd !== undefined ? parseInt(lineEnd) : 0;
 	}
 
-	// Find the brick whose center x is closest to the mouse x,
-	// choosing "before" or "after" based on which half the mouse is in.
 	let best = bricksOnLine[0];
 	let bestDist = Infinity;
 	for (const b of bricksOnLine) {
@@ -87,10 +78,8 @@ function positionFromPoint(
 	}
 
 	const cx = (best.rect.left + best.rect.right) / 2;
-	// If mouse is to the right of center → position after this brick
 	return x >= cx ? best.tokenIdx + 1 : best.tokenIdx;
 }
-
 
 export default function SyncMapLyricsEditor({
 	lyricsString,
@@ -100,23 +89,21 @@ export default function SyncMapLyricsEditor({
 	placeholder = "Paste or type lyrics here…",
 	className = "",
 }: SyncMapLyricsEditorProps) {
-	const containerRef	= useRef<HTMLDivElement>(null);
-	const contentRef		= useRef<HTMLDivElement>(null);
+	const containerRef  = useRef<HTMLDivElement>(null);
+	const contentRef    = useRef<HTMLDivElement>(null);
 
-	const tokensRef		 = useRef<Token[]>(parseTokens(lyricsString));
-	const cursorRef		 = useRef<number>(tokensRef.current.length);
-	const anchorRef		 = useRef<number | null>(null);
-	const draftElRef		= useRef<HTMLSpanElement | null>(null);
-	const onChangeRef	 = useRef(onChange);
-	const timingsRef		= useRef(timings);
+	const tokensRef     = useRef<Token[]>(parseTokens(lyricsString));
+	const cursorRef     = useRef<number>(tokensRef.current.length);
+	const anchorRef     = useRef<number | null>(null);
+	const draftElRef    = useRef<HTMLSpanElement | null>(null);
+	const onChangeRef   = useRef(onChange);
+	const timingsRef    = useRef(timings);
 	const onWordClickRef = useRef(onWordTimingClick);
 
-	// For drag-to-select hit testing
 	const brickRectsRef = useRef<Array<{ tokenIdx: number; rect: DOMRect }>>([]);
-	const lineDivsRef	 = useRef<HTMLElement[]>([]);
+	const lineDivsRef   = useRef<HTMLElement[]>([]);
 	const isDraggingRef = useRef(false);
 
-	// Keep refs fresh
 	useEffect(() => { onChangeRef.current = onChange; }, [onChange]);
 	useEffect(() => { onWordClickRef.current = onWordTimingClick; }, [onWordTimingClick]);
 	useEffect(() => { timingsRef.current = timings; renderDOM(); }, [timings]);
@@ -130,8 +117,6 @@ export default function SyncMapLyricsEditor({
 			renderDOM();
 		}
 	}, [lyricsString]);
-
-	// Selection helpers
 
 	function selStart() {
 		const a = anchorRef.current, c = cursorRef.current;
@@ -147,8 +132,6 @@ export default function SyncMapLyricsEditor({
 	function clampCursor() {
 		cursorRef.current = Math.min(cursorRef.current, tokensRef.current.length);
 	}
-
-	// Edit helpers
 
 	function deleteSelection() {
 		const ss = selStart(), se = selEnd();
@@ -180,8 +163,6 @@ export default function SyncMapLyricsEditor({
 		renderDOM();
 	}
 
-	// Focus draft
-
 	function focusDraft() {
 		const draft = draftElRef.current;
 		if (!draft) return;
@@ -193,8 +174,6 @@ export default function SyncMapLyricsEditor({
 		sel?.removeAllRanges();
 		sel?.addRange(range);
 	}
-
-	// Imperative DOM render
 
 	function renderDOM() {
 		const content = contentRef.current;
@@ -209,7 +188,6 @@ export default function SyncMapLyricsEditor({
 		const draftWasFocused = document.activeElement === draftElRef.current;
 		const draftText = draftElRef.current?.textContent ?? "";
 
-		// Build flat item list
 		type Item =
 			| { type: "brick"; idx: number; text: string; wi: number }
 			| { type: "newline" }
@@ -224,23 +202,20 @@ export default function SyncMapLyricsEditor({
 		});
 		if (cp >= tokens.length) items.push({ type: "draft" });
 
-		// Split into visual lines, tracking the last token idx per line
 		type Line = { items: Item[]; lineEndTokenIdx: number };
 		const lines: Line[] = [{ items: [], lineEndTokenIdx: 0 }];
 		let lastTokenIdx = -1;
 		items.forEach((item) => {
 			if (item.type === "newline") {
-				lines[lines.length - 1].lineEndTokenIdx = lastTokenIdx + 1; // position after last word = before newline
+				lines[lines.length - 1].lineEndTokenIdx = lastTokenIdx + 1;
 				lines.push({ items: [], lineEndTokenIdx: lastTokenIdx + 1 });
 			} else {
 				if (item.type === "brick") lastTokenIdx = item.idx;
 				lines[lines.length - 1].items.push(item);
 			}
 		});
-		// Last line end is after its last brick (or current cp if draft is last)
 		lines[lines.length - 1].lineEndTokenIdx = Math.max(lastTokenIdx + 1, cp);
 
-		// Rebuild DOM
 		content.innerHTML = "";
 		draftElRef.current = null;
 		brickRectsRef.current = [];
@@ -268,7 +243,7 @@ export default function SyncMapLyricsEditor({
 					span.addEventListener("keydown", handleKeyDown);
 					span.addEventListener("paste", handlePaste);
 					span.addEventListener("focus", () => { span.style.borderBottomColor = "#a855f7"; });
-					span.addEventListener("blur",	() => { span.style.borderBottomColor = "transparent"; });
+					span.addEventListener("blur",   () => { span.style.borderBottomColor = "transparent"; });
 					lineDiv.appendChild(span);
 					draftElRef.current = span;
 				} else if (item.type === "brick") {
@@ -290,15 +265,6 @@ export default function SyncMapLyricsEditor({
 					span.textContent = item.text;
 					if (timing) span.title = `${timing.start.toFixed(2)}s – ${timing.end.toFixed(2)}s`;
 
-					// mousedown: don't steal focus, but start tracking for drag
-					span.addEventListener("mousedown", (e) => {
-						e.preventDefault(); // keep draft focused
-					});
-					span.addEventListener("click", (e) => {
-						e.stopPropagation();
-						handleBrickClick(item.idx, timing, e as MouseEvent);
-					});
-
 					lineDiv.appendChild(span);
 				}
 			});
@@ -307,7 +273,6 @@ export default function SyncMapLyricsEditor({
 			lineDivsRef.current.push(lineDiv);
 		});
 
-		// After DOM is painted, record brick rects for hit-testing
 		requestAnimationFrame(() => {
 			brickRectsRef.current = [];
 			lineDivsRef.current.forEach((lineDiv) => {
@@ -329,8 +294,6 @@ export default function SyncMapLyricsEditor({
 			window.getSelection()?.addRange(range);
 		}
 	}
-
-	// Keyboard
 
 	function handleKeyDown(e: KeyboardEvent) {
 		const draftEmpty = !draftElRef.current?.textContent;
@@ -406,29 +369,30 @@ export default function SyncMapLyricsEditor({
 		}
 	}
 
-	// Paste
-
 	function handlePaste(e: ClipboardEvent) {
-        e.preventDefault();
-        const text = e.clipboardData?.getData("text/plain");
-        if (!text) return;
-        clampCursor();
-        if (hasSel()) deleteSelection();
-        const insertAt = cursorRef.current;
-        // Serialize current tokens up to insertAt and after, splice pasted text between them
-        const before = serializeTokens(tokensRef.current.slice(0, insertAt));
-        const after = serializeTokens(tokensRef.current.slice(insertAt));
-        const joined = [before, text, after].filter(Boolean).join(" ");
-        onChangeRef.current(joined);
-    }
-
-	// Brick click
+		e.preventDefault();
+		const text = e.clipboardData?.getData("text/plain");
+		if (!text) return;
+		clampCursor();
+		if (hasSel()) deleteSelection();
+		const insertAt = cursorRef.current;
+		const before = serializeTokens(tokensRef.current.slice(0, insertAt));
+		const after = serializeTokens(tokensRef.current.slice(insertAt));
+		const joined = [before, text, after].filter(Boolean).join(" ");
+		onChangeRef.current(joined);
+	}
 
 	function handleBrickClick(tokenIdx: number, timing: Timing | undefined, e: MouseEvent) {
 		if (isDraggingRef.current) return;
 
 		clampCursor();
 		const cp = cursorRef.current;
+
+		let fi = 0;
+		for (let i = 0; i < tokenIdx; i++) {
+			if (tokensRef.current[i].kind === "word") fi++;
+		}
+
 		const newCursor = tokenIdx + 1;
 
 		if (e.shiftKey) {
@@ -450,10 +414,6 @@ export default function SyncMapLyricsEditor({
 			anchorRef.current = null;
 
 			if (timing && onWordClickRef.current) {
-				let fi = 0;
-				for (let i = 0; i < tokenIdx; i++) {
-					if (tokensRef.current[i].kind === "word") fi++;
-				}
 				onWordClickRef.current(timing, fi);
 			}
 		}
@@ -462,8 +422,6 @@ export default function SyncMapLyricsEditor({
 		setTimeout(focusDraft, 0);
 	}
 
-	// Mouse drag-to-select
-
 	const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
 		if (e.button !== 0) return;
 		const target = e.target as HTMLElement;
@@ -471,7 +429,6 @@ export default function SyncMapLyricsEditor({
 
 		e.preventDefault();
 
-		// Refresh brick rects immediately (they may have shifted since last render)
 		brickRectsRef.current = [];
 		lineDivsRef.current.forEach((lineDiv) => {
 			lineDiv.querySelectorAll<HTMLElement>("[data-token-idx]").forEach((el) => {
@@ -482,8 +439,6 @@ export default function SyncMapLyricsEditor({
 			});
 		});
 
-		// For a plain click on a brick, place cursor directly after it.
-		// Only use positionFromPoint for drags and clicks on empty space.
 		const clickedBrick = target.closest<HTMLElement>("[data-token-idx]");
 		const startPos = clickedBrick
 			? parseInt(clickedBrick.dataset.tokenIdx!) + 1
@@ -504,10 +459,7 @@ export default function SyncMapLyricsEditor({
 		renderDOM();
 		focusDraft();
 
-		// Drag
-
 		const onMouseMove = (me: globalThis.MouseEvent) => {
-			// Only start drag mode after moving a few pixels (avoids accidental selections)
 			const dx = me.clientX - mouseDownX;
 			const dy = me.clientY - mouseDownY;
 			if (!isDraggingRef.current && Math.sqrt(dx * dx + dy * dy) < 5) return;
@@ -527,16 +479,32 @@ export default function SyncMapLyricsEditor({
 			}
 		};
 
-		const onMouseUp = () => {
+		const onMouseUp = (me: globalThis.MouseEvent) => {
 			window.removeEventListener("mousemove", onMouseMove);
 			window.removeEventListener("mouseup", onMouseUp);
-			// Simple click (no drag) — collapse selection
-			if (!isDraggingRef.current) {
-				anchorRef.current = null;
-				cursorRef.current = startPos;
-			} else if (anchorRef.current === cursorRef.current) {
-				anchorRef.current = null;
+
+			if (!me.shiftKey) {
+				if (!isDraggingRef.current) {
+					anchorRef.current = null;
+					cursorRef.current = startPos;
+				} else if (anchorRef.current === cursorRef.current) {
+					anchorRef.current = null;
+				}
 			}
+
+			// Fire brick click callback if this was a plain click on a brick
+			if (!isDraggingRef.current && !me.shiftKey && clickedBrick) {
+				const tokenIdx = parseInt(clickedBrick.dataset.tokenIdx!);
+				const wi = brickRectsRef.current.find(b => b.tokenIdx === tokenIdx);
+				if (wi !== undefined) {
+					const timing = timingsRef.current[
+						tokensRef.current.slice(0, tokenIdx).filter(t => t.kind === "word").length
+					];
+					handleBrickClick(tokenIdx, timing, me);
+					return;
+				}
+			}
+
 			isDraggingRef.current = false;
 			renderDOM();
 			focusDraft();
@@ -545,8 +513,6 @@ export default function SyncMapLyricsEditor({
 		window.addEventListener("mousemove", onMouseMove);
 		window.addEventListener("mouseup", onMouseUp);
 	}, []);
-
-	// Mount
 
 	useEffect(() => {
 		renderDOM();

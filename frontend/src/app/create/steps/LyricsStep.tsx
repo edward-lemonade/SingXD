@@ -3,8 +3,8 @@
 import Card from "@/src/components/Card";
 import { Line, Timing } from "../../../lib/types/types";
 import { AudioUrls } from "../page";
-import React, { SetStateAction, useMemo, useState } from "react";
-import SyncMapAlignmentEditor from "@/src/components/SyncMapAlignmentEditor";
+import React, { SetStateAction, useMemo, useRef, useState } from "react";
+import SyncMapAlignmentEditor, { SyncMapAlignmentEditorHandle } from "@/src/components/SyncMapAlignmentEditor";
 import SyncMapLyricsEditor from "@/src/components/SyncMapLyricsEditor";
 
 interface LyricsStepProps {
@@ -31,19 +31,18 @@ export default function LyricsStep({
 	const [useInstrumental, setUseInstrumental] = useState(false);
 	const audioUrl = useInstrumental ? audioUrls.instrumental : audioUrls.combined;
 
+	const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+	const alignmentEditorRef = useRef<SyncMapAlignmentEditorHandle>(null);
+
 	const flatWords = useMemo(
 		() => lines.flatMap((line) => line.words.map((word) => word.text)),
 		[lines]
 	);
 
-	/**
-	 * When a timed word-brick is clicked, seek the audio player to that timing.
-	 * Extend this to call into your SyncMapAlignmentEditor / audio player as needed.
-	 */
 	const handleWordTimingClick = (timing: Timing, wordFlatIndex: number) => {
-		// Example: seek audio to timing.start
-		// audioPlayerRef.current?.seekTo(timing.start);
-		console.log(`Word #${wordFlatIndex} clicked — start: ${timing.start}s, end: ${timing.end}s`);
+		setSelectedIndex(wordFlatIndex);
+		alignmentEditorRef.current?.seekTo(timing.start);
 	};
 
 	return (
@@ -59,7 +58,7 @@ export default function LyricsStep({
 						onChange={setLyricsString}
 						timings={timings}
 						onWordTimingClick={handleWordTimingClick}
-						placeholder="Paste or type lyrics here…"
+						placeholder="Paste or type lyrics here..."
 					/>
 
 					{lyricsString && (
@@ -68,16 +67,19 @@ export default function LyricsStep({
 							disabled={loading}
 							className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
 						>
-							{loading ? "Aligning…" : "Align lyrics to audio with AI"}
+							{loading ? "Aligning..." : "Align lyrics to audio with AI"}
 						</button>
 					)}
 				</Card>
 
 				<SyncMapAlignmentEditor
+					ref={alignmentEditorRef}
 					audioUrl={audioUrl}
 					timings={timings}
 					setTimings={setTimings}
 					words={flatWords}
+					selectedIndex={selectedIndex}
+					onSelectedIndexChange={setSelectedIndex}
 				/>
 			</div>
 		</section>
