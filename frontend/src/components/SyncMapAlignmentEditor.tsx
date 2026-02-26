@@ -57,7 +57,7 @@ export default function SyncMapAlignmentEditor({
         }
     };
 
-    /** Called by a region when the user drags it or resizes it */
+    // Called by a region when the user drags it or resizes it
     const handleTimingChange = (index: number, newStart: number, newEnd: number) => {
         setTimings((prev) => {
             const next = [...prev];
