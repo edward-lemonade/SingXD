@@ -35,6 +35,8 @@ export default function LyricsStep({
         line.words.map(word => word.text)
     ), [lines]);
 
+	const [selectedTimingIndex, setSelectedTimingIndex] = useState<number | null>(null);
+
 	return (
 		<section>
 			<div className="space-y-6">
@@ -61,6 +63,8 @@ export default function LyricsStep({
 					timings={timings}
 					setTimings={setTimings}
 					words={flatWords}
+					selectedIndex={selectedTimingIndex}
+					setSelectedIndex={setSelectedTimingIndex}
 				/>
 			</div>
 		</section>
