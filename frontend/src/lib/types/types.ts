@@ -24,13 +24,20 @@ export const DEFAULT_SYNC_MAP_SETTINGS : SyncMapSettings = {
 }
 
 export interface SyncMapMetadata {
+    title: string;
+    artist: string;
+    songTitle: string;
     duration: number; // in seconds
 }
 export const DEFAULT_SYNC_MAP_METADATA : SyncMapMetadata = {
+    title: "",
+    artist: "",
+    songTitle: "",
     duration: 0,
 }
 
 export interface SyncMap {
+    uuid: "",
     lines: Line[];
     timings: Timing[];
     settings: SyncMapSettings;

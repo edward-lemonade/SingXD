@@ -7,11 +7,13 @@ import LyricsStep from "@/src/app/create/steps/LyricsStep";
 import VideoStep from "@/src/app/create/steps/VideoStep";
 import { SyncMap, Timing, SyncMapSettings, SyncMapMetadata, DEFAULT_SYNC_MAP_SETTINGS, DEFAULT_SYNC_MAP_METADATA, Line } from "@/src/lib/types/types" ;
 import * as CreateAPI from "@/src/lib/api/CreateAPI";
+import PublishStep from "./steps/PublishStep";
 
 const steps = [
   { id: 1, name: "Audio" },
   { id: 2, name: "Lyrics" },
   { id: 3, name: "Video" },
+  { id: 4, name: "Publish" },
 ];
 
 export interface AudioUrls {
@@ -25,7 +27,7 @@ export default function CreatePage() {
 	// Page state
 
 	const sessionId = useRef<string | null>(null);
-	const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+	const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
 
 	// Syncmap Construction
 
@@ -61,6 +63,7 @@ export default function CreatePage() {
 	});
 
 	const syncMap: SyncMap = {
+		uuid: "",
 		lines: lines,
 		timings: timings,
 		settings: syncMapSettings,
@@ -98,10 +101,12 @@ export default function CreatePage() {
 				const audioCtx = new AudioContext();
 				const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 				const duration = audioBuffer.duration;
-				const newSyncMapMetadata: SyncMapMetadata = {
-					duration
-				};
-				setSyncMapMetadata(newSyncMapMetadata);
+				setSyncMapMetadata((prev) => {
+					return {
+						...prev,
+						duration
+					}
+				});
 				setSyncMapSettings((prev) => {
 					return {
 						...prev,
@@ -212,6 +217,14 @@ export default function CreatePage() {
 								syncMap={syncMap}
 								syncMapSettings={syncMapSettings}
 								setSyncMapSettings={setSyncMapSettings}
+							/>
+						)}
+
+						{currentStep === 4 && (
+							<PublishStep
+								syncMap={syncMap}
+								syncMapMetadata={syncMapMetadata}
+								setSyncMapMetadata={setSyncMapMetadata}
 							/>
 						)}
 					</div>

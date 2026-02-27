@@ -151,8 +151,18 @@ function SyncMapTimingEditor({
                 className="flex flex-col grow"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                    if (e.code === "Space") { e.preventDefault(); togglePlayPause(); }
+                    if (e.code === "Space") { 
+                        e.preventDefault(); 
+                        if (selectedIndex !== null) {
+                            wsRef.current?.seekTo(timings[selectedIndex].start / wsRef.current.getDuration());
+                        }
+                        togglePlayPause(); 
+                    }
                     if (e.code === "Escape") setSelectedIndex(null);
+                    if (e.code === "Backspace" && selectedIndex !== null) {
+                        setTimings((prev) => prev.filter((_, i) => i !== selectedIndex));
+                        setSelectedIndex(null);
+                    }
                 }}
                 style={{ backgroundColor: "#F4F4F4", overflow: "hidden" }}
             >

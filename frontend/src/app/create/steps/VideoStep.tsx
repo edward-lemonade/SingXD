@@ -26,50 +26,53 @@ export default function VideoStep({ syncMap, syncMapSettings, setSyncMapSettings
 
 	return (
 		<section>
-			<Card className="p-6 space-y-4">
-				<div>
-					<label className="block mb-2">Font</label>
-					<select
-						value={syncMapSettings.font}
-						onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, font: e.target.value }))}
-						className="border p-2 rounded"
-					>
-						<option value="Arial">Arial</option>
-						<option value="Times New Roman">Times New Roman</option>
-						<option value="Courier New">Courier New</option>
-					</select>
+			<Card className="p-6 space-y-4 flex flex-row">
+				<div className="flex flex-col">
+					<div>
+						<label className="block mb-2">Font</label>
+						<select
+							value={syncMapSettings.font}
+							onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, font: e.target.value }))}
+							className="border p-2 rounded"
+						>
+							<option value="Arial">Arial</option>
+							<option value="Times New Roman">Times New Roman</option>
+							<option value="Courier New">Courier New</option>
+						</select>
+					</div>
+					<div>
+						<label className="block mb-2">Text Size</label>
+						<input
+							type="number"
+							value={syncMapSettings.textSize}
+							onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, textSize: parseInt(e.target.value) }))}
+							className="border p-2 rounded"
+						/>
+					</div>
+					<div>
+						<label className="block mb-2">Text Color</label>
+						<input
+							type="color"
+							value={syncMapSettings.textColor}
+							onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, textColor: e.target.value }))}
+							className="border p-2 rounded"
+						/>
+					</div>
+					<div>
+						<label className="block mb-2">Background Image</label>
+						<input
+							type="file"
+							accept="image/*"
+							onChange={onBackgroundImageFileInputChange}
+						/>
+					</div>
 				</div>
-				<div>
-					<label className="block mb-2">Text Size</label>
-					<input
-						type="number"
-						value={syncMapSettings.textSize}
-						onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, textSize: parseInt(e.target.value) }))}
-						className="border p-2 rounded"
-					/>
-				</div>
-				<div>
-					<label className="block mb-2">Text Color</label>
-					<input
-						type="color"
-						value={syncMapSettings.textColor}
-						onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, textColor: e.target.value }))}
-						className="border p-2 rounded"
-					/>
-				</div>
-				<div>
-					<label className="block mb-2">Background Image</label>
-					<input
-						type="file"
-						accept="image/*"
-						onChange={onBackgroundImageFileInputChange}
-					/>
-				</div>
+
+				<SyncMapPlayer
+					syncMap={syncMap}
+				/>
 			</Card>
 
-			<SyncMapPlayer
-				syncMap={syncMap}
-			/>
 		</section>
 	);
 }

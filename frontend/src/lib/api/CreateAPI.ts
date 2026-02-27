@@ -32,6 +32,5 @@ export const generateTimings = async (
         { timeout: 5 * 60 * 1000 } // 5 min timeout
     );
 
-    console.log(response.data.timings)
     return response.data.timings;
 }
