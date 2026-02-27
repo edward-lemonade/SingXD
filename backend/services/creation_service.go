@@ -18,12 +18,12 @@ import (
 	"singxd/models"
 )
 
-type AudioService struct {
+type CreationService struct {
 	s3Client *db.S3Client
 }
 
-func NewAudioService(s3Client *db.S3Client) *AudioService {
-	return &AudioService{s3Client: s3Client}
+func NewCreationService(s3Client *db.S3Client) *CreationService {
+	return &CreationService{s3Client: s3Client}
 }
 
 // =========================================================
@@ -35,7 +35,7 @@ type SeparateAudioResponse struct {
 	SessionID       string `json:"sessionId"`
 }
 
-func (s *AudioService) SeparateAudio(ctx context.Context, file *multipart.FileHeader) (SeparateAudioResponse, error) {
+func (s *CreationService) SeparateAudio(ctx context.Context, file *multipart.FileHeader) (SeparateAudioResponse, error) {
 	fmt.Println("SeparateAudio request received")
 
 	if file == nil {
@@ -175,7 +175,7 @@ type GenerateTimingsResponse struct {
 	Timings []models.Timing `json:"timings"`
 }
 
-func (s *AudioService) GenerateTimings(ctx context.Context, sessionID string, lyrics string) (GenerateTimingsResponse, error) {
+func (s *CreationService) GenerateTimings(ctx context.Context, sessionID string, lyrics string) (GenerateTimingsResponse, error) {
 	if sessionID == "" || lyrics == "" {
 		return GenerateTimingsResponse{}, NewServiceError(http.StatusBadRequest, "Missing sessionID or lyrics", nil)
 	}
@@ -294,4 +294,3 @@ func (s *AudioService) GenerateTimings(ctx context.Context, sessionID string, ly
 		Timings: timings,
 	}, nil
 }
-

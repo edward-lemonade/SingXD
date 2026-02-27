@@ -32,8 +32,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create S3 client: %v", err)
 	}
-	audioService := services.NewAudioService(s3Client)
-	audioController := controllers.NewAudioController(audioService)
+	creationService := services.NewCreationService(s3Client)
+	creationController := controllers.NewCreationController(creationService)
 
 	router := gin.Default()
 
@@ -46,7 +46,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	routes.SetupRoutes(router, audioController)
+	routes.SetupRoutes(router, creationController)
 
 	router.Run(":8080")
 }

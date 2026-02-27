@@ -6,10 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(router *gin.Engine, audioController *controllers.AudioController) {
+func SetupRoutes(router *gin.Engine, creationController *controllers.CreationController) {
 	api := router.Group("/api")
 	{
-		api.POST("/separate-audio", audioController.SeparateAudio)
-		api.POST("/generate-timings", audioController.GenerateTimings)
+		api.POST("/separate-audio", creationController.SeparateAudio)
+		api.POST("/generate-timings", creationController.GenerateTimings)
 	}
 }
