@@ -1,49 +1,45 @@
-package controllers
+package services
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"mime/multipart"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
+
 	"singxd/db"
 	"singxd/models"
-
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
-var s3Client *db.S3Client
-
-func SetS3Client(client *db.S3Client) {
-	s3Client = client
+type AudioService struct {
+	s3Client *db.S3Client
 }
 
-// SeparateAudioResponse represents the response structure for audio separation
+func NewAudioService(s3Client *db.S3Client) *AudioService {
+	return &AudioService{s3Client: s3Client}
+}
+
+// =========================================================
+// Separate Audio
+
 type SeparateAudioResponse struct {
 	VocalsURL       string `json:"vocalsUrl"`
 	InstrumentalURL string `json:"instrumentalUrl"`
 	SessionID       string `json:"sessionId"`
 }
 
-// GenerateTimingsResponse represents the response structure for timing generation
-type GenerateTimingsResponse struct {
-	Timings []models.Timing `json:"timings"`
-}
-
-// handles audio file separation request
-func SeparateAudio(c *gin.Context) {
+func (s *AudioService) SeparateAudio(ctx context.Context, file *multipart.FileHeader) (SeparateAudioResponse, error) {
 	fmt.Println("SeparateAudio request received")
 
-	file, err := c.FormFile("audio")
-	if err != nil {
-		fmt.Println("Missing audio file:", err)
-		c.JSON(400, gin.H{"error": "No audio file provided"})
-		return
+	if file == nil {
+		return SeparateAudioResponse{}, NewServiceError(http.StatusBadRequest, "No audio file provided", nil)
 	}
 
 	// -------------------------------------------------------------------------
@@ -52,17 +48,14 @@ func SeparateAudio(c *gin.Context) {
 	tempDir := fmt.Sprintf("/tmp/audio_separation_%d", time.Now().Unix())
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		fmt.Println("Failed to create temp dir:", err)
-		c.JSON(500, gin.H{"error": "Failed to create temp directory"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to create temp directory", err)
 	}
-
 	defer os.RemoveAll(tempDir)
 
 	inputPath := filepath.Join(tempDir, "input.mp3")
-	if err := c.SaveUploadedFile(file, inputPath); err != nil {
+	if err := SaveMultipartFile(file, inputPath); err != nil {
 		fmt.Println("Failed to save uploaded file:", err)
-		c.JSON(500, gin.H{"error": "Failed to save uploaded file"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to save uploaded file", err)
 	}
 
 	// -------------------------------------------------------------------------
@@ -71,21 +64,18 @@ func SeparateAudio(c *gin.Context) {
 	scriptPath, err := filepath.Abs("../ctc/separator.py")
 	if err != nil {
 		fmt.Println("Failed to resolve script path:", err)
-		c.JSON(500, gin.H{"error": "Script path resolution failed"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Script path resolution failed", err)
 	}
 
 	venvPython := filepath.Join("..", "ctc", ".venv", "bin", "python")
 	venvPythonAbs, err := filepath.Abs(venvPython)
 	if err != nil {
 		fmt.Println("Failed to resolve venv Python path:", err)
-		c.JSON(500, gin.H{"error": "Python path resolution failed"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Python path resolution failed", err)
 	}
 	if _, err := os.Stat(venvPythonAbs); err != nil {
 		fmt.Println("Python interpreter not found:", venvPythonAbs)
-		c.JSON(500, gin.H{"error": "Python interpreter not found"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Python interpreter not found", err)
 	}
 
 	fmt.Println("Running separator:", scriptPath)
@@ -102,11 +92,12 @@ func SeparateAudio(c *gin.Context) {
 
 	if err != nil {
 		fmt.Println("Separator failed:", err)
-		c.JSON(500, gin.H{
-			"error":   "Separation failed",
-			"details": string(output),
-		})
-		return
+		return SeparateAudioResponse{}, NewServiceErrorWithDetails(
+			http.StatusInternalServerError,
+			"Separation failed",
+			string(output),
+			err,
+		)
 	}
 
 	vocalsPath := filepath.Join(tempDir, "vocals.wav")
@@ -114,20 +105,17 @@ func SeparateAudio(c *gin.Context) {
 
 	if _, err := os.Stat(vocalsPath); err != nil {
 		fmt.Println("Vocals missing:", err)
-		c.JSON(500, gin.H{"error": "Vocals file not generated"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Vocals file not generated", err)
 	}
 	if _, err := os.Stat(instPath); err != nil {
 		fmt.Println("Instrumental missing:", err)
-		c.JSON(500, gin.H{"error": "Instrumental file not generated"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Instrumental file not generated", err)
 	}
 
 	// -------------------------------------------------------------------------
 	// Initialize file uploads
 
 	sessionID := uuid.New().String()
-	ctx := context.TODO()
 
 	// -------------------------------------------------------------------------
 	// Upload vocals
@@ -136,14 +124,12 @@ func SeparateAudio(c *gin.Context) {
 	vocalsKey := fmt.Sprintf("creates/%s/vocals.wav", sessionID)
 	if err != nil {
 		fmt.Println("Failed to open vocals file:", err)
-		c.JSON(500, gin.H{"error": "Failed to read vocals file"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to read vocals file", err)
 	}
 	defer vocalsFile.Close()
-	if err := s3Client.UploadFileWithExpiry(ctx, vocalsKey, vocalsFile, 60*24); err != nil {
+	if err := s.s3Client.UploadFileWithExpiry(ctx, vocalsKey, vocalsFile, 60*24); err != nil {
 		fmt.Println("Failed to upload vocals:", err)
-		c.JSON(500, gin.H{"error": "Failed to upload vocals"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to upload vocals", err)
 	}
 
 	// -------------------------------------------------------------------------
@@ -153,48 +139,45 @@ func SeparateAudio(c *gin.Context) {
 	instKey := fmt.Sprintf("creates/%s/inst.wav", sessionID)
 	if err != nil {
 		fmt.Println("Failed to open instrumental file:", err)
-		c.JSON(500, gin.H{"error": "Failed to read instrumental file"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to read instrumental file", err)
 	}
 	defer instFile.Close()
-	if err := s3Client.UploadFileWithExpiry(ctx, instKey, instFile, 60*24); err != nil {
+	if err := s.s3Client.UploadFileWithExpiry(ctx, instKey, instFile, 60*24); err != nil {
 		fmt.Println("Failed to upload instrumental:", err)
-		c.JSON(500, gin.H{"error": "Failed to upload instrumental"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to upload instrumental", err)
 	}
 
 	// -------------------------------------------------------------------------
 	// Get presigned URLs for client access
 
-	vocalsURL, err := s3Client.GetPresignedURL(ctx, vocalsKey, 3600) // 1 hour expiry
+	vocalsURL, err := s.s3Client.GetPresignedURL(ctx, vocalsKey, 3600) // 1 hour expiry
 	if err != nil {
 		fmt.Println("Failed to get vocals URL:", err)
-		c.JSON(500, gin.H{"error": "Failed to generate vocals URL"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to generate vocals URL", err)
 	}
-	instURL, err := s3Client.GetPresignedURL(ctx, instKey, 3600)
+	instURL, err := s.s3Client.GetPresignedURL(ctx, instKey, 3600)
 	if err != nil {
 		fmt.Println("Failed to get instrumental URL:", err)
-		c.JSON(500, gin.H{"error": "Failed to generate instrumental URL"})
-		return
+		return SeparateAudioResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to generate instrumental URL", err)
 	}
 
-	response := SeparateAudioResponse{
+	return SeparateAudioResponse{
 		VocalsURL:       vocalsURL,
 		InstrumentalURL: instURL,
 		SessionID:       sessionID,
-	}
-
-	c.JSON(200, response)
+	}, nil
 }
 
-// handles generating timings for lyrics and audio
-func GenerateTimings(c *gin.Context) {
-	sessionID := c.PostForm("sessionID")
-	lyrics := c.PostForm("lyrics")
+// =========================================================
+// Generate Timings
+
+type GenerateTimingsResponse struct {
+	Timings []models.Timing `json:"timings"`
+}
+
+func (s *AudioService) GenerateTimings(ctx context.Context, sessionID string, lyrics string) (GenerateTimingsResponse, error) {
 	if sessionID == "" || lyrics == "" {
-		c.JSON(400, gin.H{"error": "Missing sessionID or lyrics"})
-		return
+		return GenerateTimingsResponse{}, NewServiceError(http.StatusBadRequest, "Missing sessionID or lyrics", nil)
 	}
 
 	// -------------------------------------------------------------------------
@@ -203,8 +186,7 @@ func GenerateTimings(c *gin.Context) {
 	tempDir := fmt.Sprintf("/tmp/alignment_%d", time.Now().Unix())
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		fmt.Println("Failed to create temp dir:", err)
-		c.JSON(500, gin.H{"error": "Failed to create temp directory"})
-		return
+		return GenerateTimingsResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to create temp directory", err)
 	}
 	defer os.RemoveAll(tempDir)
 
@@ -212,18 +194,16 @@ func GenerateTimings(c *gin.Context) {
 	// Download vocals from S3 (use cache in the future)
 
 	vocalsKey := fmt.Sprintf("creates/%s/vocals.wav", sessionID)
-	vocalsData, err := s3Client.DownloadFile(context.TODO(), vocalsKey)
+	vocalsData, err := s.s3Client.DownloadFile(ctx, vocalsKey)
 	if err != nil {
 		fmt.Println("Failed to download vocals:", err)
-		c.JSON(500, gin.H{"error": "Failed to download vocals"})
-		return
+		return GenerateTimingsResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to download vocals", err)
 	}
 
 	vocalsPath := filepath.Join(tempDir, "vocals.wav")
 	if err := os.WriteFile(vocalsPath, vocalsData, 0644); err != nil {
 		fmt.Println("Failed to save vocals:", err)
-		c.JSON(500, gin.H{"error": "Failed to save vocals"})
-		return
+		return GenerateTimingsResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to save vocals", err)
 	}
 
 	// -------------------------------------------------------------------------
@@ -235,8 +215,7 @@ func GenerateTimings(c *gin.Context) {
 	var lines []models.Line
 	if err := json.Unmarshal([]byte(lyrics), &lines); err != nil {
 		fmt.Println("Failed to parse lyrics JSON:", err)
-		c.JSON(500, gin.H{"error": "Failed to parse lyrics"})
-		return
+		return GenerateTimingsResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to parse lyrics", err)
 	}
 
 	var allWords []string
@@ -250,8 +229,7 @@ func GenerateTimings(c *gin.Context) {
 
 	if err := os.WriteFile(lyricsPath, []byte(lyricsText), 0644); err != nil {
 		fmt.Println("Failed to save lyrics:", err)
-		c.JSON(500, gin.H{"error": "Failed to save lyrics"})
-		return
+		return GenerateTimingsResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to save lyrics", err)
 	}
 
 	// -------------------------------------------------------------------------
@@ -260,31 +238,28 @@ func GenerateTimings(c *gin.Context) {
 	alignScript, err := filepath.Abs("../ctc/align.py")
 	if err != nil {
 		fmt.Println("Failed to resolve align script path:", err)
-		c.JSON(500, gin.H{"error": "Script path resolution failed"})
-		return
+		return GenerateTimingsResponse{}, NewServiceError(http.StatusInternalServerError, "Script path resolution failed", err)
 	}
 
 	venvPython, err := filepath.Abs("../ctc/.venv/bin/python")
 	if err != nil {
 		fmt.Println("Failed to resolve venv Python path:", err)
-		c.JSON(500, gin.H{"error": "Python path resolution failed"})
-		return
+		return GenerateTimingsResponse{}, NewServiceError(http.StatusInternalServerError, "Python path resolution failed", err)
 	}
 	if _, err := os.Stat(venvPython); err != nil {
 		fmt.Println("Python interpreter not found:", venvPython)
-		c.JSON(500, gin.H{"error": "Python interpreter not found"})
-		return
+		return GenerateTimingsResponse{}, NewServiceError(http.StatusInternalServerError, "Python interpreter not found", err)
 	}
 
 	// -------------------------------------------------------------------------
 	// Execute
 
-	outputJson := filepath.Join(tempDir, "timings.json")
+	outputJSON := filepath.Join(tempDir, "timings.json")
 
 	fmt.Println("Running alignment script:", alignScript)
 
 	// Run align.py
-	cmd := exec.Command(venvPython, alignScript, vocalsPath, lyricsPath, outputJson)
+	cmd := exec.Command(venvPython, alignScript, vocalsPath, lyricsPath, outputJSON)
 	cmd.Env = os.Environ()
 
 	output, err := cmd.CombinedOutput()
@@ -292,33 +267,31 @@ func GenerateTimings(c *gin.Context) {
 
 	if err != nil {
 		fmt.Println("Alignment failed:", err)
-		c.JSON(500, gin.H{
-			"error":   "Alignment failed",
-			"details": string(output),
-		})
-		return
+		return GenerateTimingsResponse{}, NewServiceErrorWithDetails(
+			http.StatusInternalServerError,
+			"Alignment failed",
+			string(output),
+			err,
+		)
 	}
 
 	// -------------------------------------------------------------------------
 	// Reformat Output using proper types
 
-	jsonData, err := os.ReadFile(outputJson)
+	jsonData, err := os.ReadFile(outputJSON)
 	if err != nil {
 		fmt.Println("Failed to read timings JSON:", err)
-		c.JSON(500, gin.H{"error": "Failed to read timings"})
-		return
+		return GenerateTimingsResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to read timings", err)
 	}
 
 	var timings []models.Timing
 	if err := json.Unmarshal(jsonData, &timings); err != nil {
 		fmt.Println("Failed to parse timings JSON:", err)
-		c.JSON(500, gin.H{"error": "Failed to parse timings"})
-		return
+		return GenerateTimingsResponse{}, NewServiceError(http.StatusInternalServerError, "Failed to parse timings", err)
 	}
 
-	response := GenerateTimingsResponse{
+	return GenerateTimingsResponse{
 		Timings: timings,
-	}
-
-	c.JSON(200, response)
+	}, nil
 }
+

@@ -12,6 +12,7 @@ import (
 	"singxd/controllers"
 	"singxd/db"
 	"singxd/routes"
+	"singxd/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,7 +32,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create S3 client: %v", err)
 	}
-	controllers.SetS3Client(s3Client)
+	audioService := services.NewAudioService(s3Client)
+	audioController := controllers.NewAudioController(audioService)
 
 	router := gin.Default()
 
@@ -44,7 +46,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	routes.SetupRoutes(router)
+	routes.SetupRoutes(router, audioController)
 
 	router.Run(":8080")
 }

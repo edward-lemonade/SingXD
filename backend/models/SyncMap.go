@@ -34,16 +34,23 @@ func DefaultSyncMapSettings() SyncMapSettings {
 }
 
 type SyncMapMetadata struct {
-	Duration float64 `json:"duration"` // in seconds
+	Title     string  `json:"title"`
+	Artist    string  `json:"artist"`
+	SongTitle string  `json:"songTitle"`
+	Duration  float64 `json:"duration"` // in seconds
 }
 
 func DefaultSyncMapMetadata() SyncMapMetadata {
 	return SyncMapMetadata{
-		Duration: 0,
+		Title:     "",
+		Artist:    "",
+		SongTitle: "",
+		Duration:  0,
 	}
 }
 
 type SyncMap struct {
+	UUID     string          `json:"uuid"`
 	Lines    []Line          `json:"lines"`
 	Timings  []Timing        `json:"timings"`
 	Settings SyncMapSettings `json:"settings"`
