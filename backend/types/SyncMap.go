@@ -1,5 +1,5 @@
-// models/syncmap.go
-package models
+// types/syncmap.go
+package types
 
 type Word struct {
 	Text  string `json:"text"`

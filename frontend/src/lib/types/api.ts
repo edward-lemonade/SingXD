@@ -10,6 +10,10 @@ export interface GenerateTimingsResponse {
     timings: Timing[],
 }
 
+export interface UploadImageResponse {
+    imageUrl: string;
+}
+
 export interface GenerateVideoResponse {
     videoUrl: string,
 }

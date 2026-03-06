@@ -14,7 +14,7 @@ interface LyricsStepProps {
 	timings: Timing[];
 	setTimings: (syncPoints: SetStateAction<Timing[]>) => void;
 	loading: boolean;
-	generateAlignment: () => void;
+	handleGenerateAlignment: () => void;
 }
 
 export default function LyricsStep({ 
@@ -25,7 +25,7 @@ export default function LyricsStep({
 	timings, 
 	setTimings, 
 	loading, 
-	generateAlignment,
+	handleGenerateAlignment,
 }: LyricsStepProps) {
 	const [useInstrumental, setUseInstrumental] = useState(false);
 	const audioUrl = useInstrumental ? audioUrls.instrumental : audioUrls.combined;
@@ -49,7 +49,7 @@ export default function LyricsStep({
 					/>
 					{lyricsString && (
 						<button
-							onClick={generateAlignment}
+							onClick={handleGenerateAlignment}
 							disabled={loading}
 							className="bg-blue-500 text-white px-4 py-2 rounded"
 						>

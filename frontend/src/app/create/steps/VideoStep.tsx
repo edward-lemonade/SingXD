@@ -4,25 +4,30 @@ import Card from "@/src/components/Card";
 import SyncMapPlayer from "@/src/components/SyncMapPlayer";
 import { SyncMap, SyncMapSettings } from "@/src/lib/types/types";
 import { SetStateAction } from "react";
-import { AudioUrls } from "../page";
 
-interface VideoStepProps {
+type VideoStepProps = {
 	syncMap: SyncMap;
 	syncMapSettings: SyncMapSettings;
 	setSyncMapSettings: (video: SetStateAction<SyncMapSettings>) => void;
-}
+	onBackgroundImageFileSelect: (file: File) => void | Promise<void>;
+	backgroundImageUploading: boolean;
+	backgroundImageError: string | null;
+};
 
-export default function VideoStep({ syncMap, syncMapSettings, setSyncMapSettings }: VideoStepProps) {
-    const onBackgroundImageFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        const fileUrl = URL.createObjectURL(file);
-        setSyncMapSettings((prev) => ({
-            ...prev,
-            backgroundImageUrl: fileUrl,
-        }));
-    }
+export default function VideoStep({
+	syncMap,
+	syncMapSettings,
+	setSyncMapSettings,
+	onBackgroundImageFileSelect,
+	backgroundImageUploading,
+	backgroundImageError,
+}: VideoStepProps) {
+	const onBackgroundImageFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+		onBackgroundImageFileSelect(file);
+		e.target.value = "";
+	};
 
 	return (
 		<section>
@@ -64,7 +69,10 @@ export default function VideoStep({ syncMap, syncMapSettings, setSyncMapSettings
 							type="file"
 							accept="image/*"
 							onChange={onBackgroundImageFileInputChange}
+							disabled={backgroundImageUploading}
 						/>
+						{backgroundImageUploading && <p className="text-sm text-gray-500 mt-1">Uploading…</p>}
+						{backgroundImageError && <p className="text-sm text-red-500 mt-1">{backgroundImageError}</p>}
 					</div>
 				</div>
 

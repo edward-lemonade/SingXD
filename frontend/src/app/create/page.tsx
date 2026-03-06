@@ -1,12 +1,13 @@
 "use client";
 
+import axios from "axios";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Wallpaper from "@/src/components/Wallpaper";
 import AudioStep from "@/src/app/create/steps/AudioStep";
 import LyricsStep from "@/src/app/create/steps/LyricsStep";
-import VideoStep from "@/src/app/create/steps/VideoStep";
+import VideoStep from "./steps/VideoStep";
 import { SyncMap, Timing, SyncMapSettings, SyncMapMetadata, DEFAULT_SYNC_MAP_SETTINGS, DEFAULT_SYNC_MAP_METADATA, Line } from "@/src/lib/types/types" ;
-import * as CreateAPI from "@/src/lib/api/CreateAPI";
+import * as CreateAPI from "@/src/lib/api/SyncMapAPI";
 import PublishStep from "./steps/PublishStep";
 
 const steps = [
@@ -88,15 +89,16 @@ export default function CreatePage() {
 		}
 	}, [audioUrls.vocals]);
 	useEffect(() => {
-		return () => { 
-			if (syncMapSettings.backgroundImageUrl) URL.revokeObjectURL(syncMapSettings.backgroundImageUrl);
-		}
-	}, [syncMapSettings.backgroundImageUrl])
+		return () => {
+			const url = syncMapSettings.backgroundImageUrl;
+			if (url && url.startsWith("blob:")) URL.revokeObjectURL(url);
+		};
+	}, [syncMapSettings.backgroundImageUrl]);
 
 	useEffect(() => {
 		const setMetadataAndSettings = async () => {
-			if (audioUrls.combined) {
-				const res = await fetch(audioUrls.combined);
+			if (audioUrls.vocals) {
+				const res = await fetch(audioUrls.vocals);
 				const arrayBuffer = await res.arrayBuffer();
 				const audioCtx = new AudioContext();
 				const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
@@ -110,15 +112,26 @@ export default function CreatePage() {
 				setSyncMapSettings((prev) => {
 					return {
 						...prev,
-						audioUrl: audioUrls.combined,
+						audioUrl: audioUrls.vocals,
 					}
 				})
 			} else {
-				setSyncMapMetadata(DEFAULT_SYNC_MAP_METADATA);
+				setSyncMapMetadata((prev) => {
+					return {
+						...prev,
+						duration: 0,
+					}
+				});
+				setSyncMapSettings((prev) => {
+					return {
+						...prev,
+						audioUrl: null,
+					}
+				})
 			}
 		}
 		setMetadataAndSettings();
-	}, [audioUrls.combined]); 
+	}, [audioUrls.vocals]); 
 
 	const [separateAudioLoading, setSeparateAudioLoading] = useState(false);
 	const handleSeparateAudio = async () => {
@@ -154,6 +167,45 @@ export default function CreatePage() {
 			console.error('Failed to generate alignment', error);
 		} finally {
 			setGenerateAlignmentLoading(false);
+		}
+	}
+
+	const [backgroundImageUploading, setBackgroundImageUploading] = useState(false);
+	const [backgroundImageError, setBackgroundImageError] = useState<string | null>(null);
+	const handleUploadBackgroundImage = async (file: File) => {
+		const sid = sessionId.current;
+		if (!sid) {
+			setBackgroundImageError("Complete the Audio step first");
+			return;
+		}
+		setBackgroundImageError(null);
+		setBackgroundImageUploading(true);
+		try {
+			const imageUrl = await CreateAPI.uploadImage(sid, file);
+			setSyncMapSettings((prev) => ({ ...prev, backgroundImageUrl: imageUrl }));
+		} catch (err) {
+			const message = axios.isAxiosError(err) && err.response?.data?.error
+				? err.response.data.error
+				: err instanceof Error ? err.message : "Failed to upload image";
+			setBackgroundImageError(message);
+		} finally {
+			setBackgroundImageUploading(false);
+		}
+	};
+
+	const [publishLoading, setPublishLoading] = useState(false);
+	const handlePublish = async () => {
+		if (!audioUrls.vocals || !lines) return;
+		setPublishLoading(true);
+		try {
+			const success = await CreateAPI.createMap(sessionId.current!, syncMap);
+			if (success) {
+				console.log("Syncmap created");
+			}
+		} catch (error) {
+			console.error('Failed to generate alignment', error);
+		} finally {
+			setPublishLoading(false);
 		}
 	}
 
@@ -208,7 +260,7 @@ export default function CreatePage() {
 								timings={timings}
 								setTimings={setTimings}
 								loading={generateAlignmentLoading}
-								generateAlignment={handleGenerateAlignment}
+								handleGenerateAlignment={handleGenerateAlignment}
 							/>
 						)}
 
@@ -217,6 +269,9 @@ export default function CreatePage() {
 								syncMap={syncMap}
 								syncMapSettings={syncMapSettings}
 								setSyncMapSettings={setSyncMapSettings}
+								onBackgroundImageFileSelect={handleUploadBackgroundImage}
+								backgroundImageUploading={backgroundImageUploading}
+								backgroundImageError={backgroundImageError}
 							/>
 						)}
 
@@ -225,6 +280,8 @@ export default function CreatePage() {
 								syncMap={syncMap}
 								syncMapMetadata={syncMapMetadata}
 								setSyncMapMetadata={setSyncMapMetadata}
+								loading={publishLoading}
+								handlePublish={handlePublish}
 							/>
 						)}
 					</div>

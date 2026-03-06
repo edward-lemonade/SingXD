@@ -10,9 +10,11 @@ interface PublishStepProps {
 	syncMap: SyncMap;
 	syncMapMetadata: SyncMapMetadata;
 	setSyncMapMetadata: (video: SetStateAction<SyncMapMetadata>) => void;
+	loading: boolean;
+	handlePublish: () => void;
 }
 
-export default function PublishStep({ syncMap, syncMapMetadata, setSyncMapMetadata }: PublishStepProps) {
+export default function PublishStep({ syncMap, syncMapMetadata, setSyncMapMetadata, loading, handlePublish }: PublishStepProps) {
 
 	return (
 		<section>
@@ -45,6 +47,13 @@ export default function PublishStep({ syncMap, syncMapMetadata, setSyncMapMetada
 							className="border p-2 rounded"
 						/>
 					</div>
+					<button
+						onClick={handlePublish}
+						disabled={loading}
+						className="bg-blue-500 text-white px-4 py-2 rounded"
+					>
+						{loading ? 'Publishing...' : 'Publish'}
+					</button>
 				</div>
 			</Card>
 

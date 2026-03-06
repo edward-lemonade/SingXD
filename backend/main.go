@@ -11,6 +11,7 @@ import (
 
 	"singxd/controllers"
 	"singxd/db"
+	"singxd/db/postgres"
 	"singxd/routes"
 	"singxd/services"
 
@@ -32,8 +33,27 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create S3 client: %v", err)
 	}
-	creationService := services.NewCreationService(s3Client)
-	creationController := controllers.NewCreationController(creationService)
+
+	// Initialize Postgres client (GORM) and auto-migrate
+	databaseURL := os.Getenv("DATABASE_URL")
+	if databaseURL == "" {
+		log.Fatal("DATABASE_URL environment variable not set")
+	}
+	gormDB, err := postgres.NewGormDB(databaseURL)
+	if err != nil {
+		log.Fatalf("Failed to create Postgres connection: %v", err)
+	}
+	if err := postgres.AutoMigrate(gormDB); err != nil {
+		log.Fatalf("Failed to run migrations: %v", err)
+	}
+	sqlDB, err := gormDB.DB()
+	if err != nil {
+		log.Fatalf("Failed to get sql db: %v", err)
+	}
+	defer sqlDB.Close()
+
+	syncMapService := services.NewSyncMapService(s3Client, gormDB)
+	syncMapController := controllers.NewSyncMapController(syncMapService)
 
 	router := gin.Default()
 
@@ -46,7 +66,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	routes.SetupRoutes(router, creationController)
+	routes.SetupRoutes(router, syncMapController)
 
 	router.Run(":8080")
 }

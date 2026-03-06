@@ -2,7 +2,9 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"time"
 
@@ -97,6 +99,20 @@ func (sc *S3Client) ListFiles(ctx context.Context, prefix string) ([]string, err
 		keys = append(keys, *obj.Key)
 	}
 	return keys, nil
+}
+
+func (sc *S3Client) MoveObject(ctx context.Context, sourceKey string, destKey string) error {
+	copySource := url.PathEscape(fmt.Sprintf("%s/%s", sc.bucket, sourceKey))
+	_, err := sc.client.CopyObject(ctx, &s3.CopyObjectInput{
+		Bucket:     aws.String(sc.bucket),
+		CopySource: aws.String(copySource),
+		Key:        aws.String(destKey),
+	})
+	if err != nil {
+		return err
+	}
+
+	return sc.DeleteFile(ctx, sourceKey)
 }
 
 // SetObjectLifecycleExpiry sets an object expiration policy (for a session)

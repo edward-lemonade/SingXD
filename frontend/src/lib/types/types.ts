@@ -37,7 +37,7 @@ export const DEFAULT_SYNC_MAP_METADATA : SyncMapMetadata = {
 }
 
 export interface SyncMap {
-    uuid: "",
+    uuid: string;
     lines: Line[];
     timings: Timing[];
     settings: SyncMapSettings;
