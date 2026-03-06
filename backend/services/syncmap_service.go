@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"mime/multipart"
 	"net/http"
@@ -15,18 +16,21 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"singxd/db"
 	"singxd/db/postgres"
 	"singxd/db/s3"
 	"singxd/types"
 )
 
+type SyncMap = types.SyncMap
+type Timing = types.Timing
+type Line = types.Line
+
 type SyncMapService struct {
-	s3Client *db.S3Client
+	s3Client *s3.S3Client
 	db       *gorm.DB
 }
 
-func NewSyncMapService(s3Client *db.S3Client, db *gorm.DB) *SyncMapService {
+func NewSyncMapService(s3Client *s3.S3Client, db *gorm.DB) *SyncMapService {
 	return &SyncMapService{
 		s3Client: s3Client,
 		db:       db,
@@ -104,7 +108,7 @@ func (s *SyncMapService) SeparateAudio(ctx context.Context, file *multipart.File
 	}
 
 	vocalsPath := filepath.Join(tempDir, "vocals.wav")
-	instPath := filepath.Join(tempDir, "inst.wav")
+	instPath := filepath.Join(tempDir, "instrumental.wav")
 
 	if _, err := os.Stat(vocalsPath); err != nil {
 		fmt.Println("Vocals missing:", err)
@@ -124,13 +128,12 @@ func (s *SyncMapService) SeparateAudio(ctx context.Context, file *multipart.File
 	// Upload vocals
 
 	vocalsFile, err := os.Open(vocalsPath)
-	vocalsKey := fmt.Sprintf("syncmap_temp/%s/vocals.wav", sessionID)
 	if err != nil {
 		fmt.Println("Failed to open vocals file:", err)
 		return SeparateAudioResult{}, NewServiceError(http.StatusInternalServerError, "Failed to read vocals file", err)
 	}
 	defer vocalsFile.Close()
-	if err := s.s3Client.UploadFileWithExpiry(ctx, vocalsKey, vocalsFile, 60*24); err != nil {
+	if _, err := s3.SaveSyncMapTempAudioFile(ctx, s.s3Client, sessionID, "vocals", vocalsFile, 60*24); err != nil {
 		fmt.Println("Failed to upload vocals:", err)
 		return SeparateAudioResult{}, NewServiceError(http.StatusInternalServerError, "Failed to upload vocals", err)
 	}
@@ -139,13 +142,12 @@ func (s *SyncMapService) SeparateAudio(ctx context.Context, file *multipart.File
 	// Upload instrumentals
 
 	instFile, err := os.Open(instPath)
-	instKey := fmt.Sprintf("syncmap_temp/%s/inst.wav", sessionID)
 	if err != nil {
 		fmt.Println("Failed to open instrumental file:", err)
 		return SeparateAudioResult{}, NewServiceError(http.StatusInternalServerError, "Failed to read instrumental file", err)
 	}
 	defer instFile.Close()
-	if err := s.s3Client.UploadFileWithExpiry(ctx, instKey, instFile, 60*24); err != nil {
+	if _, err := s3.SaveSyncMapTempAudioFile(ctx, s.s3Client, sessionID, "inst", instFile, 60*24); err != nil {
 		fmt.Println("Failed to upload instrumental:", err)
 		return SeparateAudioResult{}, NewServiceError(http.StatusInternalServerError, "Failed to upload instrumental", err)
 	}
@@ -153,12 +155,12 @@ func (s *SyncMapService) SeparateAudio(ctx context.Context, file *multipart.File
 	// -------------------------------------------------------------------------
 	// Get presigned URLs for client access
 
-	vocalsURL, err := s.s3Client.GetPresignedURL(ctx, vocalsKey, 3600) // 1 hour expiry
+	vocalsURL, err := s3.GetSyncMapTempAudioFileURL(ctx, s.s3Client, sessionID, "vocals", 3600)
 	if err != nil {
 		fmt.Println("Failed to get vocals URL:", err)
 		return SeparateAudioResult{}, NewServiceError(http.StatusInternalServerError, "Failed to generate vocals URL", err)
 	}
-	instURL, err := s.s3Client.GetPresignedURL(ctx, instKey, 3600)
+	instURL, err := s3.GetSyncMapTempAudioFileURL(ctx, s.s3Client, sessionID, "inst", 3600)
 	if err != nil {
 		fmt.Println("Failed to get instrumental URL:", err)
 		return SeparateAudioResult{}, NewServiceError(http.StatusInternalServerError, "Failed to generate instrumental URL", err)
@@ -172,10 +174,7 @@ func (s *SyncMapService) SeparateAudio(ctx context.Context, file *multipart.File
 }
 
 // =========================================================
-// Upload Image (background)
-
-const syncmapTempPrefix = "syncmap_temp"
-const presignedBackgroundExpirySeconds = 24 * 3600 // 1 day for temp preview
+// Upload Background Image
 
 func (s *SyncMapService) UploadImage(ctx context.Context, sessionID string, file *multipart.FileHeader) (string, error) {
 	if sessionID == "" {
@@ -190,18 +189,20 @@ func (s *SyncMapService) UploadImage(ctx context.Context, sessionID string, file
 		return "", NewServiceError(http.StatusBadRequest, "Invalid image type", nil)
 	}
 
-	key := fmt.Sprintf("%s/%s/background%s", syncmapTempPrefix, sessionID, ext)
 	src, err := file.Open()
 	if err != nil {
 		return "", NewServiceError(http.StatusInternalServerError, "Failed to read image", err)
 	}
 	defer src.Close()
 
-	if err := s.s3Client.UploadFile(ctx, key, src); err != nil {
+	key, err := s3.SaveSyncMapTempBackgroundImage(ctx, s.s3Client, sessionID, ext, src)
+	if err != nil {
 		return "", NewServiceError(http.StatusInternalServerError, "Failed to upload image", err)
 	}
 
-	url, err := s.s3Client.GetPresignedURL(ctx, key, int64(presignedBackgroundExpirySeconds))
+	// 1 day preview URL for the background image
+	const expirySeconds int64 = 24 * 3600
+	url, err := s3.GetSyncMapTempBackgroundImageURL(ctx, s.s3Client, key, expirySeconds)
 	if err != nil {
 		return "", NewServiceError(http.StatusInternalServerError, "Failed to generate image URL", err)
 	}
@@ -211,7 +212,7 @@ func (s *SyncMapService) UploadImage(ctx context.Context, sessionID string, file
 // =========================================================
 // Generate Timings
 
-func (s *SyncMapService) GenerateTimings(ctx context.Context, sessionID string, lyrics string) ([]types.Timing, error) {
+func (s *SyncMapService) GenerateTimings(ctx context.Context, sessionID string, lyrics string) ([]Timing, error) {
 	// -------------------------------------------------------------------------
 	// Create temp folder
 
@@ -225,8 +226,7 @@ func (s *SyncMapService) GenerateTimings(ctx context.Context, sessionID string, 
 	// -------------------------------------------------------------------------
 	// Download vocals from S3 (use cache in the future)
 
-	vocalsKey := fmt.Sprintf("syncmap_temp/%s/vocals.wav", sessionID)
-	vocalsData, err := s.s3Client.DownloadFile(ctx, vocalsKey)
+	vocalsData, err := s3.DownloadSyncMapTempAudioFile(ctx, s.s3Client, sessionID, "vocals")
 	if err != nil {
 		fmt.Println("Failed to download vocals:", err)
 		return nil, NewServiceError(http.StatusInternalServerError, "Failed to download vocals", err)
@@ -244,7 +244,7 @@ func (s *SyncMapService) GenerateTimings(ctx context.Context, sessionID string, 
 	lyricsPath := filepath.Join(tempDir, "lyrics.txt")
 
 	// Parse the JSON lines array using proper types
-	var lines []types.Line
+	var lines []Line
 	if err := json.Unmarshal([]byte(lyrics), &lines); err != nil {
 		fmt.Println("Failed to parse lyrics JSON:", err)
 		return nil, NewServiceError(http.StatusInternalServerError, "Failed to parse lyrics", err)
@@ -316,7 +316,7 @@ func (s *SyncMapService) GenerateTimings(ctx context.Context, sessionID string, 
 		return nil, NewServiceError(http.StatusInternalServerError, "Failed to read timings", err)
 	}
 
-	var timings []types.Timing
+	var timings []Timing
 	if err := json.Unmarshal(jsonData, &timings); err != nil {
 		fmt.Println("Failed to parse timings JSON:", err)
 		return nil, NewServiceError(http.StatusInternalServerError, "Failed to parse timings", err)
@@ -328,7 +328,7 @@ func (s *SyncMapService) GenerateTimings(ctx context.Context, sessionID string, 
 // =========================================================
 // Get SyncMap by UUID
 
-func (s *SyncMapService) GetByUUID(ctx context.Context, uuid string) (*types.SyncMap, error) {
+func (s *SyncMapService) GetByUUID(ctx context.Context, uuid string) (*SyncMap, error) {
 	if s.db == nil {
 		return nil, NewServiceError(http.StatusInternalServerError, "Database not configured", nil)
 	}
@@ -338,9 +338,9 @@ func (s *SyncMapService) GetByUUID(ctx context.Context, uuid string) (*types.Syn
 // =========================================================
 // Create SyncMap
 
-func (s *SyncMapService) CreateMap(ctx context.Context, sessionID string, syncMap types.SyncMap) (types.SyncMap, error) {
+func (s *SyncMapService) CreateMap(ctx context.Context, sessionID string, syncMap SyncMap) (SyncMap, error) {
 	if s.db == nil {
-		return types.SyncMap{}, NewServiceError(http.StatusInternalServerError, "Database not configured", nil)
+		return SyncMap{}, NewServiceError(http.StatusInternalServerError, "Database not configured", nil)
 	}
 
 	destUUID := syncMap.UUID
@@ -349,78 +349,34 @@ func (s *SyncMapService) CreateMap(ctx context.Context, sessionID string, syncMa
 		syncMap.UUID = destUUID
 	}
 
-	if err := s3.CreateSyncMapFolder(ctx, s.s3Client, destUUID); err != nil {
-		return types.SyncMap{}, NewServiceError(http.StatusInternalServerError, "Failed to create syncmap folder", err)
-	}
-
-	destKeys, err := s3.ListSyncMapFiles(ctx, s.s3Client, destUUID)
+	instKey, bgKey, err := s3.PrepareSyncMapMedia(ctx, s.s3Client, sessionID, destUUID)
 	if err != nil {
-		return types.SyncMap{}, NewServiceError(http.StatusInternalServerError, "Failed to list destination files", err)
-	}
-
-	// If destination already has files (e.g. retry after a partial publish),
-	// don't try to move again from temp.
-	audioKeys := make([]string, 0, len(destKeys))
-	destPrefix := s3.SyncMapPrefix(destUUID)
-	for _, k := range destKeys {
-		if k == destPrefix || strings.HasSuffix(k, "/") {
-			continue
+		switch {
+		case errors.Is(err, s3.ErrNoAudioFilesForSession):
+			return SyncMap{}, NewServiceError(http.StatusBadRequest, "No audio files found for session", err)
+		case errors.Is(err, s3.ErrNoInstrumentalFile):
+			return SyncMap{}, NewServiceError(http.StatusBadRequest, "No instrumental (inst) audio file found", err)
+		default:
+			return SyncMap{}, NewServiceError(http.StatusInternalServerError, "Failed to prepare syncmap media", err)
 		}
-		audioKeys = append(audioKeys, k)
 	}
-
-	if len(audioKeys) == 0 {
-		movedKeys, err := s3.MoveTempToSyncMap(ctx, s.s3Client, sessionID, destUUID)
-		if err != nil {
-			return types.SyncMap{}, NewServiceError(http.StatusInternalServerError, "Failed to move audio files", err)
-		}
-		if len(movedKeys) == 0 {
-			return types.SyncMap{}, NewServiceError(http.StatusBadRequest, "No audio files found for session", nil)
-		}
-		audioKeys = movedKeys
-	}
-
-	instKey := findInstKey(audioKeys)
-	if instKey == "" {
-		return types.SyncMap{}, NewServiceError(http.StatusBadRequest, "No instrumental (inst) audio file found", nil)
-	}
-	audioURL, err := s.s3Client.GetPresignedURL(ctx, instKey, 3600)
+	audioURL, err := s3.GetSyncMapMediaURL(ctx, s.s3Client, instKey, 3600)
 	if err != nil {
-		return types.SyncMap{}, NewServiceError(http.StatusInternalServerError, "Failed to generate audio URL", err)
+		return SyncMap{}, NewServiceError(http.StatusInternalServerError, "Failed to generate audio URL", err)
 	}
 	syncMap.Settings.AudioURL = &audioURL
 
-	if bgKey := findBackgroundImageKey(audioKeys); bgKey != "" {
-		bgURL, err := s.s3Client.GetPresignedURL(ctx, bgKey, 3600)
+	if bgKey != nil {
+		bgURL, err := s3.GetSyncMapMediaURL(ctx, s.s3Client, *bgKey, 3600)
 		if err != nil {
-			return types.SyncMap{}, NewServiceError(http.StatusInternalServerError, "Failed to generate background image URL", err)
+			return SyncMap{}, NewServiceError(http.StatusInternalServerError, "Failed to generate background image URL", err)
 		}
 		syncMap.Settings.BackgroundImageURL = &bgURL
 	}
 
 	if err := postgres.SaveSyncMap(ctx, s.db, syncMap); err != nil {
-		return types.SyncMap{}, NewServiceError(http.StatusInternalServerError, "Failed to save syncmap", err)
+		return SyncMap{}, NewServiceError(http.StatusInternalServerError, "Failed to save syncmap", err)
 	}
 
 	return syncMap, nil
-}
-
-func findInstKey(keys []string) string {
-	for _, k := range keys {
-		base := strings.ToLower(filepath.Base(k))
-		if strings.Contains(base, "inst") {
-			return k
-		}
-	}
-	return ""
-}
-
-func findBackgroundImageKey(keys []string) string {
-	for _, k := range keys {
-		base := strings.ToLower(filepath.Base(k))
-		if strings.HasPrefix(base, "background") {
-			return k
-		}
-	}
-	return ""
 }

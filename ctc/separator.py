@@ -26,8 +26,8 @@ if __name__ == "__main__":
                 # vocals.wav -> vocals.wav in output_dir
                 shutil.move(str(stem_file), output_dir / "vocals.wav")
             else:
-                # no-vocals.wav -> inst.wav in output_dir
-                shutil.move(str(stem_file), output_dir / "inst.wav")
+                # no-vocals.wav -> instrumental.wav in output_dir
+                shutil.move(str(stem_file), output_dir / "instrumental.wav")
                 
         shutil.rmtree(output_folder.parent)
     else:

@@ -10,8 +10,8 @@ import (
 	"github.com/joho/godotenv"
 
 	"singxd/controllers"
-	"singxd/db"
 	"singxd/db/postgres"
+	"singxd/db/s3"
 	"singxd/routes"
 	"singxd/services"
 
@@ -29,7 +29,7 @@ func main() {
 	if bucket == "" {
 		log.Fatal("S3_BUCKET environment variable not set")
 	}
-	s3Client, err := db.NewS3Client(ctx, bucket)
+	s3Client, err := s3.NewS3Client(ctx, bucket)
 	if err != nil {
 		log.Fatalf("Failed to create S3 client: %v", err)
 	}
