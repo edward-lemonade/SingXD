@@ -3,13 +3,13 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import SyncMapPlayer from "@/src/components/SyncMapPlayer";
-import { SyncMap } from "@/src/lib/types/types";
+import { SyncMapDraft } from "@/src/lib/types/types";
 import * as CreateAPI from "@/src/lib/api/SyncMapAPI";
 
 export default function SyncMapPage() {
 	const params = useParams();
 	const uuid = params.uuid as string;
-	const [syncMap, setSyncMap] = useState<SyncMap | null>(null);
+	const [syncMap, setSyncMap] = useState<SyncMapDraft | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
 

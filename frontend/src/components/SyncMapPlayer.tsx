@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { SyncMap } from "../lib/types/types";
+import { SyncMapDraft } from "../lib/types/types";
 
 export interface SyncMapPlayerSettings {
     width: number;
@@ -15,7 +15,7 @@ export default function SyncMapPlayer({
     syncMap,
     playerSettings: partialSettings,
 }: {
-    syncMap: SyncMap;
+    syncMap: SyncMapDraft;
     playerSettings?: Partial<SyncMapPlayerSettings>;
 }) {
     const playerSettings = { ...defaultPlayerSettings, ...partialSettings };
@@ -138,8 +138,8 @@ export default function SyncMapPlayer({
                 display: 'flex',
                 flexDirection: 'column',
                 backgroundColor: '#000',
-                backgroundImage: syncMap.settings.backgroundImageUrl 
-                    ? `url(${syncMap.settings.backgroundImageUrl})` 
+                backgroundImage: syncMap.properties.backgroundImageUrl 
+                    ? `url(${syncMap.properties.backgroundImageUrl})` 
                     : undefined,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
@@ -148,10 +148,10 @@ export default function SyncMapPlayer({
             }}
         >
             {/* Audio element */}
-            {syncMap.settings.audioUrl && (
+            {syncMap.properties.audioUrl && (
                 <audio
                     ref={audioRef}
-                    src={syncMap.settings.audioUrl}
+                    src={syncMap.properties.audioUrl}
                     onTimeUpdate={handleTimeUpdate}
                     onEnded={() => setIsPlaying(false)}
                 />
@@ -182,8 +182,8 @@ export default function SyncMapPlayer({
                                 opacity: isCurrentLine ? 1 : 0.5,
                                 transform: isCurrentLine ? 'scale(1.1)' : 'scale(1)',
                                 transition: 'all 0.3s ease',
-                                fontFamily: syncMap.settings.font,
-                                fontSize: syncMap.settings.textSize,
+                                fontFamily: syncMap.properties.font,
+                                fontSize: syncMap.properties.textSize,
                             }}
                         >
                             {line.words.map((word, wordIdx) => {
@@ -196,7 +196,7 @@ export default function SyncMapPlayer({
                                         style={{
                                             color: isCurrentWord 
                                                 ? '#FFD700' // Gold for current word
-                                                : syncMap.settings.textColor,
+                                                : syncMap.properties.textColor,
                                             fontWeight: isCurrentWord ? 'bold' : 'normal',
                                             textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
                                             transition: 'all 0.2s ease',
@@ -224,7 +224,7 @@ export default function SyncMapPlayer({
                 <input
                     type="range"
                     min="0"
-                    max={syncMap.metadata.duration}
+                    max={syncMap.properties.duration}
                     step="0.01"
                     value={currentTime}
                     onChange={handleSeek}
@@ -239,7 +239,7 @@ export default function SyncMapPlayer({
                     color: '#fff',
                 }}>
                     <span>
-                        {formatTime(currentTime)} / {formatTime(syncMap.metadata.duration)}
+                        {formatTime(currentTime)} / {formatTime(syncMap.properties.duration)}
                     </span>
                     
                     <button

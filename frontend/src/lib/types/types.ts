@@ -8,38 +8,39 @@ export interface Timing {
     start: number; 
     end: number;
 }
-export interface SyncMapSettings {
+export interface SyncMapProperties {
 	font: string;
 	textSize: number;
 	textColor: string;
 	backgroundImageUrl: string | null;
     audioUrl: string | null;
-}
-export const DEFAULT_SYNC_MAP_SETTINGS : SyncMapSettings = {
-    font: "Arial",
-	textSize: 24,
-	textColor: '#000000',
-    backgroundImageUrl: null,
-    audioUrl: null,
-}
-
-export interface SyncMapMetadata {
     title: string;
     artist: string;
     songTitle: string;
     duration: number; // in seconds
 }
-export const DEFAULT_SYNC_MAP_METADATA : SyncMapMetadata = {
+
+export interface SyncMapDraft {
+    lines: Line[];
+    timings: Timing[];
+    properties: SyncMapProperties;
+} 
+
+export interface SyncMap extends SyncMapDraft {
+    id: number;
+    createdAt: Date;
+    updatedAt: Date;
+    author: string | null;
+}
+
+export const DEFAULT_SYNCMAP_PROPERTIES : SyncMapProperties = {
+    font: "Arial",
+	textSize: 24,
+	textColor: '#000000',
+    backgroundImageUrl: null,
+    audioUrl: null,
     title: "",
     artist: "",
     songTitle: "",
     duration: 0,
 }
-
-export interface SyncMap {
-    uuid: string;
-    lines: Line[];
-    timings: Timing[];
-    settings: SyncMapSettings;
-    metadata: SyncMapMetadata;
-} 

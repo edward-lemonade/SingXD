@@ -2,13 +2,13 @@
 
 import Card from "@/src/components/Card";
 import SyncMapPlayer from "@/src/components/SyncMapPlayer";
-import { SyncMap, SyncMapSettings } from "@/src/lib/types/types";
+import { SyncMapDraft, SyncMapProperties } from "@/src/lib/types/types";
 import { SetStateAction } from "react";
 
 type VideoStepProps = {
-	syncMap: SyncMap;
-	syncMapSettings: SyncMapSettings;
-	setSyncMapSettings: (video: SetStateAction<SyncMapSettings>) => void;
+	syncMap: SyncMapDraft;
+	syncMapProps: SyncMapProperties;
+	setSyncMapProps: (video: SetStateAction<SyncMapProperties>) => void;
 	onBackgroundImageFileSelect: (file: File) => void | Promise<void>;
 	backgroundImageUploading: boolean;
 	backgroundImageError: string | null;
@@ -16,8 +16,8 @@ type VideoStepProps = {
 
 export default function VideoStep({
 	syncMap,
-	syncMapSettings,
-	setSyncMapSettings,
+	syncMapProps,
+	setSyncMapProps,
 	onBackgroundImageFileSelect,
 	backgroundImageUploading,
 	backgroundImageError,
@@ -36,8 +36,8 @@ export default function VideoStep({
 					<div>
 						<label className="block mb-2">Font</label>
 						<select
-							value={syncMapSettings.font}
-							onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, font: e.target.value }))}
+							value={syncMapProps.font}
+							onChange={(e) => setSyncMapProps((prev) => ({ ...prev, font: e.target.value }))}
 							className="border p-2 rounded"
 						>
 							<option value="Arial">Arial</option>
@@ -49,8 +49,8 @@ export default function VideoStep({
 						<label className="block mb-2">Text Size</label>
 						<input
 							type="number"
-							value={syncMapSettings.textSize}
-							onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, textSize: parseInt(e.target.value) }))}
+							value={syncMapProps.textSize}
+							onChange={(e) => setSyncMapProps((prev) => ({ ...prev, textSize: parseInt(e.target.value) }))}
 							className="border p-2 rounded"
 						/>
 					</div>
@@ -58,8 +58,8 @@ export default function VideoStep({
 						<label className="block mb-2">Text Color</label>
 						<input
 							type="color"
-							value={syncMapSettings.textColor}
-							onChange={(e) => setSyncMapSettings((prev) => ({ ...prev, textColor: e.target.value }))}
+							value={syncMapProps.textColor}
+							onChange={(e) => setSyncMapProps((prev) => ({ ...prev, textColor: e.target.value }))}
 							className="border p-2 rounded"
 						/>
 					</div>

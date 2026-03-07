@@ -6,7 +6,7 @@ import Wallpaper from "@/src/components/Wallpaper";
 import AudioStep from "@/src/app/create/steps/AudioStep";
 import LyricsStep from "@/src/app/create/steps/LyricsStep";
 import VideoStep from "./steps/VideoStep";
-import { SyncMap, Timing, SyncMapSettings, SyncMapMetadata, DEFAULT_SYNC_MAP_SETTINGS, DEFAULT_SYNC_MAP_METADATA, Line } from "@/src/lib/types/types" ;
+import { SyncMapDraft, Timing, SyncMapProperties, Line, DEFAULT_SYNCMAP_PROPERTIES } from "@/src/lib/types/types" ;
 import * as CreateAPI from "@/src/lib/api/SyncMapAPI";
 import PublishStep from "./steps/PublishStep";
 
@@ -54,8 +54,7 @@ export default function CreatePage() {
 		})
 	const [timings, setTimings] = useState<Timing[]>([]);
 
-	const [syncMapSettings, setSyncMapSettings] = useState<SyncMapSettings>(DEFAULT_SYNC_MAP_SETTINGS);
-	const [syncMapMetadata, setSyncMapMetadata] = useState<SyncMapMetadata>(DEFAULT_SYNC_MAP_METADATA);
+	const [syncMapProps, setSyncMapProps] = useState<SyncMapProperties>(DEFAULT_SYNCMAP_PROPERTIES);
 
 	const [audioUrls, setAudioUrls] = useState<AudioUrls>({
 		combined: null,
@@ -63,12 +62,10 @@ export default function CreatePage() {
 		vocals: null,
 	});
 
-	const syncMap: SyncMap = {
-		uuid: "",
+	const syncMap: SyncMapDraft = {
 		lines: lines,
 		timings: timings,
-		settings: syncMapSettings,
-		metadata: syncMapMetadata,
+		properties: syncMapProps,
 	};
 
 	// Cleanup
@@ -90,10 +87,10 @@ export default function CreatePage() {
 	}, [audioUrls.vocals]);
 	useEffect(() => {
 		return () => {
-			const url = syncMapSettings.backgroundImageUrl;
+			const url = syncMapProps.backgroundImageUrl;
 			if (url && url.startsWith("blob:")) URL.revokeObjectURL(url);
 		};
-	}, [syncMapSettings.backgroundImageUrl]);
+	}, [syncMapProps.backgroundImageUrl]);
 
 	useEffect(() => {
 		const setMetadataAndSettings = async () => {
@@ -103,26 +100,26 @@ export default function CreatePage() {
 				const audioCtx = new AudioContext();
 				const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 				const duration = audioBuffer.duration;
-				setSyncMapMetadata((prev) => {
+				setSyncMapProps((prev) => {
 					return {
 						...prev,
 						duration
 					}
 				});
-				setSyncMapSettings((prev) => {
+				setSyncMapProps((prev) => {
 					return {
 						...prev,
 						audioUrl: audioUrls.vocals,
 					}
 				})
 			} else {
-				setSyncMapMetadata((prev) => {
+				setSyncMapProps((prev) => {
 					return {
 						...prev,
 						duration: 0,
 					}
 				});
-				setSyncMapSettings((prev) => {
+				setSyncMapProps((prev) => {
 					return {
 						...prev,
 						audioUrl: null,
@@ -182,7 +179,7 @@ export default function CreatePage() {
 		setBackgroundImageUploading(true);
 		try {
 			const imageUrl = await CreateAPI.uploadImage(sid, file);
-			setSyncMapSettings((prev) => ({ ...prev, backgroundImageUrl: imageUrl }));
+			setSyncMapProps((prev) => ({ ...prev, backgroundImageUrl: imageUrl }));
 		} catch (err) {
 			const message = axios.isAxiosError(err) && err.response?.data?.error
 				? err.response.data.error
@@ -267,8 +264,8 @@ export default function CreatePage() {
 						{currentStep === 3 && (
 							<VideoStep
 								syncMap={syncMap}
-								syncMapSettings={syncMapSettings}
-								setSyncMapSettings={setSyncMapSettings}
+								syncMapProps={syncMapProps}
+								setSyncMapProps={setSyncMapProps}
 								onBackgroundImageFileSelect={handleUploadBackgroundImage}
 								backgroundImageUploading={backgroundImageUploading}
 								backgroundImageError={backgroundImageError}
@@ -278,8 +275,8 @@ export default function CreatePage() {
 						{currentStep === 4 && (
 							<PublishStep
 								syncMap={syncMap}
-								syncMapMetadata={syncMapMetadata}
-								setSyncMapMetadata={setSyncMapMetadata}
+								syncMapProps={syncMapProps}
+								setSyncMapProps={setSyncMapProps}
 								loading={publishLoading}
 								handlePublish={handlePublish}
 							/>

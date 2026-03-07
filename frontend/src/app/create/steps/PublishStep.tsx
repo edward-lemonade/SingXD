@@ -2,19 +2,19 @@
 
 import Card from "@/src/components/Card";
 import SyncMapPlayer from "@/src/components/SyncMapPlayer";
-import { SyncMap, SyncMapMetadata, SyncMapSettings } from "@/src/lib/types/types";
+import { SyncMapDraft, SyncMapProperties } from "@/src/lib/types/types";
 import { SetStateAction } from "react";
 import { AudioUrls } from "../page";
 
 interface PublishStepProps {
-	syncMap: SyncMap;
-	syncMapMetadata: SyncMapMetadata;
-	setSyncMapMetadata: (video: SetStateAction<SyncMapMetadata>) => void;
+	syncMap: SyncMapDraft;
+	syncMapProps: SyncMapProperties;
+	setSyncMapProps: (video: SetStateAction<SyncMapProperties>) => void;
 	loading: boolean;
 	handlePublish: () => void;
 }
 
-export default function PublishStep({ syncMap, syncMapMetadata, setSyncMapMetadata, loading, handlePublish }: PublishStepProps) {
+export default function PublishStep({ syncMap, syncMapProps, setSyncMapProps, loading, handlePublish }: PublishStepProps) {
 
 	return (
 		<section>
@@ -24,8 +24,8 @@ export default function PublishStep({ syncMap, syncMapMetadata, setSyncMapMetada
 						<label className="block mb-2">SyncMap Title</label>
 						<input
 							type="text"
-							value={syncMapMetadata.title}
-							onChange={(e) => setSyncMapMetadata((prev) => ({ ...prev, title: e.target.value }))}
+							value={syncMapProps.title}
+							onChange={(e) => setSyncMapProps((prev) => ({ ...prev, title: e.target.value }))}
 							className="border p-2 rounded"
 						/>
 					</div>
@@ -33,8 +33,8 @@ export default function PublishStep({ syncMap, syncMapMetadata, setSyncMapMetada
 						<label className="block mb-2">Song Title</label>
 						<input
 							type="text"
-							value={syncMapMetadata.songTitle}
-							onChange={(e) => setSyncMapMetadata((prev) => ({ ...prev, songTitle: e.target.value }))}
+							value={syncMapProps.songTitle}
+							onChange={(e) => setSyncMapProps((prev) => ({ ...prev, songTitle: e.target.value }))}
 							className="border p-2 rounded"
 						/>
 					</div>
@@ -42,8 +42,8 @@ export default function PublishStep({ syncMap, syncMapMetadata, setSyncMapMetada
 						<label className="block mb-2">Song Artist</label>
 						<input
 							type="text"
-							value={syncMapMetadata.artist}
-							onChange={(e) => setSyncMapMetadata((prev) => ({ ...prev, artist: e.target.value }))}
+							value={syncMapProps.artist}
+							onChange={(e) => setSyncMapProps((prev) => ({ ...prev, artist: e.target.value }))}
 							className="border p-2 rounded"
 						/>
 					</div>

@@ -1,11 +1,11 @@
 import axios from "axios";
 import { GenerateTimingsResponse, GenerateVideoResponse, SeparateAudioResponse, UploadImageResponse } from "../types/api";
-import { Line, SyncMap, Timing } from "../types/types";
+import { Line, SyncMapDraft, Timing } from "../types/types";
 
 const PREFIX = `${process.env.NEXT_PUBLIC_API_URL}/syncmap`;
 
-export const getSyncMap = async (uuid: string): Promise<SyncMap> => {
-    const response = await axios.get<SyncMap>(`${PREFIX}/${uuid}`);
+export const getSyncMap = async (uuid: string): Promise<SyncMapDraft> => {
+    const response = await axios.get<SyncMapDraft>(`${PREFIX}/${uuid}`);
     return response.data;
 };
 
@@ -55,9 +55,9 @@ export const generateTimings = async (
 
 export const createMap = async (
     sessionId: string,
-    syncMap: SyncMap
-): Promise<SyncMap> => {
-    const response = await axios.post<SyncMap>(
+    syncMap: SyncMapDraft
+): Promise<SyncMapDraft> => {
+    const response = await axios.post<SyncMapDraft>(
         `${PREFIX}/create`,
         { sessionId, syncMap }
     );
