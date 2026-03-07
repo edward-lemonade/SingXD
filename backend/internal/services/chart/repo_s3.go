@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
-	"singxd/storage"
+	"singxd/internal/storage"
 	"strings"
 )
 

@@ -3,9 +3,9 @@ package controllers
 import (
 	"net/http"
 
-	"singxd/services/chart_draft"
-	t "singxd/services/types"
-	"singxd/transport"
+	"singxd/internal/services/chart_draft"
+	t "singxd/internal/services/types"
+	"singxd/internal/transport"
 
 	"github.com/gin-gonic/gin"
 )

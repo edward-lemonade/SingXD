@@ -14,8 +14,8 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	t "singxd/services/types"
-	"singxd/storage"
+	t "singxd/internal/services/types"
+	"singxd/internal/storage"
 )
 
 type ChartDraftService struct {

@@ -9,11 +9,11 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/joho/godotenv"
 
-	"singxd/controllers"
-	"singxd/routes"
-	"singxd/services/chart"
-	"singxd/services/chart_draft"
-	"singxd/storage"
+	"singxd/internal/controllers"
+	"singxd/internal/routes"
+	"singxd/internal/services/chart"
+	"singxd/internal/services/chart_draft"
+	"singxd/internal/storage"
 
 	"github.com/gin-gonic/gin"
 )

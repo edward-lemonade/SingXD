@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"singxd/services/chart"
-	t "singxd/services/types"
-	"singxd/transport"
+	"singxd/internal/services/chart"
+	t "singxd/internal/services/types"
+	"singxd/internal/transport"
 
 	"github.com/gin-gonic/gin"
 )

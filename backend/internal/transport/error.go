@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"singxd/services/chart"
-	"singxd/services/chart_draft"
+	"singxd/internal/services/chart"
+	"singxd/internal/services/chart_draft"
 
 	"github.com/gin-gonic/gin"
 )

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"singxd/storage"
+	"singxd/internal/storage"
 )
 
 type S3Client = storage.S3Client

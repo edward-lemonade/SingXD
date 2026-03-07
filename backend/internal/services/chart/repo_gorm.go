@@ -3,7 +3,7 @@ package chart
 import (
 	"context"
 	"encoding/json"
-	t "singxd/services/types"
+	t "singxd/internal/services/types"
 	"time"
 
 	"gorm.io/datatypes"
