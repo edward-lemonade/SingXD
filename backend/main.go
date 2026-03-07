@@ -10,10 +10,10 @@ import (
 	"github.com/joho/godotenv"
 
 	"singxd/controllers"
-	"singxd/db/postgres"
-	"singxd/db/s3"
 	"singxd/routes"
-	"singxd/services"
+	"singxd/services/syncmap"
+	"singxd/services/syncmap_draft"
+	"singxd/storage"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,31 +29,35 @@ func main() {
 	if bucket == "" {
 		log.Fatal("S3_BUCKET environment variable not set")
 	}
-	s3Client, err := s3.NewS3Client(ctx, bucket)
+	s3Client, err := storage.NewS3Client(ctx, bucket)
 	if err != nil {
 		log.Fatalf("Failed to create S3 client: %v", err)
 	}
 
-	// Initialize Postgres client (GORM) and auto-migrate
+	// Initialize Postgres client
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
 		log.Fatal("DATABASE_URL environment variable not set")
 	}
-	gormDB, err := postgres.NewGormDB(databaseURL)
+	gormDB, err := storage.NewGormDB(databaseURL)
 	if err != nil {
 		log.Fatalf("Failed to create Postgres connection: %v", err)
 	}
-	if err := postgres.AutoMigrate(gormDB); err != nil {
-		log.Fatalf("Failed to run migrations: %v", err)
-	}
-	sqlDB, err := gormDB.DB()
-	if err != nil {
-		log.Fatalf("Failed to get sql db: %v", err)
-	}
-	defer sqlDB.Close()
 
-	syncMapService := services.NewSyncMapService(s3Client, gormDB)
-	syncMapController := controllers.NewSyncMapController(syncMapService)
+	// Run migrations
+	if err := gormDB.AutoMigrate(
+		&syncmap.SyncMapRecord{},
+	); err != nil {
+		log.Fatal(err)
+	}
+
+	syncMapService := syncmap.NewSyncMapService(s3Client, gormDB)
+	syncMapDraftService := syncmap_draft.NewSyncMapDraftService(s3Client, gormDB)
+
+	controllers := routes.Controllers{
+		SyncMap:      controllers.NewSyncMapController(syncMapService),
+		SyncMapDraft: controllers.NewSyncMapDraftController(syncMapDraftService),
+	}
 
 	router := gin.Default()
 
@@ -66,7 +70,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	routes.SetupRoutes(router, syncMapController)
+	routes.SetupRoutes(router, controllers)
 
 	router.Run(":8080")
 }

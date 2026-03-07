@@ -6,13 +6,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(router *gin.Engine, syncmapController *controllers.SyncMapController) {
+type Controllers struct {
+	SyncMapDraft *controllers.SyncMapDraftController
+	SyncMap      *controllers.SyncMapController
+}
+
+func SetupRoutes(
+	router *gin.Engine,
+	c Controllers,
+) {
 	api := router.Group("/api")
 	{
-		api.GET("/syncmap/:uuid", syncmapController.GetSyncMap)
-		api.POST("/syncmap/separate-audio", syncmapController.SeparateAudio)
-		api.POST("/syncmap/upload-image", syncmapController.UploadImage)
-		api.POST("/syncmap/generate-timings", syncmapController.GenerateTimings)
-		api.POST("/syncmap/create", syncmapController.CreateMap)
+		api.POST("/syncmap/separate-audio", c.SyncMapDraft.SeparateAudio)
+		api.POST("/syncmap/upload-image", c.SyncMapDraft.UploadImage)
+		api.POST("/syncmap/generate-timings", c.SyncMapDraft.GenerateTimings)
+
+		api.POST("/syncmap/create", c.SyncMap.CreateMap)
+		api.GET("/syncmap/:id", c.SyncMap.GetSyncMap)
 	}
 }

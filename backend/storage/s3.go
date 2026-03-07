@@ -1,4 +1,4 @@
-package s3
+package storage
 
 import (
 	"context"
@@ -113,12 +113,4 @@ func (sc *S3Client) MoveObject(ctx context.Context, sourceKey string, destKey st
 	}
 
 	return sc.DeleteFile(ctx, sourceKey)
-}
-
-// SetObjectLifecycleExpiry sets an object expiration policy (for a session)
-// Note: This is simplified; in production, use lifecycle policies on the bucket
-func (sc *S3Client) SetObjectExpiry(ctx context.Context, key string, expiryDays int) error {
-	// S3 object tagging or lifecycle policies would handle this
-	// For now, this is a placeholder for future implementation
-	return nil
 }
