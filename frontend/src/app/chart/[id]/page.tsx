@@ -2,28 +2,28 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import SyncMapPlayer from "@/src/components/SyncMapPlayer";
-import { SyncMapDraft } from "@/src/lib/types/types";
-import * as CreateAPI from "@/src/lib/api/SyncMapAPI";
+import ChartPlayer from "@/src/components/ChartPlayer";
+import { ChartDraft } from "@/src/lib/types/types";
+import * as ChartAPI from "@/src/lib/api/ChartAPI";
 
-export default function SyncMapPage() {
+export default function ChartPage() {
 	const params = useParams();
-	const uuid = params.uuid as string;
-	const [syncMap, setSyncMap] = useState<SyncMapDraft | null>(null);
+	const id = params.id;
+	const [chartDraft, setChartDraft] = useState<ChartDraft | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		if (!uuid) {
+		if (!id) {
 			setLoading(false);
-			setError("Missing UUID");
+			setError("Missing ID");
 			return;
 		}
-		CreateAPI.getSyncMap(uuid)
-			.then(setSyncMap)
-			.catch((err) => setError(err?.response?.data?.error ?? err?.message ?? "Failed to load syncmap"))
+		ChartAPI.getChart(Number(id))
+			.then((res) => setChartDraft(res.chart))
+			.catch((err) => setError(err?.response?.data?.error ?? err?.message ?? "Failed to load chart"))
 			.finally(() => setLoading(false));
-	}, [uuid]);
+	}, [id]);
 
 	if (loading) {
 		return (
@@ -32,17 +32,17 @@ export default function SyncMapPage() {
 			</div>
 		);
 	}
-	if (error || !syncMap) {
+	if (error || !chartDraft) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
-				<p className="text-red-600">{error ?? "SyncMap not found"}</p>
+				<p className="text-red-600">{error ?? "Chart not found"}</p>
 			</div>
 		);
 	}
 
 	return (
 		<div className="min-h-screen flex flex-col items-center justify-center p-8">
-			<SyncMapPlayer syncMap={syncMap} />
+			<ChartPlayer chart={chartDraft} />
 		</div>
 	);
 }

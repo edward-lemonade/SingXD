@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useCallback } from "react";
 import { Timing } from "@/src/lib/types/types";
 
-interface SyncMapLyricsEditorProps {
+interface ChartLyricsEditorProps {
 	lyricsString: string;
 	onChange: (lyrics: string) => void;
 	timings: Timing[];
@@ -81,14 +81,14 @@ function positionFromPoint(
 	return x >= cx ? best.tokenIdx + 1 : best.tokenIdx;
 }
 
-export default function SyncMapLyricsEditor({
+export default function ChartLyricsEditor({
 	lyricsString,
 	onChange,
 	timings,
 	onWordTimingClick,
 	placeholder = "Paste or type lyrics here…",
 	className = "",
-}: SyncMapLyricsEditorProps) {
+}: ChartLyricsEditorProps) {
 	const containerRef  = useRef<HTMLDivElement>(null);
 	const contentRef    = useRef<HTMLDivElement>(null);
 

@@ -1,11 +1,11 @@
 import axios from "axios";
-import { GenerateTimingsResponse, GenerateVideoResponse, SeparateAudioResponse, UploadImageResponse } from "../types/api";
-import { Line, SyncMapDraft, Timing } from "../types/types";
+import { ChartResponse, GenerateTimingsResponse, GenerateVideoResponse, SeparateAudioResponse, UploadImageResponse } from "../types/api";
+import { Line, ChartDraft, Timing, Chart } from "../types/types";
 
-const PREFIX = `${process.env.NEXT_PUBLIC_API_URL}/syncmap`;
+const PREFIX = `${process.env.NEXT_PUBLIC_API_URL}/chart`;
 
-export const getSyncMap = async (uuid: string): Promise<SyncMapDraft> => {
-    const response = await axios.get<SyncMapDraft>(`${PREFIX}/${uuid}`);
+export const getChart = async (id: number): Promise<ChartResponse> => {
+    const response = await axios.get<ChartResponse>(`${PREFIX}/${id}`);
     return response.data;
 };
 
@@ -53,13 +53,13 @@ export const generateTimings = async (
     return response.data.timings;
 }
 
-export const createMap = async (
+export const createChart = async (
     sessionId: string,
-    syncMap: SyncMapDraft
-): Promise<SyncMapDraft> => {
-    const response = await axios.post<SyncMapDraft>(
+    chartDraft: ChartDraft
+): Promise<ChartResponse> => {
+    const response = await axios.post<ChartResponse>(
         `${PREFIX}/create`,
-        { sessionId, syncMap }
+        { sessionId, chartDraft }
     );
     return response.data;
 }

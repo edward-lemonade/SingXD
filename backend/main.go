@@ -11,8 +11,8 @@ import (
 
 	"singxd/controllers"
 	"singxd/routes"
-	"singxd/services/syncmap"
-	"singxd/services/syncmap_draft"
+	"singxd/services/chart"
+	"singxd/services/chart_draft"
 	"singxd/storage"
 
 	"github.com/gin-gonic/gin"
@@ -46,17 +46,17 @@ func main() {
 
 	// Run migrations
 	if err := gormDB.AutoMigrate(
-		&syncmap.SyncMapRecord{},
+		&chart.ChartRecord{},
 	); err != nil {
 		log.Fatal(err)
 	}
 
-	syncMapService := syncmap.NewSyncMapService(s3Client, gormDB)
-	syncMapDraftService := syncmap_draft.NewSyncMapDraftService(s3Client, gormDB)
+	chartService := chart.NewChartService(s3Client, gormDB)
+	chartDraftService := chart_draft.NewChartDraftService(s3Client, gormDB)
 
 	controllers := routes.Controllers{
-		SyncMap:      controllers.NewSyncMapController(syncMapService),
-		SyncMapDraft: controllers.NewSyncMapDraftController(syncMapDraftService),
+		Chart:      controllers.NewChartController(chartService),
+		ChartDraft: controllers.NewChartDraftController(chartDraftService),
 	}
 
 	router := gin.Default()

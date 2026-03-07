@@ -3,34 +3,34 @@ package controllers
 import (
 	"net/http"
 
-	"singxd/services/syncmap_draft"
+	"singxd/services/chart_draft"
 	t "singxd/services/types"
 	"singxd/transport"
 
 	"github.com/gin-gonic/gin"
 )
 
-type SyncMapDraftService = syncmap_draft.SyncMapDraftService
+type ChartDraftService = chart_draft.ChartDraftService
 
-type SyncMapDraftController struct {
-	syncmapDraftService *SyncMapDraftService
+type ChartDraftController struct {
+	chartDraftService *ChartDraftService
 }
 
-func NewSyncMapDraftController(service *SyncMapDraftService) *SyncMapDraftController {
-	return &SyncMapDraftController{syncmapDraftService: service}
+func NewChartDraftController(service *ChartDraftService) *ChartDraftController {
+	return &ChartDraftController{chartDraftService: service}
 }
 
 // ============================================================================================
 // Handlers
 
-func (a *SyncMapDraftController) SeparateAudio(c *gin.Context) {
+func (a *ChartDraftController) SeparateAudio(c *gin.Context) {
 	file, err := c.FormFile("audio")
 	if err != nil {
 		transport.BadRequest(c, "no audio file provided")
 		return
 	}
 
-	result, err := a.syncmapDraftService.SeparateAudio(c.Request.Context(), file)
+	result, err := a.chartDraftService.SeparateAudio(c.Request.Context(), file)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return
@@ -48,7 +48,7 @@ func (a *SyncMapDraftController) SeparateAudio(c *gin.Context) {
 	})
 }
 
-func (a *SyncMapDraftController) UploadImage(c *gin.Context) {
+func (a *ChartDraftController) UploadImage(c *gin.Context) {
 	sessionID := c.PostForm("sessionID")
 	file, err := c.FormFile("image")
 	if err != nil {
@@ -56,7 +56,7 @@ func (a *SyncMapDraftController) UploadImage(c *gin.Context) {
 		return
 	}
 
-	imageURL, err := a.syncmapDraftService.UploadImage(c.Request.Context(), sessionID, file)
+	imageURL, err := a.chartDraftService.UploadImage(c.Request.Context(), sessionID, file)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return
@@ -68,7 +68,7 @@ func (a *SyncMapDraftController) UploadImage(c *gin.Context) {
 	c.JSON(http.StatusOK, Response{ImageURL: imageURL})
 }
 
-func (a *SyncMapDraftController) GenerateTimings(c *gin.Context) {
+func (a *ChartDraftController) GenerateTimings(c *gin.Context) {
 	sessionID := c.PostForm("sessionID")
 	lyrics := c.PostForm("lyrics")
 	if sessionID == "" {
@@ -80,7 +80,7 @@ func (a *SyncMapDraftController) GenerateTimings(c *gin.Context) {
 		return
 	}
 
-	timings, err := a.syncmapDraftService.GenerateTimings(c.Request.Context(), sessionID, lyrics)
+	timings, err := a.chartDraftService.GenerateTimings(c.Request.Context(), sessionID, lyrics)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return

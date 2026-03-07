@@ -1,4 +1,4 @@
-package syncmap_draft
+package chart_draft
 
 import (
 	"context"
@@ -18,13 +18,13 @@ import (
 	"singxd/storage"
 )
 
-type SyncMapDraftService struct {
+type ChartDraftService struct {
 	s3Client *S3Client
 	db       *gorm.DB
 }
 
-func NewSyncMapDraftService(s3Client *S3Client, db *gorm.DB) *SyncMapDraftService {
-	return &SyncMapDraftService{
+func NewChartDraftService(s3Client *S3Client, db *gorm.DB) *ChartDraftService {
+	return &ChartDraftService{
 		s3Client: s3Client,
 		db:       db,
 	}
@@ -39,7 +39,7 @@ type SeparateAudioResult struct {
 	SessionID       string
 }
 
-func (s *SyncMapDraftService) SeparateAudio(ctx context.Context, file *multipart.FileHeader) (SeparateAudioResult, error) {
+func (s *ChartDraftService) SeparateAudio(ctx context.Context, file *multipart.FileHeader) (SeparateAudioResult, error) {
 	tempDir := fmt.Sprintf("/tmp/audio_separation_%d", time.Now().Unix())
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		return SeparateAudioResult{}, fmt.Errorf("creating temp dir: %w", err)
@@ -79,7 +79,7 @@ func (s *SyncMapDraftService) SeparateAudio(ctx context.Context, file *multipart
 		return SeparateAudioResult{}, fmt.Errorf("opening vocals: %w", err)
 	}
 	defer vocalsFile.Close()
-	if _, err := SaveSyncMapTempAudioFile(ctx, s.s3Client, sessionID, "vocals", vocalsFile, 60*24); err != nil {
+	if _, err := SaveChartTempAudioFile(ctx, s.s3Client, sessionID, "vocals", vocalsFile, 60*24); err != nil {
 		return SeparateAudioResult{}, fmt.Errorf("uploading vocals: %w", err)
 	}
 
@@ -88,22 +88,22 @@ func (s *SyncMapDraftService) SeparateAudio(ctx context.Context, file *multipart
 		return SeparateAudioResult{}, fmt.Errorf("opening instrumental: %w", err)
 	}
 	defer instFile.Close()
-	if _, err := SaveSyncMapTempAudioFile(ctx, s.s3Client, sessionID, "inst", instFile, 60*24); err != nil {
+	if _, err := SaveChartTempAudioFile(ctx, s.s3Client, sessionID, "instrumental", instFile, 60*24); err != nil {
 		return SeparateAudioResult{}, fmt.Errorf("uploading instrumental: %w", err)
 	}
 
-	vocalsURL, err := GetSyncMapTempAudioFileURL(ctx, s.s3Client, sessionID, "vocals", 3600)
+	vocalsURL, err := GetChartTempAudioFileURL(ctx, s.s3Client, sessionID, "vocals", 3600)
 	if err != nil {
 		return SeparateAudioResult{}, fmt.Errorf("getting vocals url: %w", err)
 	}
-	instURL, err := GetSyncMapTempAudioFileURL(ctx, s.s3Client, sessionID, "inst", 3600)
+	instrumentalURL, err := GetChartTempAudioFileURL(ctx, s.s3Client, sessionID, "instrumental", 3600)
 	if err != nil {
 		return SeparateAudioResult{}, fmt.Errorf("getting instrumental url: %w", err)
 	}
 
 	return SeparateAudioResult{
 		VocalsURL:       vocalsURL,
-		InstrumentalURL: instURL,
+		InstrumentalURL: instrumentalURL,
 		SessionID:       sessionID,
 	}, nil
 }
@@ -111,7 +111,7 @@ func (s *SyncMapDraftService) SeparateAudio(ctx context.Context, file *multipart
 // =========================================================
 // Upload Background Image
 
-func (s *SyncMapDraftService) UploadImage(ctx context.Context, sessionID string, file *multipart.FileHeader) (string, error) {
+func (s *ChartDraftService) UploadImage(ctx context.Context, sessionID string, file *multipart.FileHeader) (string, error) {
 	if sessionID == "" {
 		return "", ErrMissingSessionID
 	}
@@ -130,12 +130,12 @@ func (s *SyncMapDraftService) UploadImage(ctx context.Context, sessionID string,
 	}
 	defer src.Close()
 
-	key, err := SaveSyncMapTempBackgroundImage(ctx, s.s3Client, sessionID, ext, src)
+	key, err := SaveChartTempBackgroundImage(ctx, s.s3Client, sessionID, ext, src)
 	if err != nil {
 		return "", fmt.Errorf("uploading image: %w", err)
 	}
 
-	url, err := GetSyncMapTempBackgroundImageURL(ctx, s.s3Client, key, 24*3600)
+	url, err := GetChartTempBackgroundImageURL(ctx, s.s3Client, key, 24*3600)
 	if err != nil {
 		return "", fmt.Errorf("getting image url: %w", err)
 	}
@@ -145,14 +145,14 @@ func (s *SyncMapDraftService) UploadImage(ctx context.Context, sessionID string,
 // =========================================================
 // Generate Timings
 
-func (s *SyncMapDraftService) GenerateTimings(ctx context.Context, sessionID string, lyrics string) ([]t.Timing, error) {
+func (s *ChartDraftService) GenerateTimings(ctx context.Context, sessionID string, lyrics string) ([]t.Timing, error) {
 	tempDir := fmt.Sprintf("/tmp/alignment_%d", time.Now().Unix())
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		return nil, fmt.Errorf("creating temp dir: %w", err)
 	}
 	defer os.RemoveAll(tempDir)
 
-	vocalsData, err := DownloadSyncMapTempAudioFile(ctx, s.s3Client, sessionID, "vocals")
+	vocalsData, err := DownloadChartTempAudioFile(ctx, s.s3Client, sessionID, "vocals")
 	if err != nil {
 		return nil, fmt.Errorf("downloading vocals session=%s: %w", sessionID, err)
 	}

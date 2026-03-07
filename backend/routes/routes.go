@@ -7,8 +7,8 @@ import (
 )
 
 type Controllers struct {
-	SyncMapDraft *controllers.SyncMapDraftController
-	SyncMap      *controllers.SyncMapController
+	ChartDraft *controllers.ChartDraftController
+	Chart      *controllers.ChartController
 }
 
 func SetupRoutes(
@@ -17,11 +17,11 @@ func SetupRoutes(
 ) {
 	api := router.Group("/api")
 	{
-		api.POST("/syncmap/separate-audio", c.SyncMapDraft.SeparateAudio)
-		api.POST("/syncmap/upload-image", c.SyncMapDraft.UploadImage)
-		api.POST("/syncmap/generate-timings", c.SyncMapDraft.GenerateTimings)
+		api.POST("/chart/separate-audio", c.ChartDraft.SeparateAudio)
+		api.POST("/chart/upload-image", c.ChartDraft.UploadImage)
+		api.POST("/chart/generate-timings", c.ChartDraft.GenerateTimings)
 
-		api.POST("/syncmap/create", c.SyncMap.CreateMap)
-		api.GET("/syncmap/:id", c.SyncMap.GetSyncMap)
+		api.POST("/chart/create", c.Chart.CreateMap)
+		api.GET("/chart/:id", c.Chart.GetChart)
 	}
 }

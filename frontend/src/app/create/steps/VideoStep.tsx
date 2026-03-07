@@ -1,23 +1,23 @@
 "use client";
 
 import Card from "@/src/components/Card";
-import SyncMapPlayer from "@/src/components/SyncMapPlayer";
-import { SyncMapDraft, SyncMapProperties } from "@/src/lib/types/types";
+import ChartPlayer from "@/src/components/ChartPlayer";
+import { ChartDraft, ChartProperties } from "@/src/lib/types/types";
 import { SetStateAction } from "react";
 
 type VideoStepProps = {
-	syncMap: SyncMapDraft;
-	syncMapProps: SyncMapProperties;
-	setSyncMapProps: (video: SetStateAction<SyncMapProperties>) => void;
+	chart: ChartDraft;
+	chartProps: ChartProperties;
+	setChartProps: (video: SetStateAction<ChartProperties>) => void;
 	onBackgroundImageFileSelect: (file: File) => void | Promise<void>;
 	backgroundImageUploading: boolean;
 	backgroundImageError: string | null;
 };
 
 export default function VideoStep({
-	syncMap,
-	syncMapProps,
-	setSyncMapProps,
+	chart,
+	chartProps,
+	setChartProps,
 	onBackgroundImageFileSelect,
 	backgroundImageUploading,
 	backgroundImageError,
@@ -36,8 +36,8 @@ export default function VideoStep({
 					<div>
 						<label className="block mb-2">Font</label>
 						<select
-							value={syncMapProps.font}
-							onChange={(e) => setSyncMapProps((prev) => ({ ...prev, font: e.target.value }))}
+							value={chartProps.font}
+							onChange={(e) => setChartProps((prev) => ({ ...prev, font: e.target.value }))}
 							className="border p-2 rounded"
 						>
 							<option value="Arial">Arial</option>
@@ -49,8 +49,8 @@ export default function VideoStep({
 						<label className="block mb-2">Text Size</label>
 						<input
 							type="number"
-							value={syncMapProps.textSize}
-							onChange={(e) => setSyncMapProps((prev) => ({ ...prev, textSize: parseInt(e.target.value) }))}
+							value={chartProps.textSize}
+							onChange={(e) => setChartProps((prev) => ({ ...prev, textSize: parseInt(e.target.value) }))}
 							className="border p-2 rounded"
 						/>
 					</div>
@@ -58,8 +58,8 @@ export default function VideoStep({
 						<label className="block mb-2">Text Color</label>
 						<input
 							type="color"
-							value={syncMapProps.textColor}
-							onChange={(e) => setSyncMapProps((prev) => ({ ...prev, textColor: e.target.value }))}
+							value={chartProps.textColor}
+							onChange={(e) => setChartProps((prev) => ({ ...prev, textColor: e.target.value }))}
 							className="border p-2 rounded"
 						/>
 					</div>
@@ -76,8 +76,8 @@ export default function VideoStep({
 					</div>
 				</div>
 
-				<SyncMapPlayer
-					syncMap={syncMap}
+				<ChartPlayer
+					chart={chart}
 				/>
 			</Card>
 

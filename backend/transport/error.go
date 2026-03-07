@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	se "singxd/services/syncmap"
-	de "singxd/services/syncmap_draft"
+	"singxd/services/chart"
+	"singxd/services/chart_draft"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,21 +24,21 @@ var errorMap = []struct {
 	status   int
 	message  string
 }{
-	// syncmap_draft
-	{de.ErrMissingSessionID, http.StatusBadRequest, "Session ID is required."},
-	{de.ErrInvalidImageType, http.StatusBadRequest, "Unsupported image format. Please upload a JPG, PNG, GIF, or WebP file."},
-	{de.ErrParsingLyrics, http.StatusBadRequest, "The lyrics could not be parsed. Please check the format and try again."},
-	{de.ErrSeparationFailed, http.StatusUnprocessableEntity, "Audio separation failed. Please check that your file is a valid audio track."},
-	{de.ErrVocalsNotGenerated, http.StatusUnprocessableEntity, "Could not extract vocals from the audio. Please try a different file."},
-	{de.ErrInstrumentalNotGenerated, http.StatusUnprocessableEntity, "Could not extract the instrumental track. Please try a different file."},
-	{de.ErrAlignmentFailed, http.StatusUnprocessableEntity, "Lyrics alignment failed. Make sure the lyrics match the audio content."},
-	{de.ErrPythonInterpreterNotFound, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},
+	// chart_draft
+	{chart_draft.ErrMissingSessionID, http.StatusBadRequest, "Session ID is required."},
+	{chart_draft.ErrInvalidImageType, http.StatusBadRequest, "Unsupported image format. Please upload a JPG, PNG, GIF, or WebP file."},
+	{chart_draft.ErrParsingLyrics, http.StatusBadRequest, "The lyrics could not be parsed. Please check the format and try again."},
+	{chart_draft.ErrSeparationFailed, http.StatusUnprocessableEntity, "Audio separation failed. Please check that your file is a valid audio track."},
+	{chart_draft.ErrVocalsNotGenerated, http.StatusUnprocessableEntity, "Could not extract vocals from the audio. Please try a different file."},
+	{chart_draft.ErrInstrumentalNotGenerated, http.StatusUnprocessableEntity, "Could not extract the instrumental track. Please try a different file."},
+	{chart_draft.ErrAlignmentFailed, http.StatusUnprocessableEntity, "Lyrics alignment failed. Make sure the lyrics match the audio content."},
+	{chart_draft.ErrPythonInterpreterNotFound, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},
 
-	// syncmap
-	{se.ErrSyncMapNotFound, http.StatusNotFound, "The requested sync map could not be found."},
-	{se.ErrNoAudioFilesForSession, http.StatusNotFound, "No audio files were found for this session."},
-	{se.ErrNoInstrumentalFile, http.StatusNotFound, "No instrumental track was found for this session."},
-	{se.ErrDbNotConfigured, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},
+	// chart
+	{chart.ErrChartNotFound, http.StatusNotFound, "The requested sync map could not be found."},
+	{chart.ErrNoAudioFilesForSession, http.StatusNotFound, "No audio files were found for this session."},
+	{chart.ErrNoInstrumentalFile, http.StatusNotFound, "No instrumental track was found for this session."},
+	{chart.ErrDbNotConfigured, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},
 }
 
 func resolve(err error) (int, string) {

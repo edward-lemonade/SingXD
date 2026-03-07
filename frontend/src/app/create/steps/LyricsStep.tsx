@@ -1,10 +1,10 @@
 "use client";
 
 import Card from "@/src/components/Card";
-import { Line, SyncMapMetadata, Timing } from "../../../lib/types/types";
+import { Line, Timing } from "../../../lib/types/types";
 import { AudioUrls } from "../page";
 import React, { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
-import SyncMapTimingEditor from "@/src/components/SyncMapTimingEditor";
+import ChartTimingEditor from "@/src/components/ChartTimingEditor";
 
 interface LyricsStepProps {
 	lyricsString: string;
@@ -58,7 +58,7 @@ export default function LyricsStep({
 					)}
 				</Card>
 
-				<SyncMapTimingEditor
+				<ChartTimingEditor
 					audioUrl={audioUrl}
 					timings={timings}
 					setTimings={setTimings}

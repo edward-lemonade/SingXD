@@ -1,7 +1,7 @@
 import { SetStateAction, useEffect, useRef } from "react";
 import Card from "../Card";
 import { Timing } from "../../lib/types/types";
-import SyncMapTimingEditorRegion, { DragMode } from "./Region";
+import Region, { DragMode } from "./Region";
 import { useWaveSurfer } from "./hooks/useWavesurfer";
 import { useRegionUpdate } from "./hooks/useRegionUpdate";
 import { useRegionDraw } from "./hooks/useRegionDraw";
@@ -9,12 +9,12 @@ import { useRegionDraw } from "./hooks/useRegionDraw";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 
-export interface SyncMapTimingEditorHandle {
+export interface ChartTimingEditorHandle {
     seekTo: (time: number) => void;
     selectIndex: (index: number) => void;
 }
 
-interface SyncMapTimingEditorProps {
+interface ChartTimingEditorProps {
     audioUrl: string | null;
     timings: Timing[];
     setTimings: (syncPoints: SetStateAction<Timing[]>) => void;
@@ -26,14 +26,14 @@ interface SyncMapTimingEditorProps {
 const WAVEFORM_HEIGHT = 100;
 const TIMELINE_HEIGHT = 25;
 
-function SyncMapTimingEditor({
+function ChartTimingEditor({
     audioUrl,
     timings,
     setTimings,
     words,
     selectedIndex,
     setSelectedIndex,
-}: SyncMapTimingEditorProps) {
+}: ChartTimingEditorProps) {
 
     // DOM refs
     const wsContainerRef = useRef<HTMLDivElement | null>(null);
@@ -248,7 +248,7 @@ function SyncMapTimingEditor({
                             }}
                         >
                             {isReady && timings.map((timing, index) => (
-                                <SyncMapTimingEditorRegion
+                                <Region
                                     key={index}
                                     index={index}
                                     start={timing.start}
@@ -272,4 +272,4 @@ function SyncMapTimingEditor({
     );
 }
 
-export default SyncMapTimingEditor;
+export default ChartTimingEditor;

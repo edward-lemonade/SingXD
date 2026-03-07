@@ -1,4 +1,4 @@
-package syncmap
+package chart
 
 import (
 	"context"
@@ -13,11 +13,11 @@ import (
 // ==============================================================================
 // Model
 
-func (SyncMapRecord) TableName() string {
-	return "syncmaps"
+func (ChartRecord) TableName() string {
+	return "charts"
 }
 
-type SyncMapRecord struct {
+type ChartRecord struct {
 	ID         uint           `gorm:"primaryKey;column:id"`
 	Lines      datatypes.JSON `gorm:"type:jsonb;column:lines;not null"`
 	Timings    datatypes.JSON `gorm:"type:jsonb;column:timings;not null"`
@@ -28,29 +28,29 @@ type SyncMapRecord struct {
 }
 
 func AutoMigrate(db *gorm.DB) error {
-	return db.AutoMigrate(&SyncMapRecord{})
+	return db.AutoMigrate(&ChartRecord{})
 }
 
 // ==============================================================================
 // Operations
 
-func SaveSyncMap(ctx context.Context, db *gorm.DB, syncMap t.SyncMapDraft) (SyncMapRecord, error) {
-	linesJSON, err := json.Marshal(syncMap.Lines)
+func SaveChart(ctx context.Context, db *gorm.DB, chartDraft t.ChartDraft) (ChartRecord, error) {
+	linesJSON, err := json.Marshal(chartDraft.Lines)
 	if err != nil {
-		return SyncMapRecord{}, err
+		return ChartRecord{}, err
 	}
 
-	timingsJSON, err := json.Marshal(syncMap.Timings)
+	timingsJSON, err := json.Marshal(chartDraft.Timings)
 	if err != nil {
-		return SyncMapRecord{}, err
+		return ChartRecord{}, err
 	}
 
-	propertiesJSON, err := json.Marshal(syncMap.Properties)
+	propertiesJSON, err := json.Marshal(chartDraft.Properties)
 	if err != nil {
-		return SyncMapRecord{}, err
+		return ChartRecord{}, err
 	}
 
-	record := SyncMapRecord{
+	record := ChartRecord{
 		Lines:      datatypes.JSON(linesJSON),
 		Timings:    datatypes.JSON(timingsJSON),
 		Properties: datatypes.JSON(propertiesJSON),
@@ -58,31 +58,31 @@ func SaveSyncMap(ctx context.Context, db *gorm.DB, syncMap t.SyncMapDraft) (Sync
 	}
 
 	if err := db.WithContext(ctx).Create(&record).Error; err != nil {
-		return SyncMapRecord{}, err
+		return ChartRecord{}, err
 	}
 
 	return record, nil
 }
 
-func GetSyncMap(ctx context.Context, db *gorm.DB, id uint) (*t.SyncMap, error) {
-	var record SyncMapRecord
+func GetChart(ctx context.Context, db *gorm.DB, id uint) (*t.Chart, error) {
+	var record ChartRecord
 	if err := db.WithContext(ctx).First(&record, id).Error; err != nil {
 		return nil, err
 	}
 
-	var syncMap t.SyncMap
-	syncMap.ID = record.ID
+	var chart t.Chart
+	chart.ID = record.ID
 
-	if err := json.Unmarshal(record.Lines, &syncMap.Lines); err != nil {
+	if err := json.Unmarshal(record.Lines, &chart.Lines); err != nil {
 		return nil, err
 	}
-	if err := json.Unmarshal(record.Timings, &syncMap.Timings); err != nil {
+	if err := json.Unmarshal(record.Timings, &chart.Timings); err != nil {
 		return nil, err
 	}
-	if err := json.Unmarshal(record.Properties, &syncMap.Properties); err != nil {
+	if err := json.Unmarshal(record.Properties, &chart.Properties); err != nil {
 		return nil, err
 	}
 
-	// Keep Author blank in SyncMapDraft (the draft does not track Author)
-	return &syncMap, nil
+	// Keep Author blank in Chart for now
+	return &chart, nil
 }

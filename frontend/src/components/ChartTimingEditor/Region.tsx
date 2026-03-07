@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 
 export type DragMode = "move" | "resize-left" | "resize-right";
 
-interface SyncMapTimingEditorRegionProps {
+interface RegionProps {
     index: number;
     start: number;
     end: number;
@@ -18,7 +18,7 @@ interface SyncMapTimingEditorRegionProps {
 
 const SNAKE_HEIGHTS = [5, 20, 35, 50, 65, 80];
 
-export default function SyncMapTimingEditorRegion({
+export default function Region({
     index,
     start,
     end,
@@ -29,7 +29,7 @@ export default function SyncMapTimingEditorRegion({
     onSelect,
     onDragStart,
     regionRef,
-}: SyncMapTimingEditorRegionProps) {
+}: RegionProps) {
     const [hovered, setHovered] = useState(false);
 
     const startPosition = (start / duration) * waveformWidth;

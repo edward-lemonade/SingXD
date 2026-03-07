@@ -16,7 +16,7 @@ type Timing struct {
 	End   float64 `json:"end"`   // in seconds
 }
 
-type SyncMapProperties struct {
+type ChartProperties struct {
 	Title              string  `json:"title"`
 	Artist             string  `json:"artist"`
 	SongTitle          string  `json:"songTitle"`
@@ -28,16 +28,16 @@ type SyncMapProperties struct {
 	AudioURL           *string `json:"audioUrl"`           // nullable
 }
 
-type SyncMapDraft struct {
-	Lines      []Line            `json:"lines"`
-	Timings    []Timing          `json:"timings"`
-	Properties SyncMapProperties `json:"properties"`
+type ChartDraft struct {
+	Lines      []Line          `json:"lines"`
+	Timings    []Timing        `json:"timings"`
+	Properties ChartProperties `json:"properties"`
 }
 
-type SyncMap struct {
+type Chart struct {
 	ID        uint      `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	Author    *string   `json:"author"`
-	SyncMapDraft
+	ChartDraft
 }

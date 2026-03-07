@@ -3,7 +3,7 @@
 import React from "react";
 import { Timing } from "@/src/lib/types/types";
 
-interface SyncMapLyricsEditorBrickProps {
+interface BrickProps {
 	word: string;
 	timing?: Timing;
 	onClickTiming?: (timing: Timing) => void;
@@ -11,7 +11,7 @@ interface SyncMapLyricsEditorBrickProps {
 	isSelected?: boolean;
 }
 
-export default function SyncMapLyricsEditorBrick({ word, timing, onClickTiming, hasTiming, isSelected }: SyncMapLyricsEditorBrickProps) {
+export default function Brick({ word, timing, onClickTiming, hasTiming, isSelected }: BrickProps) {
 	const handleClick = () => {
 		if (timing && onClickTiming) {
 			onClickTiming(timing);

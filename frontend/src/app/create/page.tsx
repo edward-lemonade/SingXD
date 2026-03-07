@@ -6,9 +6,10 @@ import Wallpaper from "@/src/components/Wallpaper";
 import AudioStep from "@/src/app/create/steps/AudioStep";
 import LyricsStep from "@/src/app/create/steps/LyricsStep";
 import VideoStep from "./steps/VideoStep";
-import { SyncMapDraft, Timing, SyncMapProperties, Line, DEFAULT_SYNCMAP_PROPERTIES } from "@/src/lib/types/types" ;
-import * as CreateAPI from "@/src/lib/api/SyncMapAPI";
+import { ChartDraft, Timing, ChartProperties, Line, DEFAULT_CHART_PROPERTIES } from "@/src/lib/types/types" ;
+import * as ChartAPI from "@/src/lib/api/ChartAPI";
 import PublishStep from "./steps/PublishStep";
+import { useRouter } from "next/navigation";
 
 const steps = [
   { id: 1, name: "Audio" },
@@ -29,8 +30,9 @@ export default function CreatePage() {
 
 	const sessionId = useRef<string | null>(null);
 	const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
+	const router = useRouter();
 
-	// Syncmap Construction
+	// Chart Construction
 
 	const [lyricsString, setLyricsString] = useState('');
 	const lines: Line[] = lyricsString
@@ -53,8 +55,7 @@ export default function CreatePage() {
 			}
 		})
 	const [timings, setTimings] = useState<Timing[]>([]);
-
-	const [syncMapProps, setSyncMapProps] = useState<SyncMapProperties>(DEFAULT_SYNCMAP_PROPERTIES);
+	const [chartProps, setChartProps] = useState<ChartProperties>(DEFAULT_CHART_PROPERTIES);
 
 	const [audioUrls, setAudioUrls] = useState<AudioUrls>({
 		combined: null,
@@ -62,10 +63,10 @@ export default function CreatePage() {
 		vocals: null,
 	});
 
-	const syncMap: SyncMapDraft = {
+	const chart: ChartDraft = {
 		lines: lines,
 		timings: timings,
-		properties: syncMapProps,
+		properties: chartProps,
 	};
 
 	// Cleanup
@@ -87,39 +88,39 @@ export default function CreatePage() {
 	}, [audioUrls.vocals]);
 	useEffect(() => {
 		return () => {
-			const url = syncMapProps.backgroundImageUrl;
+			const url = chartProps.backgroundImageUrl;
 			if (url && url.startsWith("blob:")) URL.revokeObjectURL(url);
 		};
-	}, [syncMapProps.backgroundImageUrl]);
+	}, [chartProps.backgroundImageUrl]);
 
 	useEffect(() => {
 		const setMetadataAndSettings = async () => {
-			if (audioUrls.vocals) {
-				const res = await fetch(audioUrls.vocals);
+			if (audioUrls.instrumental) {
+				const res = await fetch(audioUrls.instrumental);
 				const arrayBuffer = await res.arrayBuffer();
 				const audioCtx = new AudioContext();
 				const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 				const duration = audioBuffer.duration;
-				setSyncMapProps((prev) => {
+				setChartProps((prev) => {
 					return {
 						...prev,
 						duration
 					}
 				});
-				setSyncMapProps((prev) => {
+				setChartProps((prev) => {
 					return {
 						...prev,
-						audioUrl: audioUrls.vocals,
+						audioUrl: audioUrls.instrumental,
 					}
 				})
 			} else {
-				setSyncMapProps((prev) => {
+				setChartProps((prev) => {
 					return {
 						...prev,
 						duration: 0,
 					}
 				});
-				setSyncMapProps((prev) => {
+				setChartProps((prev) => {
 					return {
 						...prev,
 						audioUrl: null,
@@ -128,7 +129,7 @@ export default function CreatePage() {
 			}
 		}
 		setMetadataAndSettings();
-	}, [audioUrls.vocals]); 
+	}, [audioUrls.instrumental]); 
 
 	const [separateAudioLoading, setSeparateAudioLoading] = useState(false);
 	const handleSeparateAudio = async () => {
@@ -137,7 +138,7 @@ export default function CreatePage() {
 		try {
 			const combinedFile = await fetch(audioUrls.combined);
 			const blob = await combinedFile.blob()
-			const res = await CreateAPI.separateAudio(blob);
+			const res = await ChartAPI.separateAudio(blob);
 
 			sessionId.current = res.sessionId;
 
@@ -158,7 +159,7 @@ export default function CreatePage() {
 		if (!audioUrls.vocals || !lines) return;
 		setGenerateAlignmentLoading(true);
 		try {
-			const timings = await CreateAPI.generateTimings(sessionId.current!, lines);
+			const timings = await ChartAPI.generateTimings(sessionId.current!, lines);
 			setTimings(timings);
 		} catch (error) {
 			console.error('Failed to generate alignment', error);
@@ -178,8 +179,8 @@ export default function CreatePage() {
 		setBackgroundImageError(null);
 		setBackgroundImageUploading(true);
 		try {
-			const imageUrl = await CreateAPI.uploadImage(sid, file);
-			setSyncMapProps((prev) => ({ ...prev, backgroundImageUrl: imageUrl }));
+			const imageUrl = await ChartAPI.uploadImage(sid, file);
+			setChartProps((prev) => ({ ...prev, backgroundImageUrl: imageUrl }));
 		} catch (err) {
 			const message = axios.isAxiosError(err) && err.response?.data?.error
 				? err.response.data.error
@@ -195,9 +196,10 @@ export default function CreatePage() {
 		if (!audioUrls.vocals || !lines) return;
 		setPublishLoading(true);
 		try {
-			const success = await CreateAPI.createMap(sessionId.current!, syncMap);
-			if (success) {
-				console.log("Syncmap created");
+			const res = await ChartAPI.createChart(sessionId.current!, chart);
+			if (res.chart) {
+				console.log("Chart created");
+				router.push(`/chart/${res.chart.id}`);
 			}
 		} catch (error) {
 			console.error('Failed to generate alignment', error);
@@ -263,9 +265,9 @@ export default function CreatePage() {
 
 						{currentStep === 3 && (
 							<VideoStep
-								syncMap={syncMap}
-								syncMapProps={syncMapProps}
-								setSyncMapProps={setSyncMapProps}
+								chart={chart}
+								chartProps={chartProps}
+								setChartProps={setChartProps}
 								onBackgroundImageFileSelect={handleUploadBackgroundImage}
 								backgroundImageUploading={backgroundImageUploading}
 								backgroundImageError={backgroundImageError}
@@ -274,9 +276,9 @@ export default function CreatePage() {
 
 						{currentStep === 4 && (
 							<PublishStep
-								syncMap={syncMap}
-								syncMapProps={syncMapProps}
-								setSyncMapProps={setSyncMapProps}
+								chart={chart}
+								chartProps={chartProps}
+								setChartProps={setChartProps}
 								loading={publishLoading}
 								handlePublish={handlePublish}
 							/>

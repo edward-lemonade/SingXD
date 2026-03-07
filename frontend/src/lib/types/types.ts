@@ -8,7 +8,7 @@ export interface Timing {
     start: number; 
     end: number;
 }
-export interface SyncMapProperties {
+export interface ChartProperties {
 	font: string;
 	textSize: number;
 	textColor: string;
@@ -20,20 +20,20 @@ export interface SyncMapProperties {
     duration: number; // in seconds
 }
 
-export interface SyncMapDraft {
+export interface ChartDraft {
     lines: Line[];
     timings: Timing[];
-    properties: SyncMapProperties;
+    properties: ChartProperties;
 } 
 
-export interface SyncMap extends SyncMapDraft {
+export interface Chart extends ChartDraft {
     id: number;
     createdAt: Date;
     updatedAt: Date;
     author: string | null;
 }
 
-export const DEFAULT_SYNCMAP_PROPERTIES : SyncMapProperties = {
+export const DEFAULT_CHART_PROPERTIES : ChartProperties = {
     font: "Arial",
 	textSize: 24,
 	textColor: '#000000',

@@ -1,22 +1,22 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { SyncMapDraft } from "../lib/types/types";
+import { ChartDraft } from "../lib/types/types";
 
-export interface SyncMapPlayerSettings {
+export interface ChartPlayerSettings {
     width: number;
     height: number;
 }
 
-const defaultPlayerSettings: SyncMapPlayerSettings = {
+const defaultPlayerSettings: ChartPlayerSettings = {
     width: 720,
     height: 720,
 }
 
-export default function SyncMapPlayer({
-    syncMap,
+export default function ChartPlayer({
+    chart,
     playerSettings: partialSettings,
 }: {
-    syncMap: SyncMapDraft;
-    playerSettings?: Partial<SyncMapPlayerSettings>;
+    chart: ChartDraft;
+    playerSettings?: Partial<ChartPlayerSettings>;
 }) {
     const playerSettings = { ...defaultPlayerSettings, ...partialSettings };
     
@@ -28,8 +28,8 @@ export default function SyncMapPlayer({
     // Find current line and word based on time
     const getCurrentIndices = useMemo(() => {
         return (time: number) => {
-            const lines = syncMap.lines;
-            const timings = syncMap.timings;
+            const lines = chart.lines;
+            const timings = chart.timings;
             let lineIndex = -1;
             let wordIndex = -1;
             let globalWordIndex = -1;
@@ -65,7 +65,7 @@ export default function SyncMapPlayer({
             
             return { lineIndex, wordIndex };
         };
-    }, [syncMap.lines, syncMap.timings]);
+    }, [chart.lines, chart.timings]);
     const { 
         lineIndex: currentLineIndex, 
         wordIndex: currentWordIndex 
@@ -76,10 +76,10 @@ export default function SyncMapPlayer({
         if (currentLineIndex === -1) return [];
         
         const start = Math.max(0, currentLineIndex - 1);
-        const end = Math.min(syncMap.lines.length, currentLineIndex + 2);
-        return syncMap.lines.slice(start, end);
+        const end = Math.min(chart.lines.length, currentLineIndex + 2);
+        return chart.lines.slice(start, end);
     };
-    const displayLines = useMemo(getDisplayLines, [syncMap, currentLineIndex]);
+    const displayLines = useMemo(getDisplayLines, [chart, currentLineIndex]);
 
     // Update current time on animation frame
     const updateTime = () => {
@@ -138,8 +138,8 @@ export default function SyncMapPlayer({
                 display: 'flex',
                 flexDirection: 'column',
                 backgroundColor: '#000',
-                backgroundImage: syncMap.properties.backgroundImageUrl 
-                    ? `url(${syncMap.properties.backgroundImageUrl})` 
+                backgroundImage: chart.properties.backgroundImageUrl 
+                    ? `url(${chart.properties.backgroundImageUrl})` 
                     : undefined,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
@@ -148,10 +148,10 @@ export default function SyncMapPlayer({
             }}
         >
             {/* Audio element */}
-            {syncMap.properties.audioUrl && (
+            {chart.properties.audioUrl && (
                 <audio
                     ref={audioRef}
-                    src={syncMap.properties.audioUrl}
+                    src={chart.properties.audioUrl}
                     onTimeUpdate={handleTimeUpdate}
                     onEnded={() => setIsPlaying(false)}
                 />
@@ -168,7 +168,7 @@ export default function SyncMapPlayer({
                 gap: '20px',
             }}>
                 {displayLines.map((line, idx) => {
-                    const lineIdx = syncMap.lines.indexOf(line);
+                    const lineIdx = chart.lines.indexOf(line);
                     const isCurrentLine = lineIdx === currentLineIndex;
                     
                     return (
@@ -182,8 +182,8 @@ export default function SyncMapPlayer({
                                 opacity: isCurrentLine ? 1 : 0.5,
                                 transform: isCurrentLine ? 'scale(1.1)' : 'scale(1)',
                                 transition: 'all 0.3s ease',
-                                fontFamily: syncMap.properties.font,
-                                fontSize: syncMap.properties.textSize,
+                                fontFamily: chart.properties.font,
+                                fontSize: chart.properties.textSize,
                             }}
                         >
                             {line.words.map((word, wordIdx) => {
@@ -196,7 +196,7 @@ export default function SyncMapPlayer({
                                         style={{
                                             color: isCurrentWord 
                                                 ? '#FFD700' // Gold for current word
-                                                : syncMap.properties.textColor,
+                                                : chart.properties.textColor,
                                             fontWeight: isCurrentWord ? 'bold' : 'normal',
                                             textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
                                             transition: 'all 0.2s ease',
@@ -224,7 +224,7 @@ export default function SyncMapPlayer({
                 <input
                     type="range"
                     min="0"
-                    max={syncMap.properties.duration}
+                    max={chart.properties.duration}
                     step="0.01"
                     value={currentTime}
                     onChange={handleSeek}
@@ -239,7 +239,7 @@ export default function SyncMapPlayer({
                     color: '#fff',
                 }}>
                     <span>
-                        {formatTime(currentTime)} / {formatTime(syncMap.properties.duration)}
+                        {formatTime(currentTime)} / {formatTime(chart.properties.duration)}
                     </span>
                     
                     <button

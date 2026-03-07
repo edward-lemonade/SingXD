@@ -1,4 +1,4 @@
-import { Timing } from "./types";
+import { Chart, Timing } from "./types";
 
 export interface SeparateAudioResponse {
     vocalsUrl: string,
@@ -11,9 +11,13 @@ export interface GenerateTimingsResponse {
 }
 
 export interface UploadImageResponse {
-    imageUrl: string;
+    imageUrl: string,
 }
 
 export interface GenerateVideoResponse {
     videoUrl: string,
+}
+
+export interface ChartResponse {
+    chart: Chart,
 }

@@ -1,4 +1,4 @@
-package syncmap_draft
+package chart_draft
 
 import "errors"
 
