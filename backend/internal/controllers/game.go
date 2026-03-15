@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -82,13 +81,13 @@ func (g *GameController) PreloadVocals(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid chart id"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": game.ErrInvalidChartID.Error()})
 		return
 	}
 	data, err := g.chartService.GetVocalsFileByID(context.Background(), uint(id))
 	if err != nil {
 		log.Printf("[PreloadVocals] failed to load vocals for chart %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("loading vocals: %v", err)})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": game.ErrVocalsUnavailable.Error()})
 		return
 	}
 	g.vocalsMu.Lock()
@@ -102,14 +101,14 @@ func (g *GameController) GameSocket(c *gin.Context) {
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
 		log.Printf("[GameSocket] invalid chart id %q: %v", idStr, err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid chart id"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": game.ErrInvalidChartID.Error()})
 		return
 	}
 
 	vocalsData, err := g.getOrLoadVocals(uint(id))
 	if err != nil {
 		log.Printf("[GameSocket] failed to load vocals for chart %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("loading vocals: %v", err)})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": game.ErrVocalsUnavailable.Error()})
 		return
 	}
 	reference := g.gameService.DecodePCM16(vocalsData)
@@ -118,7 +117,7 @@ func (g *GameController) GameSocket(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Printf("[GameSocket] failed to upgrade connection for chart %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("upgrading: %v", err)})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": game.ErrUpgradeFailed.Error()})
 		return
 	}
 	defer conn.Close()
