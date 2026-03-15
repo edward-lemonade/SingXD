@@ -9,13 +9,11 @@ export interface WsScoreMsg {
     reference: number;
     score: number;
 }
-
 export interface WsSummaryMsg {
     type: "summary";
     totalScore: number;
     chunkScores: WsScoreMsg[];
 }
-
 export type WsMsg = WsScoreMsg | WsSummaryMsg;
 
 export async function preloadVocals(chartId: number): Promise<void> {

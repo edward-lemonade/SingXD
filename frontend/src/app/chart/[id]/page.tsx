@@ -1,4 +1,3 @@
-// app/chart/[id]/page.tsx
 import ChartPageClient from "./ChartPageClient";
 import * as ChartAPI from "@/src/lib/api/ChartAPI";
 

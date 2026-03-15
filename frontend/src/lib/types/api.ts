@@ -14,10 +14,6 @@ export interface UploadImageResponse {
     imageUrl: string,
 }
 
-export interface GenerateVideoResponse {
-    videoUrl: string,
-}
-
 export interface ChartResponse {
     chart: Chart,
 }

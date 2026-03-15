@@ -1,4 +1,4 @@
-package chart_draft
+package draft
 
 import (
 	"context"
@@ -18,17 +18,27 @@ import (
 	"singxd/internal/storage"
 )
 
-type ChartDraftService struct {
+type DraftService struct {
 	s3Client *S3Client
 	db       *gorm.DB
 }
 
-func NewChartDraftService(s3Client *S3Client, db *gorm.DB) *ChartDraftService {
-	return &ChartDraftService{
+func NewDraftService(s3Client *S3Client, db *gorm.DB) *DraftService {
+	return &DraftService{
 		s3Client: s3Client,
 		db:       db,
 	}
 }
+
+// =========================================================
+// Python Paths
+
+const PythonScriptsDir = "./internal/services/draft/scripts"
+const (
+	SeparatorScript = "separator.py"
+	AlignScript     = "align.py"
+)
+const PythonVenv = "./internal/services/draft/scripts/.venv/bin/python"
 
 // =========================================================
 // Separate Audio
@@ -39,7 +49,7 @@ type SeparateAudioResult struct {
 	SessionID       string
 }
 
-func (s *ChartDraftService) SeparateAudio(ctx context.Context, file *multipart.FileHeader) (SeparateAudioResult, error) {
+func (s *DraftService) SeparateAudio(ctx context.Context, file *multipart.FileHeader) (SeparateAudioResult, error) {
 	tempDir := fmt.Sprintf("/tmp/audio_separation_%d", time.Now().Unix())
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		return SeparateAudioResult{}, fmt.Errorf("creating temp dir: %w", err)
@@ -51,7 +61,7 @@ func (s *ChartDraftService) SeparateAudio(ctx context.Context, file *multipart.F
 		return SeparateAudioResult{}, fmt.Errorf("saving uploaded file: %w", err)
 	}
 
-	venvPython, scriptPath, err := resolvePythonEnv("../ctc/separator.py")
+	venvPython, scriptPath, err := resolvePythonEnv(SeparatorScript)
 	if err != nil {
 		return SeparateAudioResult{}, err
 	}
@@ -111,7 +121,7 @@ func (s *ChartDraftService) SeparateAudio(ctx context.Context, file *multipart.F
 // =========================================================
 // Upload Background Image
 
-func (s *ChartDraftService) UploadImage(ctx context.Context, sessionID string, file *multipart.FileHeader) (string, error) {
+func (s *DraftService) UploadImage(ctx context.Context, sessionID string, file *multipart.FileHeader) (string, error) {
 	if sessionID == "" {
 		return "", ErrMissingSessionID
 	}
@@ -145,7 +155,7 @@ func (s *ChartDraftService) UploadImage(ctx context.Context, sessionID string, f
 // =========================================================
 // Generate Timings
 
-func (s *ChartDraftService) GenerateTimings(ctx context.Context, sessionID string, lyrics string) ([]t.Timing, error) {
+func (s *DraftService) GenerateTimings(ctx context.Context, sessionID string, lyrics string) ([]t.Timing, error) {
 	tempDir := fmt.Sprintf("/tmp/alignment_%d", time.Now().Unix())
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		return nil, fmt.Errorf("creating temp dir: %w", err)
@@ -179,7 +189,7 @@ func (s *ChartDraftService) GenerateTimings(ctx context.Context, sessionID strin
 		return nil, fmt.Errorf("saving lyrics: %w", err)
 	}
 
-	venvPython, alignScript, err := resolvePythonEnv("../ctc/align.py")
+	venvPython, alignScript, err := resolvePythonEnv(AlignScript)
 	if err != nil {
 		return nil, err
 	}
@@ -208,16 +218,18 @@ func (s *ChartDraftService) GenerateTimings(ctx context.Context, sessionID strin
 // =========================================================
 // Helpers
 
-func resolvePythonEnv(scriptRelPath string) (pythonBin, scriptPath string, err error) {
-	scriptPath, err = filepath.Abs(scriptRelPath)
+func resolvePythonEnv(scriptName string) (pythonBin, scriptPath string, err error) {
+	scriptPath = filepath.Join(PythonScriptsDir, scriptName)
+	scriptPath, err = filepath.Abs(scriptPath)
 	if err != nil {
-		return "", "", fmt.Errorf("resolving script path %s: %w", scriptRelPath, err)
+		return "", "", fmt.Errorf("resolving script path %s: %w", scriptName, err)
 	}
 
-	pythonBin, err = filepath.Abs("../ctc/.venv/bin/python")
+	pythonBin, err = filepath.Abs(PythonVenv)
 	if err != nil {
 		return "", "", fmt.Errorf("resolving python path: %w", err)
 	}
+
 	if _, err := os.Stat(pythonBin); err != nil {
 		return "", "", fmt.Errorf("%w: %s: %w", ErrPythonInterpreterNotFound, pythonBin, err)
 	}

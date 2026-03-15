@@ -1,13 +1,14 @@
 "use client";
 
 import axios from "axios";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Wallpaper from "@/src/components/Wallpaper";
 import AudioStep from "@/src/app/create/steps/AudioStep";
 import LyricsStep from "@/src/app/create/steps/LyricsStep";
 import VideoStep from "./steps/VideoStep";
 import { ChartDraft, Timing, ChartProperties, Line, DEFAULT_CHART_PROPERTIES } from "@/src/lib/types/types" ;
 import * as ChartAPI from "@/src/lib/api/ChartAPI";
+import * as DraftAPI from "@/src/lib/api/DraftAPI";
 import PublishStep from "./steps/PublishStep";
 import { useRouter } from "next/navigation";
 
@@ -138,7 +139,7 @@ export default function CreateClient() {
 		try {
 			const combinedFile = await fetch(audioUrls.combined);
 			const blob = await combinedFile.blob()
-			const res = await ChartAPI.separateAudio(blob);
+			const res = await DraftAPI.separateAudio(blob);
 
 			sessionId.current = res.sessionId;
 
@@ -159,7 +160,7 @@ export default function CreateClient() {
 		if (!audioUrls.vocals || !lines) return;
 		setGenerateAlignmentLoading(true);
 		try {
-			const timings = await ChartAPI.generateTimings(sessionId.current!, lines);
+			const timings = await DraftAPI.generateTimings(sessionId.current!, lines);
 			setTimings(timings);
 		} catch (error) {
 			console.error('Failed to generate alignment', error);
@@ -179,7 +180,7 @@ export default function CreateClient() {
 		setBackgroundImageError(null);
 		setBackgroundImageUploading(true);
 		try {
-			const imageUrl = await ChartAPI.uploadImage(sid, file);
+			const imageUrl = await DraftAPI.uploadImage(sid, file);
 			setChartProps((prev) => ({ ...prev, backgroundImageUrl: imageUrl }));
 		} catch (err) {
 			const message = axios.isAxiosError(err) && err.response?.data?.error

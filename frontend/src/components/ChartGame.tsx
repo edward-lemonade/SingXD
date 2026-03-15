@@ -135,6 +135,7 @@ export default function ChartGame({
                     `[ChartGame ws] summary — total score: ${summary.totalScore.toFixed(4)}, ` +
                         `chunks: ${summary.chunkScores.length}`
                 );
+                /*
                 summary.chunkScores.forEach((c) => {
                     console.log(
                         `  @ ${c.timestamp.toFixed(2)}s — ` +
@@ -142,7 +143,7 @@ export default function ChartGame({
                             `reference: ${c.reference.toFixed(2)} Hz, ` +
                             `score: ${c.score.toFixed(4)}`
                     );
-                });
+                });*/
 
                 if (summaryTimeoutRef.current) {
                     clearTimeout(summaryTimeoutRef.current);

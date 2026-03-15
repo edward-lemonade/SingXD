@@ -7,9 +7,9 @@ import (
 )
 
 type Controllers struct {
-	ChartDraft *controllers.ChartDraftController
-	Chart      *controllers.ChartController
-	Game       *controllers.GameController
+	Draft *controllers.DraftController
+	Chart *controllers.ChartController
+	Game  *controllers.GameController
 }
 
 func SetupRoutes(
@@ -18,9 +18,9 @@ func SetupRoutes(
 ) {
 	api := router.Group("/api")
 	{
-		api.POST("/chart/separate-audio", c.ChartDraft.SeparateAudio)
-		api.POST("/chart/upload-image", c.ChartDraft.UploadImage)
-		api.POST("/chart/generate-timings", c.ChartDraft.GenerateTimings)
+		api.POST("/draft/separate-audio", c.Draft.SeparateAudio)
+		api.POST("/draft/upload-image", c.Draft.UploadImage)
+		api.POST("/draft/generate-timings", c.Draft.GenerateTimings)
 
 		api.POST("/chart/create", c.Chart.CreateMap)
 		api.GET("/chart/:id", c.Chart.GetChart)

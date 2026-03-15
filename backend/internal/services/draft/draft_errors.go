@@ -1,8 +1,9 @@
-package chart_draft
+package draft
 
 import "errors"
 
 var (
+	ErrDbNotConfigured           = errors.New("gorm not configured")
 	ErrMissingSessionID          = errors.New("missing sessionID")
 	ErrInvalidImageType          = errors.New("invalid image type")
 	ErrSeparationFailed          = errors.New("separation failed")

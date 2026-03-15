@@ -1,4 +1,4 @@
-package chart_draft
+package draft
 
 import (
 	"context"
@@ -16,7 +16,7 @@ func chartTempAudioKey(sessionID string, fileType string) string {
 }
 
 // ----------------------------------------------------------------
-// Chart Draft Audio File (vocals / inst / combined)
+// Draft Audio File (vocals / inst / combined)
 
 func SaveChartTempAudioFile(ctx context.Context, s3Client *S3Client, sessionID string, fileType string, data io.Reader, expiryMinutes int) (string, error) {
 	key := chartTempAudioKey(sessionID, fileType)
@@ -47,7 +47,7 @@ func ListChartTempAudioFiles(ctx context.Context, s3Client *S3Client, sessionID 
 }
 
 // ----------------------------------------------------------------
-// Chart Draft Background Image
+// Draft Background Image
 
 func SaveChartTempBackgroundImage(ctx context.Context, s3Client *S3Client, sessionID string, ext string, data io.Reader) (string, error) {
 	key := fmt.Sprintf("%s/%s/background%s", chartTempPrefix, sessionID, ext)

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Timing } from "@/src/lib/types/types";
 
 interface BrickProps {

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Timing } from "../../../lib/types/types";
+import { Timing } from "@/src/lib/types/types";
 import { DragMode } from "../Region";
 
 interface UseRegionUpdateOptions {

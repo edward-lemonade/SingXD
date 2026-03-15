@@ -3,34 +3,34 @@ package controllers
 import (
 	"net/http"
 
-	"singxd/internal/services/chart_draft"
+	"singxd/internal/services/draft"
 	t "singxd/internal/services/types"
 	"singxd/internal/transport"
 
 	"github.com/gin-gonic/gin"
 )
 
-type ChartDraftService = chart_draft.ChartDraftService
+type DraftService = draft.DraftService
 
-type ChartDraftController struct {
-	chartDraftService *ChartDraftService
+type DraftController struct {
+	draftService *DraftService
 }
 
-func NewChartDraftController(service *ChartDraftService) *ChartDraftController {
-	return &ChartDraftController{chartDraftService: service}
+func NewDraftController(service *DraftService) *DraftController {
+	return &DraftController{draftService: service}
 }
 
 // ============================================================================================
 // Handlers
 
-func (a *ChartDraftController) SeparateAudio(c *gin.Context) {
+func (a *DraftController) SeparateAudio(c *gin.Context) {
 	file, err := c.FormFile("audio")
 	if err != nil {
 		transport.BadRequest(c, "no audio file provided")
 		return
 	}
 
-	result, err := a.chartDraftService.SeparateAudio(c.Request.Context(), file)
+	result, err := a.draftService.SeparateAudio(c.Request.Context(), file)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return
@@ -48,7 +48,7 @@ func (a *ChartDraftController) SeparateAudio(c *gin.Context) {
 	})
 }
 
-func (a *ChartDraftController) UploadImage(c *gin.Context) {
+func (a *DraftController) UploadImage(c *gin.Context) {
 	sessionID := c.PostForm("sessionID")
 	file, err := c.FormFile("image")
 	if err != nil {
@@ -56,7 +56,7 @@ func (a *ChartDraftController) UploadImage(c *gin.Context) {
 		return
 	}
 
-	imageURL, err := a.chartDraftService.UploadImage(c.Request.Context(), sessionID, file)
+	imageURL, err := a.draftService.UploadImage(c.Request.Context(), sessionID, file)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return
@@ -68,7 +68,7 @@ func (a *ChartDraftController) UploadImage(c *gin.Context) {
 	c.JSON(http.StatusOK, Response{ImageURL: imageURL})
 }
 
-func (a *ChartDraftController) GenerateTimings(c *gin.Context) {
+func (a *DraftController) GenerateTimings(c *gin.Context) {
 	sessionID := c.PostForm("sessionID")
 	lyrics := c.PostForm("lyrics")
 	if sessionID == "" {
@@ -80,7 +80,7 @@ func (a *ChartDraftController) GenerateTimings(c *gin.Context) {
 		return
 	}
 
-	timings, err := a.chartDraftService.GenerateTimings(c.Request.Context(), sessionID, lyrics)
+	timings, err := a.draftService.GenerateTimings(c.Request.Context(), sessionID, lyrics)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return

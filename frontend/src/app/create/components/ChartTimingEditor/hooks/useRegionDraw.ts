@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Timing } from "../../../lib/types/types";
+import { Timing } from "@/src/lib/types/types";
 
 const MIN_DRAG_PX = 5;
 
