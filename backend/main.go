@@ -13,6 +13,7 @@ import (
 	"singxd/internal/routes"
 	"singxd/internal/services/chart"
 	"singxd/internal/services/chart_draft"
+	"singxd/internal/services/game"
 	"singxd/internal/storage"
 
 	"github.com/gin-gonic/gin"
@@ -53,10 +54,12 @@ func main() {
 
 	chartService := chart.NewChartService(s3Client, gormDB)
 	chartDraftService := chart_draft.NewChartDraftService(s3Client, gormDB)
+	gameService := game.NewGameService(44100, 0.2)
 
 	controllers := routes.Controllers{
 		Chart:      controllers.NewChartController(chartService),
 		ChartDraft: controllers.NewChartDraftController(chartDraftService),
+		Game:       controllers.NewGameController(gameService, chartService),
 	}
 
 	router := gin.Default()

@@ -16,13 +16,12 @@ export const separateAudio = async (
     formData.append('audio', audioCombined);
 
     const response = await axios.post<SeparateAudioResponse>(
-        `${PREFIX}/separate-audio`, 
-        formData, 
-        { timeout: 5 * 60 * 1000 } // 5 min timeout
+        `${PREFIX}/separate-audio`,
+        formData,
+        { timeout: 5 * 60 * 1000 }
     );
-
-    return response.data
-}
+    return response.data;
+};
 
 export const uploadImage = async (sessionId: string, image: Blob): Promise<string> => {
     const formData = new FormData();
@@ -37,7 +36,7 @@ export const uploadImage = async (sessionId: string, image: Blob): Promise<strin
 };
 
 export const generateTimings = async (
-    sessionId: string, 
+    sessionId: string,
     lines: Line[],
 ): Promise<Timing[]> => {
     const formData = new FormData();
@@ -45,13 +44,12 @@ export const generateTimings = async (
     formData.append('lyrics', JSON.stringify(lines));
 
     const response = await axios.post<GenerateTimingsResponse>(
-        `${PREFIX}/generate-timings`, 
-        formData, 
-        { timeout: 5 * 60 * 1000 } // 5 min timeout
+        `${PREFIX}/generate-timings`,
+        formData,
+        { timeout: 5 * 60 * 1000 }
     );
-
     return response.data.timings;
-}
+};
 
 export const createChart = async (
     sessionId: string,
@@ -62,4 +60,4 @@ export const createChart = async (
         { sessionId, chartDraft }
     );
     return response.data;
-}
+};

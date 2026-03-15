@@ -9,6 +9,7 @@ import (
 type Controllers struct {
 	ChartDraft *controllers.ChartDraftController
 	Chart      *controllers.ChartController
+	Game       *controllers.GameController
 }
 
 func SetupRoutes(
@@ -23,5 +24,8 @@ func SetupRoutes(
 
 		api.POST("/chart/create", c.Chart.CreateMap)
 		api.GET("/chart/:id", c.Chart.GetChart)
+
+		api.GET("/game/load/:id", c.Game.PreloadVocals)
+		api.GET("/game/ws/:id", c.Game.GameSocket)
 	}
 }

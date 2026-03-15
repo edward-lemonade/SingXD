@@ -1,7 +1,7 @@
 "use client";
 
 import Card from "@/src/components/Card";
-import { AudioUrls } from "../page";
+import { AudioUrls } from "../CreatePageClient";
 
 interface AudioStepProps {
 	audioUrls: AudioUrls;

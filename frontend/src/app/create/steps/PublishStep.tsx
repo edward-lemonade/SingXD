@@ -4,7 +4,7 @@ import Card from "@/src/components/Card";
 import ChartPlayer from "@/src/components/ChartPlayer";
 import { ChartDraft, ChartProperties } from "@/src/lib/types/types";
 import { SetStateAction } from "react";
-import { AudioUrls } from "../page";
+import { AudioUrls } from "../CreatePageClient";
 
 interface PublishStepProps {
 	chart: ChartDraft;

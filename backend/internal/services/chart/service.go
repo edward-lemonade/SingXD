@@ -58,12 +58,13 @@ func (s *ChartService) CreateMap(ctx context.Context, sessionId string, chartDra
 	}
 
 	// Prepare media in S3
-	if _, _, err := PrepareChartMedia(ctx, s.s3Client, sessionId, newChart.ID); err != nil {
+	if _, _, _, err := PrepareChartMedia(ctx, s.s3Client, sessionId, newChart.ID); err != nil {
 		return nil, err
 	}
 
 	return newChart, nil
 }
+
 func (s *ChartService) FindByID(ctx context.Context, id uint) (*t.Chart, error) {
 	if s.db == nil {
 		return nil, ErrDbNotConfigured
@@ -99,4 +100,12 @@ func (s *ChartService) FindByID(ctx context.Context, id uint) (*t.Chart, error) 
 	}
 
 	return chart, nil
+}
+
+func (s *ChartService) GetVocalsFileByID(ctx context.Context, id uint) ([]byte, error) {
+	return GetVocalsFile(ctx, s.s3Client, id)
+}
+
+func (s *ChartService) GetInstrumentalFileByID(ctx context.Context, id uint) ([]byte, error) {
+	return GetInstrumentalFile(ctx, s.s3Client, id)
 }

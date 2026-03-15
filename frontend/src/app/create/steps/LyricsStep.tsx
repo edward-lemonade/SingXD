@@ -2,9 +2,9 @@
 
 import Card from "@/src/components/Card";
 import { Line, Timing } from "../../../lib/types/types";
-import { AudioUrls } from "../page";
+import { AudioUrls } from "../CreatePageClient";
 import React, { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
-import ChartTimingEditor from "@/src/components/ChartTimingEditor";
+import ChartTimingEditor from "../components/ChartTimingEditor";
 
 interface LyricsStepProps {
 	lyricsString: string;
