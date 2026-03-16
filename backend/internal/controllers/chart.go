@@ -40,7 +40,7 @@ func (a *ChartController) CreateMap(c *gin.Context) {
 		return
 	}
 
-	chart, err := a.chartService.CreateMap(c.Request.Context(), request.SessionID, request.ChartDraft)
+	chart, err := a.chartService.Create(c.Request.Context(), request.SessionID, request.ChartDraft)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return

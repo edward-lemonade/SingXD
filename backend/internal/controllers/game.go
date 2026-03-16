@@ -42,7 +42,7 @@ func (g *GameController) getOrLoadVocals(id uint) ([]byte, error) {
 	if cached != nil {
 		return cached, nil
 	}
-	data, err := g.chartService.GetVocalsFileByID(context.Background(), id)
+	data, err := g.chartService.FindVocalsFileByID(context.Background(), id)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (g *GameController) PreloadVocals(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": game.ErrInvalidChartID.Error()})
 		return
 	}
-	data, err := g.chartService.GetVocalsFileByID(context.Background(), uint(id))
+	data, err := g.chartService.FindVocalsFileByID(context.Background(), uint(id))
 	if err != nil {
 		log.Printf("[PreloadVocals] failed to load vocals for chart %d: %v", id, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": game.ErrVocalsUnavailable.Error()})
