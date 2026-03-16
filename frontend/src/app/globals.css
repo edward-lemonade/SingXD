@@ -3,62 +3,62 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --background: #ffffff;
+    --foreground: #171717;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+    }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .tall-outline {
-  font-family:
-    'Anton',
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+    font-family:
+        'Anton',
+        system-ui,
+        -apple-system,
+        'Segoe UI',
+        Roboto,
+        'Helvetica Neue',
+        Arial,
+        sans-serif;
 
-  color: #000000;
-  font-weight: 800;
+    color: #000000;
+    font-weight: 800;
 
-  /* Make sure letter shapes are crisp */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    /* Make sure letter shapes are crisp */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .bg-diamond-overlay {
-  background-color: transparent;
-  background-image: repeating-conic-gradient(
-    rgba(255, 255, 255, 0.5) 0deg 90deg,
-    transparent 90deg 180deg
-  );
-  background-size: 100px 100px;
+    background-color: transparent;
+    background-image: repeating-conic-gradient(
+        rgba(255, 255, 255, 0.5) 0deg 90deg,
+        transparent 90deg 180deg
+    );
+    background-size: 100px 100px;
 }
 
 .hide-scrollbar {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
 }
 .hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
+    display: none; /* Chrome/Safari */
 }
