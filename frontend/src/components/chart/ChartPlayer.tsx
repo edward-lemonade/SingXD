@@ -21,7 +21,6 @@ interface ChartPlayerProps {
 
 export default function ChartPlayer({ chart, playerSettings: partial, onEnded }: ChartPlayerProps) {
     const settings = { ...defaultPlayerSettings, ...partial };
-
     const engine = useChartEngine(chart, { onEnded });
 
     return (
@@ -45,12 +44,9 @@ export default function ChartPlayer({ chart, playerSettings: partial, onEnded }:
                 <audio ref={engine.audioRef} src={chart.properties.audioUrl} />
             )}
 
-            <ChartLyrics
-                chart={chart}
-                currentLineIndex={engine.currentLineIndex}
-                currentWordIndex={engine.currentWordIndex}
-                displayLines={engine.displayLines}
-            />
+            <div style={{ flex: 1, display: 'flex', pointerEvents: 'none' }}>
+                <ChartLyrics chart={chart} engine={engine} />
+            </div>
 
             <ChartControls
                 currentTime={engine.currentTime}

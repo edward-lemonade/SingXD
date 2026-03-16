@@ -52,7 +52,6 @@ export default function ChartGame({
     const audioContextRef = useRef<AudioContext | null>(null);
     const workletNodeRef = useRef<AudioWorkletNode | null>(null);
 
-    // Finish callback — declared as ref so it's stable across renders.
     const finishCallbackRef = useRef<() => void>(null!);
 
     const engine = useChartEngine(chart, {
@@ -109,7 +108,6 @@ export default function ChartGame({
         closeSocket('ended');
     }, [closeSocket, teardownMic]);
 
-    // Keep finishCallbackRef current.
     finishCallbackRef.current = finish;
 
     const handleMessage = useCallback(
@@ -216,25 +214,16 @@ export default function ChartGame({
                 backgroundPosition: 'center',
             }}
         >
-            {/* Dim overlay */}
             <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)' }} />
 
-            {/* Hidden audio element owned by the engine */}
             {chart.properties.audioUrl && (
                 <audio ref={engine.audioRef} src={chart.properties.audioUrl} />
             )}
 
-            {/* Lyrics — fills all available vertical space */}
             <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex' }}>
-                <ChartLyrics
-                    chart={chart}
-                    currentLineIndex={engine.currentLineIndex}
-                    currentWordIndex={engine.currentWordIndex}
-                    displayLines={engine.displayLines}
-                />
+                <ChartLyrics chart={chart} engine={engine} />
             </div>
 
-            {/* Controls bar — locked in game mode */}
             <div style={{ position: 'relative', zIndex: 1 }}>
                 <ChartControls
                     currentTime={engine.currentTime}
@@ -244,7 +233,6 @@ export default function ChartGame({
                 />
             </div>
 
-            {/* Quit button */}
             <div style={{ position: 'absolute', bottom: '20px', right: '20px', zIndex: 2 }}>
                 <button
                     onClick={quit}
