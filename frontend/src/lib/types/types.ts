@@ -43,6 +43,9 @@ export interface Chart extends ChartDraft {
     createdAt: Date;
     updatedAt: Date;
     author: string | null;
+    lines: Line[];
+    timings: Timing[];
+    properties: ChartProperties;
 }
 
 export interface GameSettings {

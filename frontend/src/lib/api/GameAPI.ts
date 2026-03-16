@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL!;
+import { ROUTE_CONFIG } from "./routes";
 
 export type GameSocketCloseReason = "quit" | "ended" | "unmount" | string;
 
@@ -17,7 +17,7 @@ export interface WsSummaryMsg {
 export type WsMsg = WsScoreMsg | WsSummaryMsg;
 
 export async function preloadVocals(chartId: number): Promise<void> {
-    const url = `${API_BASE}/game/load/${chartId}`;
+    const url = ROUTE_CONFIG.game.load(chartId);
     const res = await fetch(url);
     if (!res.ok) {
         throw new Error(`Preload vocals failed: ${res.status} ${res.statusText}`);
@@ -36,12 +36,19 @@ export function connectChartGameSocket(options: {
     onError: (evt: Event) => void;
     onClose: (evt: CloseEvent) => void;
 }): ChartGameSocketHandle {
-    const wsUrl = API_BASE.replace(/^http/, "ws") + `/game/ws/${options.chartId}`;
+    const {
+        chartId, 
+        onMessage, 
+        onError, 
+        onClose
+    } = options;
+
+    const wsUrl = ROUTE_CONFIG.game.run(options.chartId);
     const ws = new WebSocket(wsUrl);
     ws.binaryType = "arraybuffer";
-    ws.onmessage = options.onMessage;
-    ws.onerror = options.onError;
-    ws.onclose = options.onClose;
+    ws.onmessage = onMessage;
+    ws.onerror = onError;
+    ws.onclose = onClose;
 
     return {
         close(reason: string) {
