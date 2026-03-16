@@ -1,1 +1,1 @@
-export { default } from "./ChartTimingEditor";
+export { default } from './ChartTimingEditor';

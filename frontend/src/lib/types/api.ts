@@ -1,19 +1,19 @@
-import { Chart, Timing } from "./types";
+import { Chart, Timing } from './types';
 
 export interface SeparateAudioResponse {
-    vocalsUrl: string,
-    instrumentalUrl: string,
-    sessionId: string,
+  vocalsUrl: string;
+  instrumentalUrl: string;
+  sessionId: string;
 }
 
 export interface GenerateTimingsResponse {
-    timings: Timing[],
+  timings: Timing[];
 }
 
 export interface UploadImageResponse {
-    imageUrl: string,
+  imageUrl: string;
 }
 
 export interface ChartResponse {
-    chart: Chart,
+  chart: Chart;
 }

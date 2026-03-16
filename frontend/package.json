@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "prettier --write ./src && next lint --fix",
+    "lint:check": "prettier --check ./src && next lint"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -32,9 +33,15 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/wavesurfer.js": "^6.0.12",
+    "@typescript-eslint/eslint-plugin": "^8.57.0",
+    "@typescript-eslint/parser": "^8.57.0",
     "baseline-browser-mapping": "^2.9.7",
-    "eslint": "^10.0.1",
-    "eslint-config-next": "^0.2.4",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.1.6",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "prettier": "^3.8.1",
     "tailwindcss": "^4.1.17",
     "typescript": "^5"
   }

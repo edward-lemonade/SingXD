@@ -1,1 +1,1 @@
-export { default } from "./ChartLyricsEditor";
+export { default } from './ChartLyricsEditor';

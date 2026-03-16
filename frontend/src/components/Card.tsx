@@ -1,20 +1,15 @@
-import clsx from "clsx";
+import clsx from 'clsx';
 
 export default function Card({
-	children,
-	className,
+  children,
+  className,
 }: {
-	children: React.ReactNode;
-	className?: string;
+  children: React.ReactNode;
+  className?: string;
 }) {
-	return (
-		<div
-			className={clsx(
-				"bg-white border-4 border-black text-black flex flex-col",
-				className
-			)}
-		>
-			{children}
-		</div>
-	);
+  return (
+    <div className={clsx('bg-white border-4 border-black text-black flex flex-col', className)}>
+      {children}
+    </div>
+  );
 }
