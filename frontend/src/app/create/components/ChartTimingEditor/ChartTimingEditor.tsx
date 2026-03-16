@@ -133,7 +133,7 @@ function ChartTimingEditor({
     // =====================================================================================
 
     return (
-        <Card className="p-6 gap-6 flex flex-row">
+        <div className='gap-6 flex flex-row'>
             {/* Controls */}
             {isReady && (
                 <div className="flex flex-col shrink">
@@ -280,7 +280,7 @@ function ChartTimingEditor({
                     </div>
                 </div>
             </div>
-        </Card>
+        </div>
     );
 }
 

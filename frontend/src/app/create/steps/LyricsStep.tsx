@@ -27,8 +27,8 @@ export default function LyricsStep({
     loading,
     handleGenerateAlignment,
 }: LyricsStepProps) {
-    const [useInstrumental, setUseInstrumental] = useState(false);
-    const audioUrl = useInstrumental ? audioUrls.instrumental : audioUrls.combined;
+    const [vocalsOnly, setVocalsOnly] = useState(false);
+    const audioUrl = vocalsOnly ? audioUrls.vocals : audioUrls.combined;
 
     const flatWords = useMemo(
         () => lines.flatMap((line, lineIndex) => line.words.map(word => word.text)),
@@ -58,14 +58,31 @@ export default function LyricsStep({
                     )}
                 </Card>
 
-                <ChartTimingEditor
-                    audioUrl={audioUrl}
-                    timings={timings}
-                    setTimings={setTimings}
-                    words={flatWords}
-                    selectedIndex={selectedTimingIndex}
-                    setSelectedIndex={setSelectedTimingIndex}
-                />
+                <Card className="p-6 gap-6 flex flex-col">
+                    <ChartTimingEditor
+                        key={audioUrl}
+                        audioUrl={audioUrl}
+                        timings={timings}
+                        setTimings={setTimings}
+                        words={flatWords}
+                        selectedIndex={selectedTimingIndex}
+                        setSelectedIndex={setSelectedTimingIndex}
+                    />
+
+                    {/* Controls */}
+                    <div className="flex flex-col gap-2 justify-center">
+                        <button
+                            onClick={() => setVocalsOnly(v => !v)}
+                            className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
+                                vocalsOnly
+                                    ? 'bg-purple-500 text-white hover:bg-purple-600'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                        >
+                            Vocals Only
+                        </button>
+                    </div>
+                </Card>
             </div>
         </section>
     );
