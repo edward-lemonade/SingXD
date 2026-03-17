@@ -4,12 +4,12 @@ import ChartLyrics from '../internal/ChartLyrics';
 import ChartControls from './Controls';
 import { ChartDraft } from '@/src/lib/types/models';
 
-export interface ChartPlayerSettings {
+export interface ChartPreviewSettings {
     width: number;
     height: number;
 }
 
-const defaultPlayerSettings: ChartPlayerSettings = {
+const defaultPlayerSettings: ChartPreviewSettings = {
     width: 720,
     height: 720,
 };
@@ -27,23 +27,21 @@ function computePlayerLyricSizes(playerHeight: number) {
     return { lineHeightPx, fontSize };
 }
 
-interface ChartPlayerProps {
+interface ChartPreviewProps {
     chart: ChartDraft;
-    playerSettings?: Partial<ChartPlayerSettings>;
+    playerSettings?: Partial<ChartPreviewSettings>;
     onEnded?: () => void;
 }
 
-export default function ChartPlayer({ chart, playerSettings: partial, onEnded }: ChartPlayerProps) {
+export default function ChartPreview({ chart, playerSettings: partial, onEnded }: ChartPreviewProps) {
     const settings = { ...defaultPlayerSettings, ...partial };
     const engine = useChartEngine(chart, { onEnded });
     const [isHovered, setIsHovered] = useState(false);
 
     const { lineHeightPx, fontSize } = computePlayerLyricSizes(settings.height);
 
-    const showOverlay = !engine.isPlaying || isHovered;
-    const overlayBg = engine.isPlaying
-        ? 'rgba(0,0,0,0)'
-        : 'rgba(0,0,0,0.45)';
+    const showOverlay = !engine.isPlaying;
+    const showButton = !engine.isPlaying || isHovered;
 
     return (
         <div className="max-w-full overflow-hidden rounded-2xl shadow-2xl border border-white/10">
@@ -78,7 +76,7 @@ export default function ChartPlayer({ chart, playerSettings: partial, onEnded }:
                         />
                     </div>
 
-                    {/* Play/pause overlay — sits above lyrics, below controls */}
+                    {/* Play/pause overlay */}
                     <div
                         onClick={engine.togglePlayPause}
                         onMouseEnter={() => setIsHovered(true)}
@@ -86,18 +84,45 @@ export default function ChartPlayer({ chart, playerSettings: partial, onEnded }:
                         style={{
                             position: 'absolute',
                             inset: 0,
-                            backgroundColor: overlayBg,
+                            cursor: 'pointer',
+                            transition: 'background-color backdrop-filter opacity 0.2s ease',
+                            backgroundColor: showOverlay ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0)',
+                            backdropFilter: showOverlay ? 'blur(2px)' : '',
+                            pointerEvents: 'all',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'flex-start',
+                            paddingTop: '20%', // pushes it into the upper half
+                        }}
+                    >
+                        {/* Preview label */}
+                        <span
+                            style={{
+                                color: 'white',
+                                fontSize: 20,
+                                textShadow: '0 0 4px #000000',
+                                opacity: showOverlay ? 1 : 0,
+                                transition: 'opacity 0.15s ease',
+                                userSelect: 'none',
+                            }}
+                        >
+                            Preview
+                        </span>
+                    </div>
+
+                    {/* Play/pause button */}
+                    <div
+                        style={{
+                            position: 'absolute',
+                            inset: 0,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            cursor: 'pointer',
-                            transition: 'background-color backdrop-filter opacity 0.2s ease',
-                            backdropFilter: engine.isPlaying ? '' : 'blur(2px)',
-                            opacity: showOverlay ? 1 : 0,
-                            pointerEvents: 'all',
+                            opacity: showButton ? 1 : 0,
+                            transition: 'opacity 0.2s ease',
+                            pointerEvents: 'none',
                         }}
-                    >   
-                        {/* Play/pause icon — sits above lyrics, below controls */}
+                    >
                         <div
                             style={{
                                 width: 72,
@@ -108,19 +133,17 @@ export default function ChartPlayer({ chart, playerSettings: partial, onEnded }:
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 backdropFilter: 'blur(4px)',
-                                transition: 'transform 0.15s ease, opacity 0.15s ease',
+                                transition: 'transform opacity 0.15s ease',
                                 transform: engine.isPlaying ? 'scale(0.85)' : 'scale(1)',
-                                opacity: showOverlay ? (engine.isPlaying ? 0.75 : 1) : 0
+                                opacity: engine.isPlaying ? 0.75 : 1,
                             }}
                         >
                             {engine.isPlaying ? (
-                                // Pause icon
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
                                     <rect x="5" y="3" width="4" height="18" rx="1" />
                                     <rect x="15" y="3" width="4" height="18" rx="1" />
                                 </svg>
                             ) : (
-                                // Play icon
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="white" style={{ marginLeft: 3 }}>
                                     <polygon points="5,3 19,12 5,21" />
                                 </svg>

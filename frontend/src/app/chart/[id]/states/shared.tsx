@@ -1,4 +1,4 @@
-import { ChartPlayer } from '@/src/components/Chart';
+import { ChartPreview } from '@/src/components/Chart';
 import { Chart } from '@/src/lib/types/models';
 
 export function IntroPane({
@@ -17,7 +17,7 @@ export function IntroPane({
             </h1>
 
             <div className="w-full flex items-center justify-center">
-                <ChartPlayer chart={chart} playerSettings={{ width: 420, height: 420 }} />
+                <ChartPreview chart={chart} playerSettings={{ width: 420, height: 420 }} />
             </div>
 
             <button

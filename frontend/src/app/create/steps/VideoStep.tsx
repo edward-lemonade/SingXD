@@ -1,7 +1,7 @@
 'use client';
 
 import Card from '@/src/components/Card';
-import { ChartPlayer } from '@/src/components/Chart';
+import { ChartPreview } from '@/src/components/Chart';
 import { ChartDraft, ChartProperties } from '@/src/lib/types/models';
 import { SetStateAction } from 'react';
 
@@ -89,7 +89,7 @@ export default function VideoStep({
                     </div>
                 </div>
 
-                <ChartPlayer chart={chart} />
+                <ChartPreview chart={chart} />
             </Card>
         </section>
     );
