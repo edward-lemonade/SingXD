@@ -1,4 +1,4 @@
-import { ChartDraft } from '@/src/lib/types/types';
+import { ChartDraft } from '@/src/lib/types/models';
 import { useCallback, useRef, useEffect, useState } from 'react';
 import { ChartEngine, ActiveWordState, LyricLineState } from './useChartEngine';
 

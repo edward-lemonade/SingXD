@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useCallback } from 'react';
-import { Timing } from '@/src/lib/types/types';
+import { Timing } from '@/src/lib/types/models';
 
 interface ChartLyricsEditorProps {
     lyricsString: string;

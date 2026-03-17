@@ -1,4 +1,4 @@
-import { ChartDraft } from '@/src/lib/types/types';
+import { ChartDraft } from '@/src/lib/types/models';
 import { useState, useEffect, useRef, useMemo } from 'react';
 
 // ---------------------------------------------------------------------------

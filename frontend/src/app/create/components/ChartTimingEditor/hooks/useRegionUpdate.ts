@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Timing } from '@/src/lib/types/types';
+import { Timing } from '@/src/lib/types/models';
 import { DragMode } from '../Region';
 
 const TOUCH_THRESHOLD = 0.02; // seconds — "close enough" to be considered touching

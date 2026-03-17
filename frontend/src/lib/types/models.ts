@@ -32,27 +32,18 @@ export const DEFAULT_CHART_PROPERTIES: ChartProperties = {
     duration: 0,
 };
 
-export interface ChartDraft {
-    lines: Line[];
-    timings: Timing[];
-    properties: ChartProperties;
-}
-
-export interface Chart extends ChartDraft {
-    id: number;
-    createdAt: Date;
+export interface Chart {
+    readonly id: number;
+    readonly createdAt: Date;
     updatedAt: Date;
     author: string | null;
     lines: Line[];
     timings: Timing[];
     properties: ChartProperties;
 }
-
-export interface GameSettings {
-    width: number;
-    height: number;
-}
-export const DEFAULT_GAME_SETTINGS: GameSettings = {
-    width: 720,
-    height: 720,
-};
+export type ChartDraft = Pick<
+    Chart, 
+    "lines" |
+    "timings" |
+    "properties"
+>

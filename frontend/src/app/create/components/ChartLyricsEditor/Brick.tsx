@@ -1,6 +1,6 @@
 'use client';
 
-import { Timing } from '@/src/lib/types/types';
+import { Timing } from '@/src/lib/types/models';
 
 interface BrickProps {
     word: string;

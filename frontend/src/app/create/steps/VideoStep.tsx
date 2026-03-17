@@ -2,7 +2,7 @@
 
 import Card from '@/src/components/Card';
 import { ChartPlayer } from '@/src/components/Chart';
-import { ChartDraft, ChartProperties } from '@/src/lib/types/types';
+import { ChartDraft, ChartProperties } from '@/src/lib/types/models';
 import { SetStateAction } from 'react';
 
 type VideoStepProps = {

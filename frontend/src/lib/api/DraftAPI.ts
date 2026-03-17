@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { GenerateTimingsResponse, SeparateAudioResponse, UploadImageResponse } from '../types/api';
-import { Line, Timing } from '../types/types';
+import { Line, Timing } from '../types/models';
 import { ROUTE_CONFIG } from './routes';
 
 export const separateAudio = async (audioCombined: Blob): Promise<SeparateAudioResponse> => {

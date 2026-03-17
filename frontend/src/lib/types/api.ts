@@ -1,4 +1,4 @@
-import { Chart, Timing } from './types';
+import { Chart, Timing } from './models';
 
 export interface SeparateAudioResponse {
     vocalsUrl: string;

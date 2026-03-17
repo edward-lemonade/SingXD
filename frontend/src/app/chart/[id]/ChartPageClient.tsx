@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ChartGame } from '@/src/components/Chart';
 import { preloadVocals, WsSummaryMsg } from '@/src/lib/api/GameAPI';
-import { Chart } from '@/src/lib/types/types';
+import { Chart } from '@/src/lib/types/models';
 
 type GameState = 'idle' | 'playing' | 'finished';
 

@@ -12,7 +12,7 @@ import {
     ChartProperties,
     Line,
     DEFAULT_CHART_PROPERTIES,
-} from '@/src/lib/types/types';
+} from '@/src/lib/types/models';
 import * as ChartAPI from '@/src/lib/api/ChartAPI';
 import * as DraftAPI from '@/src/lib/api/DraftAPI';
 import PublishStep from './steps/PublishStep';

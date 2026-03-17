@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ChartResponse } from '../types/api';
-import { ChartDraft } from '../types/types';
+import { ChartDraft } from '../types/models';
 import { ROUTE_CONFIG } from './routes';
 
 export const createChart = async (

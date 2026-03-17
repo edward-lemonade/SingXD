@@ -1,6 +1,6 @@
 import { SetStateAction, useEffect, useRef } from 'react';
 import Card from '@/src/components/Card';
-import { Timing } from '@/src/lib/types/types';
+import { Timing } from '@/src/lib/types/models';
 import Region, { DragMode } from './Region';
 import { useWaveSurfer } from './hooks/useWavesurfer';
 import { useRegionUpdate } from './hooks/useRegionUpdate';

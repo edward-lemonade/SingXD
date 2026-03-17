@@ -1,7 +1,7 @@
 'use client';
 
 import Card from '@/src/components/Card';
-import { Line, Timing } from '../../../lib/types/types';
+import { Line, Timing } from '../../../lib/types/models';
 import { AudioUrls } from '../CreatePageClient';
 import { SetStateAction, useMemo, useState } from 'react';
 import ChartTimingEditor from '../components/ChartTimingEditor';
