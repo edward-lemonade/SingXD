@@ -1,6 +1,6 @@
-import { useChartEngine } from './useChartEngine';
-import ChartLyrics from './internal/ChartLyrics';
-import ChartControls from './internal/ChartControls';
+import { useChartEngine } from '../internal/useChartEngine';
+import ChartLyrics from '../internal/ChartLyrics';
+import ChartControls from './Controls';
 import { ChartDraft } from '@/src/lib/types/types';
 
 export interface ChartPlayerSettings {
@@ -13,6 +13,19 @@ const defaultPlayerSettings: ChartPlayerSettings = {
     height: 720,
 };
 
+const CONTROLS_HEIGHT_PX = 56;
+const LYRICS_PADDING_PX = 80;
+
+const SLOTS = 3;
+const GAP_RATIO = 0.33;
+
+function computePlayerLyricSizes(playerHeight: number) {
+    const available = playerHeight - CONTROLS_HEIGHT_PX - LYRICS_PADDING_PX;
+    const lineHeightPx = Math.floor(available / (SLOTS + GAP_RATIO * (SLOTS - 1)));
+    const fontSize = `${Math.floor(lineHeightPx * 0.2)}px`;
+    return { lineHeightPx, fontSize };
+}
+
 interface ChartPlayerProps {
     chart: ChartDraft;
     playerSettings?: Partial<ChartPlayerSettings>;
@@ -22,6 +35,8 @@ interface ChartPlayerProps {
 export default function ChartPlayer({ chart, playerSettings: partial, onEnded }: ChartPlayerProps) {
     const settings = { ...defaultPlayerSettings, ...partial };
     const engine = useChartEngine(chart, { onEnded });
+
+    const { lineHeightPx, fontSize } = computePlayerLyricSizes(settings.height);
 
     return (
         <div
@@ -45,7 +60,12 @@ export default function ChartPlayer({ chart, playerSettings: partial, onEnded }:
             )}
 
             <div style={{ flex: 1, display: 'flex', pointerEvents: 'none' }}>
-                <ChartLyrics chart={chart} engine={engine} />
+                <ChartLyrics
+                    chart={chart}
+                    engine={engine}
+                    lineHeightPx={lineHeightPx}
+                    fontSize={fontSize}
+                />
             </div>
 
             <ChartControls

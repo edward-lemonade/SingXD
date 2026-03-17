@@ -6,9 +6,9 @@ import {
     type ChartGameSocketHandle,
 } from '@src/lib/api/GameAPI';
 import { Chart } from '@src/lib/types/types';
-import { useChartEngine } from './useChartEngine';
-import ChartLyrics from './internal/ChartLyrics';
-import ChartControls from './internal/ChartControls';
+import { useChartEngine } from '../internal/useChartEngine';
+import ChartLyrics from '../internal/ChartLyrics';
+import GameProgressBar, { GAME_PROGRESS_BAR_HEIGHT_PX } from './ProgressBar';
 
 const PCM_WORKLET_SOURCE = `
 class PCMProcessor extends AudioWorkletProcessor {
@@ -31,6 +31,19 @@ registerProcessor("pcm-processor", PCMProcessor);
 const PCM_WORKLET_BLOB_URL = URL.createObjectURL(
     new Blob([PCM_WORKLET_SOURCE], { type: 'application/javascript' })
 );
+
+// Top/bottom padding inside ChartLyrics (40px each side)
+const LYRICS_PADDING_PX = 80;
+
+const SLOTS = 3;
+const GAP_RATIO = 0.33;
+
+function computeGameLyricSizes(viewportHeight: number) {
+    const available = viewportHeight - GAME_PROGRESS_BAR_HEIGHT_PX - LYRICS_PADDING_PX;
+    const lineHeightPx = Math.floor(available / (SLOTS + GAP_RATIO * (SLOTS - 1)));
+    const fontSize = `${Math.floor(lineHeightPx * 0.3)}px`;
+    return { lineHeightPx, fontSize };
+}
 
 export default function ChartGame({
     chartId,
@@ -198,6 +211,10 @@ export default function ChartGame({
         };
     }, [chartId, chart.properties.audioUrl, handleMessage, teardownMic]);
 
+    const { lineHeightPx, fontSize } = computeGameLyricSizes(
+        typeof window !== 'undefined' ? window.innerHeight : 900
+    );
+
     return (
         <div
             style={{
@@ -220,19 +237,25 @@ export default function ChartGame({
                 <audio ref={engine.audioRef} src={chart.properties.audioUrl} />
             )}
 
-            <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex' }}>
-                <ChartLyrics chart={chart} engine={engine} />
-            </div>
-
+            {/* Progress bar */}
             <div style={{ position: 'relative', zIndex: 1 }}>
-                <ChartControls
+                <GameProgressBar
                     currentTime={engine.currentTime}
-                    duration={chart.properties.duration}
-                    isPlaying={engine.isPlaying}
-                    isGame={true}
+                    duration={chart.properties.duration ?? 0}
                 />
             </div>
 
+            {/* Lyrics */}
+            <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex' }}>
+                <ChartLyrics
+                    chart={chart}
+                    engine={engine}
+                    lineHeightPx={lineHeightPx}
+                    fontSize={fontSize}
+                />
+            </div>
+
+            {/* Quit button */}
             <div style={{ position: 'absolute', bottom: '20px', right: '20px', zIndex: 2 }}>
                 <button
                     onClick={quit}

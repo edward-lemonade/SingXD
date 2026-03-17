@@ -1,6 +1,6 @@
 import { ChartDraft } from '@/src/lib/types/types';
 import { useCallback, useRef, useEffect, useState } from 'react';
-import { ChartEngine, ActiveWordState, LyricLineState } from '../useChartEngine';
+import { ChartEngine, ActiveWordState, LyricLineState } from './useChartEngine';
 
 const STYLE_ID = 'karaoke-keyframes';
 if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
@@ -18,9 +18,10 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
 interface ChartLyricsProps {
     chart: ChartDraft;
     engine: ChartEngine;
+    lineHeightPx: number;
+    fontSize: string;
 }
 
-const LINE_HEIGHT_PX = 60;
 const TRANSITION_MS = 350;
 const SLOTS = 3; // always render this many slots so focus line stays centered
 
@@ -28,7 +29,7 @@ type Slot =
     | { kind: 'line'; line: LyricLineState }
     | { kind: 'empty'; key: string };
 
-export default function ChartLyrics({ chart, engine }: ChartLyricsProps) {
+export default function ChartLyrics({ chart, engine, lineHeightPx, fontSize }: ChartLyricsProps) {
     const { lyricState } = engine;
     const baseColor = chart.properties.textColor ?? '#ffffff';
     const highlightColor = '#FFD700';
@@ -113,7 +114,7 @@ export default function ChartLyrics({ chart, engine }: ChartLyricsProps) {
 
         if (prev === null || prev === curr) return;
 
-        setOffsetPx(LINE_HEIGHT_PX);
+        setOffsetPx(lineHeightPx);
         setIsAnimating(false);
 
         requestAnimationFrame(() => {
@@ -122,9 +123,10 @@ export default function ChartLyrics({ chart, engine }: ChartLyricsProps) {
                 setIsAnimating(true);
             });
         });
-    }, [currentLineIdx]);
+    }, [currentLineIdx, lineHeightPx]);
 
-    const containerHeight = LINE_HEIGHT_PX * SLOTS + 20 * (SLOTS - 1);
+    const gap = Math.round(lineHeightPx * 0.33);
+    const containerHeight = lineHeightPx * SLOTS + gap * (SLOTS - 1);
 
     return (
         <div
@@ -169,7 +171,7 @@ export default function ChartLyrics({ chart, engine }: ChartLyricsProps) {
                         flexDirection: 'column',
                         alignItems: 'center',
                         width: '100%',
-                        gap: '20px',
+                        gap: `${gap}px`,
                         transform: `translateY(${offsetPx}px)`,
                         transition: isAnimating
                             ? `transform ${TRANSITION_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`
@@ -181,7 +183,7 @@ export default function ChartLyrics({ chart, engine }: ChartLyricsProps) {
                             return (
                                 <div
                                     key={slot.key}
-                                    style={{ minHeight: `${LINE_HEIGHT_PX}px`, width: '100%' }}
+                                    style={{ minHeight: `${lineHeightPx}px`, width: '100%' }}
                                 />
                             );
                         }
@@ -199,8 +201,8 @@ export default function ChartLyrics({ chart, engine }: ChartLyricsProps) {
                                     transform: lineState.isCurrent ? 'scale(1.1)' : 'scale(1)',
                                     transition: 'opacity 0.3s ease, transform 0.3s ease',
                                     fontFamily: chart.properties.font,
-                                    fontSize: chart.properties.textSize,
-                                    minHeight: `${LINE_HEIGHT_PX}px`,
+                                    fontSize,
+                                    minHeight: `${lineHeightPx}px`,
                                     alignItems: 'center',
                                 }}
                             >

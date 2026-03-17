@@ -24,13 +24,33 @@ export default function ChartControls({
     return (
         <div
             style={{
-                padding: '20px',
+                flexShrink: 0,
+                padding: '12px 20px',
                 backgroundColor: 'rgba(0,0,0,0.7)',
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '12px',
             }}
         >
+            {!isGame && onTogglePlayPause && (
+                <button
+                    onClick={onTogglePlayPause}
+                    style={{
+                        flexShrink: 0,
+                        padding: '8px 20px',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        backgroundColor: '#FFD700',
+                        border: 'none',
+                        borderRadius: '5px',
+                        fontWeight: 'bold',
+                    }}
+                >
+                    {isPlaying ? '⏸ Pause' : '▶ Play'}
+                </button>
+            )}
+
             <input
                 type="range"
                 min="0"
@@ -44,41 +64,16 @@ export default function ChartControls({
                 }
                 disabled={isGame}
                 style={{
-                    width: '100%',
+                    flex: 1,
+                    minWidth: 0,
                     ...(isGame ? { opacity: 0.7, cursor: 'not-allowed' } : {}),
                 }}
                 aria-label="progress"
             />
 
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    color: '#fff',
-                }}
-            >
-                <span>
-                    {formatTime(currentTime)} / {formatTime(duration)}
-                </span>
-
-                {!isGame && onTogglePlayPause && (
-                    <button
-                        onClick={onTogglePlayPause}
-                        style={{
-                            padding: '10px 30px',
-                            fontSize: '16px',
-                            cursor: 'pointer',
-                            backgroundColor: '#FFD700',
-                            border: 'none',
-                            borderRadius: '5px',
-                            fontWeight: 'bold',
-                        }}
-                    >
-                        {isPlaying ? '⏸ Pause' : '▶ Play'}
-                    </button>
-                )}
-            </div>
+            <span style={{ flexShrink: 0, color: '#fff', fontSize: '14px' }}>
+                {formatTime(currentTime)} / {formatTime(duration)}
+            </span>
         </div>
     );
 }

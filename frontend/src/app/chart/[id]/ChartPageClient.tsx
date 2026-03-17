@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChartGame } from '@/src/components/chart';
+import { ChartGame } from '@/src/components/Chart';
 import { preloadVocals, WsSummaryMsg } from '@/src/lib/api/GameAPI';
 import { Chart } from '@/src/lib/types/types';
 
