@@ -16,9 +16,7 @@ interface ChartControlsProps {
 export default function ChartControls({
     currentTime,
     duration,
-    isPlaying,
     isGame = false,
-    onTogglePlayPause,
     onSeek,
 }: ChartControlsProps) {
     return (
@@ -33,24 +31,6 @@ export default function ChartControls({
                 gap: '12px',
             }}
         >
-            {!isGame && onTogglePlayPause && (
-                <button
-                    onClick={onTogglePlayPause}
-                    style={{
-                        flexShrink: 0,
-                        padding: '8px 20px',
-                        fontSize: '16px',
-                        cursor: 'pointer',
-                        backgroundColor: '#FFD700',
-                        border: 'none',
-                        borderRadius: '5px',
-                        fontWeight: 'bold',
-                    }}
-                >
-                    {isPlaying ? '⏸ Pause' : '▶ Play'}
-                </button>
-            )}
-
             <input
                 type="range"
                 min="0"

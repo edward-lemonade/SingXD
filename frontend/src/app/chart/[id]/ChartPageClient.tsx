@@ -1,11 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChartGame } from '@/src/components/Chart';
 import { preloadVocals, WsSummaryMsg } from '@/src/lib/api/GameAPI';
 import { Chart } from '@/src/lib/types/models';
+import InitialState from './states/InitialState';
+import PlayingState from './states/PlayingState';
+import FinishedState from './states/FinishedState';
 
-type GameState = 'idle' | 'playing' | 'finished';
+enum GameState {
+    INITIAL, PLAYING, FINISHED
+}
 
 interface ChartPageClientProps {
     chart: Chart | null;
@@ -13,7 +17,7 @@ interface ChartPageClientProps {
 }
 
 export default function ChartPageClient({ chart, chartId }: ChartPageClientProps) {
-    const [gameState, setGameState] = useState<GameState>('idle');
+    const [gameState, setGameState] = useState<GameState>(GameState.INITIAL);
     const [lastSummary, setLastSummary] = useState<WsSummaryMsg | null>(null);
 
     useEffect(() => {
@@ -31,30 +35,14 @@ export default function ChartPageClient({ chart, chartId }: ChartPageClientProps
         );
     }
 
-    if (gameState === 'playing') {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <ChartGame
-                    chart={chart}
-                    chartId={chartId}
-                    onQuit={summary => {
-                        if (summary) setLastSummary(summary);
-                        setGameState('idle');
-                    }}
-                    onFinished={summary => {
-                        if (summary) setLastSummary(summary);
-                        setGameState('finished');
-                    }}
-                />
-            </div>
-        );
-    }
-
-    const isFinished = gameState === 'finished';
+    const onPlay = () => {
+        setLastSummary(null);
+        setGameState(GameState.PLAYING);
+    };
 
     return (
         <div
-            className="min-h-screen flex flex-col items-center justify-center p-8 gap-6"
+            className="min-h-screen flex flex-col items-center justify-center gap-6"
             style={{
                 backgroundImage: chart.properties.backgroundImageUrl
                     ? `url(${chart.properties.backgroundImageUrl})`
@@ -64,48 +52,24 @@ export default function ChartPageClient({ chart, chartId }: ChartPageClientProps
             }}
         >
             <div className="absolute inset-0 bg-black/60" />
-            <div className="relative z-10 flex flex-col items-center gap-6 text-center">
-                {isFinished && (
-                    <div className="flex flex-col items-center gap-2">
-                        <span className="text-5xl">🎉</span>
-                        <h2 className="text-3xl font-bold text-white drop-shadow">Nice work!</h2>
-                        <p className="text-white/70 text-sm">You finished the chart</p>
-                        {lastSummary != null && (
-                            <p className="text-white font-semibold text-lg mt-2">
-                                Total score: {(lastSummary.totalScore * 100).toFixed(1)}%
-                            </p>
-                        )}
-                    </div>
-                )}
-
-                {!isFinished && (
-                    <h1 className="text-4xl font-bold text-white drop-shadow-lg">
-                        {chart.properties.title ?? 'Chart'}
-                    </h1>
-                )}
-
-                <button
-                    onClick={() => {
-                        setLastSummary(null);
-                        setGameState('playing');
+            {gameState === GameState.INITIAL && <InitialState chart={chart} onPlay={onPlay} />}
+            {gameState === GameState.PLAYING && (
+                <PlayingState
+                    chart={chart}
+                    chartId={chartId}
+                    onQuit={summary => {
+                        if (summary) setLastSummary(summary);
+                        setGameState(GameState.INITIAL);
                     }}
-                    className="flex items-center gap-3 px-8 py-4 rounded-full text-xl font-bold shadow-2xl transition-transform hover:scale-105 active:scale-95"
-                    style={{ backgroundColor: '#FFD700', color: '#000' }}
-                >
-                    <span
-                        style={{
-                            display: 'inline-block',
-                            width: 0,
-                            height: 0,
-                            borderTop: '10px solid transparent',
-                            borderBottom: '10px solid transparent',
-                            borderLeft: '18px solid #000',
-                            marginRight: '2px',
-                        }}
-                    />
-                    {isFinished ? 'Play Again' : 'Play'}
-                </button>
-            </div>
+                    onFinished={summary => {
+                        if (summary) setLastSummary(summary);
+                        setGameState(GameState.FINISHED);
+                    }}
+                />
+            )}
+            {gameState === GameState.FINISHED && (
+                <FinishedState chart={chart} summary={lastSummary} onPlay={onPlay} />
+            )}
         </div>
     );
 }
