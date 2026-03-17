@@ -16,24 +16,27 @@ export interface LyricLineState {
     lineIdx: number;
 }
 
+export enum LyricStateKind {
+    ACTIVE_WORD, INACTIVE_WORD, SMALL_LINE_GAP, LARGE_LINE_GAP
+}
 interface BaseLyricState {
     displayedLines: LyricLineState[];
     visible: boolean;
 }
 export interface ActiveWordState extends BaseLyricState {
-    kind: 'ActiveWord';
+    kind: LyricStateKind.ACTIVE_WORD;
     activeWordStart: number;
     activeWordEnd: number;
     activeWordKey: string;
 }
 export interface InactiveWordState extends BaseLyricState {
-    kind: 'InactiveWord';
+    kind: LyricStateKind.INACTIVE_WORD;
 }
 export interface SmallLineGapState extends BaseLyricState {
-    kind: 'SmallLineGap';
+    kind: LyricStateKind.SMALL_LINE_GAP;
 }
 export interface LargeLineGapState extends BaseLyricState {
-    kind: 'LargeLineGap';
+    kind: LyricStateKind.LARGE_LINE_GAP;
 }
 
 export type LyricState =
@@ -163,7 +166,7 @@ export function useChartEngine(
         const { lines, timings } = chart;
 
         if (timings.length === 0 || lines.length === 0) {
-            return { kind: 'InactiveWord', displayedLines: [], visible: false };
+            return { kind: LyricStateKind.INACTIVE_WORD, displayedLines: [], visible: false };
         }
 
         const firstWordStart = timings[0].start;
@@ -297,7 +300,7 @@ export function useChartEngine(
 
             if (activeGlobalIdx !== -1) {
                 return {
-                    kind: 'ActiveWord',
+                    kind: LyricStateKind.ACTIVE_WORD,
                     displayedLines: builtLines,
                     visible: true,
                     activeWordStart: timings[activeGlobalIdx].start,
@@ -305,7 +308,7 @@ export function useChartEngine(
                     activeWordKey: `${activeLineIdx}-${activeWordIdx}`,
                 };
             }
-            return { kind: 'InactiveWord', displayedLines: builtLines, visible: true };
+            return { kind: LyricStateKind.INACTIVE_WORD, displayedLines: builtLines, visible: true };
         }
 
         const gap = gapBefore(focusLineIdx);
@@ -318,17 +321,17 @@ export function useChartEngine(
             if (currentTime < nextLineStart - LARGE_GAP_LEAD_IN_S) {
                 const prevIdx = focusLineIdx - 1;
                 if (prevIdx < 0) {
-                    return { kind: 'LargeLineGap', displayedLines: [], visible: false };
+                    return { kind: LyricStateKind.LARGE_LINE_GAP, displayedLines: [], visible: false };
                 }
                 return {
-                    kind: 'LargeLineGap',
+                    kind: LyricStateKind.LARGE_LINE_GAP,
                     displayedLines: buildLinesInGroup(prevIdx, lines[prevIdx].words.length, -1),
                     visible: false,
                 };
             }
 
             return {
-                kind: 'LargeLineGap',
+                kind: LyricStateKind.LARGE_LINE_GAP,
                 displayedLines: buildLinesInGroup(focusLineIdx, 0, -1),
                 visible: true,
             };
@@ -338,13 +341,13 @@ export function useChartEngine(
         const builtLines = buildLinesInGroup(focusLineIdx, pastWordCountInFocusLine, -1);
 
         if (currentTime < firstWordStart) {
-            return { kind: 'SmallLineGap', displayedLines: builtLines, visible: gap < LARGE_GAP_THRESHOLD_S };
+            return { kind: LyricStateKind.SMALL_LINE_GAP, displayedLines: builtLines, visible: gap < LARGE_GAP_THRESHOLD_S };
         }
         if (currentTime >= lastWordEnd) {
-            return { kind: 'InactiveWord', displayedLines: builtLines, visible: true };
+            return { kind: LyricStateKind.INACTIVE_WORD, displayedLines: builtLines, visible: true };
         }
 
-        return { kind: 'SmallLineGap', displayedLines: builtLines, visible: true };
+        return { kind: LyricStateKind.SMALL_LINE_GAP, displayedLines: builtLines, visible: true };
     }, [chart.lines, chart.timings, lineRanges, lineGroups, currentTime]);
 
     return {

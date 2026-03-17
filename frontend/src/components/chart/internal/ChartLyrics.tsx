@@ -1,6 +1,6 @@
 import { ChartDraft } from '@/src/lib/types/models';
 import { useCallback, useRef, useEffect, useState } from 'react';
-import { ChartEngine, ActiveWordState, LyricLineState } from './useChartEngine';
+import { ChartEngine, ActiveWordState, LyricLineState, LyricStateKind } from './useChartEngine';
 
 const STYLE_ID = 'karaoke-keyframes';
 if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
@@ -34,7 +34,7 @@ export default function ChartLyrics({ chart, engine, lineHeightPx, fontSize }: C
     const baseColor = chart.properties.textColor ?? '#ffffff';
     const highlightColor = '#FFD700';
 
-    const activeState = lyricState.kind === 'ActiveWord' ? (lyricState as ActiveWordState) : null;
+    const activeState = lyricState.kind === LyricStateKind.ACTIVE_WORD ? (lyricState as ActiveWordState) : null;
     const durationSec = activeState
         ? Math.max(0.05, activeState.activeWordEnd - activeState.activeWordStart)
         : 0.05;

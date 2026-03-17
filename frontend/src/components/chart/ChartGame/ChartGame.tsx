@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import {
     connectChartGameSocket,
     WsMsg,
@@ -6,7 +6,7 @@ import {
     type ChartGameSocketHandle,
 } from '@src/lib/api/GameAPI';
 import { Chart } from '@/src/lib/types/models';
-import { useChartEngine } from '../internal/useChartEngine';
+import { LyricStateKind, useChartEngine } from '../internal/useChartEngine';
 import ChartLyrics from '../internal/ChartLyrics';
 import GameProgressBar, { GAME_PROGRESS_BAR_HEIGHT_PX } from './ProgressBar';
 
@@ -56,6 +56,9 @@ export default function ChartGame({
     onQuit?: (summary?: WsSummaryMsg) => void;
     onFinished?: (summary?: WsSummaryMsg) => void;
 }) {
+    const [justStarted, setJustStarted] = useState(true);
+    useEffect(() => {setJustStarted(false);}, []) // for initial overlay fade in
+
     const socketRef = useRef<ChartGameSocketHandle | null>(null);
     const endedRef = useRef(false);
     const pendingCloseRef = useRef<'quit' | 'ended' | null>(null);
@@ -230,8 +233,17 @@ export default function ChartGame({
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
             }}
-        >
-            <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)' }} />
+        >   
+            {/* Overlay */}
+            <div 
+                style={{ 
+                    position: 'absolute', 
+                    inset: 0, 
+                    backgroundColor: 'rgba(0,0,0,0.6)',
+                    opacity: (!justStarted && engine.lyricState.kind == LyricStateKind.LARGE_LINE_GAP) ? 0 : 1,
+                    transition: 'opacity 1s ease',
+                }} 
+            />
 
             {chart.properties.audioUrl && (
                 <audio ref={engine.audioRef} src={chart.properties.audioUrl} />
