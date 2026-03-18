@@ -57,7 +57,11 @@ export default function ChartGame({
     onFinished?: (summary?: WsSummaryMsg) => void;
 }) {
     const [justStarted, setJustStarted] = useState(true);
-    useEffect(() => {setJustStarted(false);}, []) // for initial overlay fade in
+    const [vignetteOpacity, setVignetteOpacity] = useState(0);
+
+    useEffect(() => {
+        setJustStarted(false);
+    }, []);
 
     const socketRef = useRef<ChartGameSocketHandle | null>(null);
     const endedRef = useRef(false);
@@ -80,13 +84,17 @@ export default function ChartGame({
             const handle = socketRef.current;
             if (!handle) return;
             handle.sendJSON({ type: 'close', reason });
+
             const SUMMARY_TIMEOUT_MS = 3000;
+
             summaryTimeoutRef.current = setTimeout(() => {
                 summaryTimeoutRef.current = null;
                 socketRef.current = null;
                 handle.close(reason);
+
                 const pending = pendingCloseRef.current;
                 pendingCloseRef.current = null;
+
                 if (pending === 'quit') onQuit?.();
                 else if (pending === 'ended') onFinished?.();
             }, SUMMARY_TIMEOUT_MS);
@@ -98,28 +106,39 @@ export default function ChartGame({
         workletNodeRef.current?.port.close();
         workletNodeRef.current?.disconnect();
         workletNodeRef.current = null;
+
         audioContextRef.current?.close();
         audioContextRef.current = null;
+
         mediaStreamRef.current?.getAudioTracks().forEach(t => t.stop());
         mediaStreamRef.current = null;
     }, []);
 
     const quit = useCallback(() => {
         if (endedRef.current) return;
+
         endedRef.current = true;
         pendingCloseRef.current = 'quit';
+
         teardownMic();
+
         const audio = engine.audioElement;
         if (audio) {
-            try { audio.pause(); audio.currentTime = 0; } catch { /* ignore */ }
+            try {
+                audio.pause();
+                audio.currentTime = 0;
+            } catch {}
         }
+
         closeSocket('quit');
     }, [closeSocket, teardownMic, engine]);
 
     const finish = useCallback(() => {
         if (endedRef.current) return;
+
         endedRef.current = true;
         pendingCloseRef.current = 'ended';
+
         teardownMic();
         closeSocket('ended');
     }, [closeSocket, teardownMic]);
@@ -129,6 +148,7 @@ export default function ChartGame({
     const handleMessage = useCallback(
         (evt: MessageEvent) => {
             let msg: WsMsg;
+
             try {
                 msg = JSON.parse(evt.data as string) as WsMsg;
             } catch {
@@ -136,21 +156,33 @@ export default function ChartGame({
                 return;
             }
 
+            if (msg.type === 'score') {
+                const opacity = Math.max(0, Math.min(1, 1 - msg.score / 0.5));
+                setVignetteOpacity(opacity);
+                return;
+            }
+
             if (msg.type === 'summary') {
                 const summary = msg;
+
                 console.log(
-                    `[ChartGame ws] summary — total score: ${summary.totalScore.toFixed(4)}, ` +
-                        `chunks: ${summary.chunkScores.length}`
+                    `[ChartGame ws] summary — total score: ${summary.totalScore.toFixed(
+                        4
+                    )}, chunks: ${summary.chunkScores.length}`
                 );
+
                 if (summaryTimeoutRef.current) {
                     clearTimeout(summaryTimeoutRef.current);
                     summaryTimeoutRef.current = null;
                 }
+
                 const handle = socketRef.current;
                 socketRef.current = null;
                 handle?.close('summary received');
+
                 const pending = pendingCloseRef.current;
                 pendingCloseRef.current = null;
+
                 if (pending === 'quit') onQuit?.(summary);
                 else if (pending === 'ended') onFinished?.(summary);
             }
@@ -167,15 +199,19 @@ export default function ChartGame({
             onError: evt => console.warn('[ChartGame ws] error', evt),
             onClose: evt => console.debug('[ChartGame ws] closed', evt.code, evt.reason),
         });
+
         socketRef.current = handle;
 
         navigator.mediaDevices
             .getUserMedia({ audio: true, video: false })
             .then(async stream => {
                 mediaStreamRef.current = stream;
+
                 const ctx = new AudioContext({ sampleRate: 44100 });
                 audioContextRef.current = ctx;
+
                 await ctx.audioWorklet.addModule(PCM_WORKLET_BLOB_URL);
+
                 if (audioContextRef.current !== ctx) return;
 
                 const node = new AudioWorkletNode(ctx, 'pcm-processor');
@@ -186,14 +222,19 @@ export default function ChartGame({
 
                 node.port.onmessage = (e: MessageEvent<ArrayBuffer>) => {
                     const newData = new Uint8Array(e.data);
+
                     const combined = new Uint8Array(buffer.length + newData.length);
                     combined.set(buffer);
                     combined.set(newData, buffer.length);
+
                     buffer = combined;
+
                     while (buffer.length >= BYTES_PER_CHUNK) {
                         const chunk = new Uint8Array(BYTES_PER_CHUNK);
                         chunk.set(buffer.subarray(0, BYTES_PER_CHUNK));
+
                         buffer = buffer.subarray(BYTES_PER_CHUNK).slice();
+
                         socketRef.current?.sendBinary(chunk.buffer);
                     }
                 };
@@ -207,9 +248,12 @@ export default function ChartGame({
                 clearTimeout(summaryTimeoutRef.current);
                 summaryTimeoutRef.current = null;
             }
+
             teardownMic();
+
             const h = socketRef.current;
             socketRef.current = null;
+
             h?.close('unmount');
         };
     }, [chartId, chart.properties.audioUrl, handleMessage, teardownMic]);
@@ -233,23 +277,40 @@ export default function ChartGame({
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
             }}
-        >   
-            {/* Overlay */}
-            <div 
-                style={{ 
-                    position: 'absolute', 
-                    inset: 0, 
+        >
+            {/* Dark overlay */}
+            <div
+                style={{
+                    position: 'absolute',
+                    inset: 0,
                     backgroundColor: 'rgba(0,0,0,0.6)',
-                    opacity: (!justStarted && engine.lyricState.kind == LyricStateKind.LARGE_LINE_GAP) ? 0 : 1,
+                    opacity:
+                        !justStarted && engine.lyricState.kind === LyricStateKind.LARGE_LINE_GAP
+                            ? 0
+                            : 1,
                     transition: 'opacity 1s ease',
-                }} 
+                }}
+            />
+
+            {/* Red score vignette */}
+            <div
+                style={{
+                    position: 'absolute',
+                    inset: 0,
+                    pointerEvents: 'none',
+                    background: `radial-gradient(
+                        ellipse at center,
+                        rgba(255,0,0,0) 40%,
+                        rgba(255,0,0,${vignetteOpacity}) 100%
+                    )`,
+                    transition: 'background 120ms linear',
+                }}
             />
 
             {chart.properties.audioUrl && (
                 <audio ref={engine.audioRef} src={chart.properties.audioUrl} />
             )}
 
-            {/* Progress bar */}
             <div style={{ position: 'relative', zIndex: 1 }}>
                 <GameProgressBar
                     currentTime={engine.currentTime}
@@ -257,7 +318,6 @@ export default function ChartGame({
                 />
             </div>
 
-            {/* Lyrics */}
             <div style={{ position: 'relative', zIndex: 1, flex: 1, display: 'flex' }}>
                 <ChartLyrics
                     chart={chart}
@@ -267,7 +327,6 @@ export default function ChartGame({
                 />
             </div>
 
-            {/* Quit button */}
             <div style={{ position: 'absolute', bottom: '20px', right: '20px', zIndex: 2 }}>
                 <button
                     onClick={quit}

@@ -11,6 +11,8 @@ const (
 	// Plausible vocal range (Hz). Yin can report ~22k from noise at tau=2; restrict to this range.
 	MinVocalHz = 70
 	MaxVocalHz = 2500
+
+	MaxCentDiff = 48 // maximum cent diff before 0 score (4 semitones)
 )
 
 func Detect(pcm []byte, sampleRate int, threshold float64) float64 {
@@ -87,15 +89,15 @@ func Detect(pcm []byte, sampleRate int, threshold float64) float64 {
 	return 0
 }
 
-func Score(detected, reference float64) float64 {
+func Score(detected, reference float64) float64 { // score in [0, 1]
 	if reference == 0 || detected == 0 {
 		return 0
 	}
-	cents := math.Abs(1200 * math.Log2(detected/reference))
-	if cents >= 50 {
+	centDiff := math.Abs(1200 * math.Log2(detected/reference))
+	if centDiff >= MaxCentDiff {
 		return 0
 	}
-	return 1 - cents/50
+	return 1 - centDiff/MaxCentDiff
 }
 
 func pcm16ToFloat(pcm []byte) []float64 {
