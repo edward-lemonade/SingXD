@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"singxd/internal/service/game"
+	"singxd/internal/transport"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -77,19 +78,18 @@ type wsSummaryMsg struct {
 }
 
 // ====================================================================================
-// Handler
+// Handlers
 
 func (g *GameHandler) PreloadVocals(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": game.ErrInvalidChartID.Error()})
+		transport.BadRequest(c, "invalid chart id")
 		return
 	}
 	data, err := g.chartService.FindVocalsFileByID(context.Background(), uint(id))
 	if err != nil {
-		log.Printf("[PreloadVocals] failed to load vocals for chart %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": game.ErrVocalsUnavailable.Error()})
+		transport.ServiceError(c, game.ErrVocalsUnavailable)
 		return
 	}
 	g.vocalsMu.Lock()
@@ -102,23 +102,20 @@ func (g *GameHandler) GameSocket(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
-		log.Printf("[GameSocket] invalid chart id %q: %v", idStr, err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": game.ErrInvalidChartID.Error()})
+		transport.BadRequest(c, "invalid chart id")
 		return
 	}
 
 	vocalsData, err := g.getOrLoadVocals(uint(id))
 	if err != nil {
-		log.Printf("[GameSocket] failed to load vocals for chart %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": game.ErrVocalsUnavailable.Error()})
+		transport.ServiceError(c, err)
 		return
 	}
 	session := g.gameService.NewSession(vocalsData)
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		log.Printf("[GameSocket] failed to upgrade connection for chart %d: %v", id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": game.ErrUpgradeFailed.Error()})
+		transport.ServiceError(c, game.ErrUpgradeFailed)
 		return
 	}
 	defer conn.Close()

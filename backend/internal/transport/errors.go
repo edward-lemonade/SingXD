@@ -3,6 +3,7 @@ package transport
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 
 	"singxd/internal/service/chart"
@@ -16,6 +17,7 @@ func BadRequest(c *gin.Context, msg string) {
 	c.JSON(http.StatusBadRequest, gin.H{"error": msg})
 }
 func ServiceError(c *gin.Context, err error) {
+	log.Printf("[Service Error]: %v", err)
 	status, msg := resolve(err)
 	c.JSON(status, gin.H{"error": msg})
 }

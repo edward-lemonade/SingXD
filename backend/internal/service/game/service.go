@@ -28,6 +28,16 @@ func NewGameService(sampleRate int, threshold float64) *GameService {
 	return &GameService{sampleRate: sampleRate, threshold: threshold}
 }
 
+const (
+	DefaultSampleRate = 44100
+	DefaultThreshold  = 0.15
+
+	MinVocalHz = 70
+	MaxVocalHz = 2500
+
+	MaxSemitoneDiff = 3 // maximum cent diff before 0 score (4 semitones)
+)
+
 type GameSession struct {
 	Reference     []float64
 	ChunksScores  []ChunkScore
@@ -98,14 +108,13 @@ func samplesElapsed(chunk []byte) int {
 }
 
 func computeScore(detected, reference float64) float64 { // score in [0, 1]
-	if reference == 0 || detected == 0 {
+	detectedSemitone := hzToSemitone(detected)
+	referenceSemitone := hzToSemitone(reference)
+	semitoneDiff := math.Abs(detectedSemitone - referenceSemitone)
+	if semitoneDiff >= MaxSemitoneDiff {
 		return 0
 	}
-	centDiff := math.Abs(1200 * math.Log2(detected/reference))
-	if centDiff >= MaxCentDiff {
-		return 0
-	}
-	return 1 - centDiff/MaxCentDiff
+	return 1 - semitoneDiff/MaxSemitoneDiff
 }
 
 func decodePCM16(data []byte) []float64 {

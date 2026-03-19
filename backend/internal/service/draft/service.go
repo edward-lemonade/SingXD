@@ -33,12 +33,12 @@ func NewDraftService(s3Client *S3Client, db *gorm.DB) *DraftService {
 // =========================================================
 // Python Paths
 
-const PythonScriptsDir = "./internal/services/draft/scripts"
+const PythonScriptsDir = "./internal/service/draft/scripts"
 const (
 	SeparatorScript = "separator.py"
 	AlignScript     = "align.py"
 )
-const PythonVenv = "./internal/services/draft/scripts/.venv/bin/python"
+const PythonVenv = "./internal/service/draft/scripts/.venv/bin/python"
 
 // =========================================================
 // Separate Audio

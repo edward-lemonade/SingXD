@@ -157,8 +157,9 @@ export default function ChartGame({
             }
 
             if (msg.type === 'score') {
-                const opacity = Math.max(0, Math.min(1, 1 - msg.score / 0.5));
+                const opacity = Math.min(1, 2-2*msg.score);
                 setVignetteOpacity(opacity);
+                console.log(msg.referenceSemitone);
                 return;
             }
 
@@ -301,9 +302,10 @@ export default function ChartGame({
                     background: `radial-gradient(
                         ellipse at center,
                         rgba(255,0,0,0) 40%,
-                        rgba(255,0,0,${vignetteOpacity}) 100%
+                        rgba(255,0,0,1) 100%
                     )`,
-                    transition: 'background 120ms linear',
+                    opacity: vignetteOpacity,
+                    transition: 'opacity 800ms ease-out',
                 }}
             />
 
