@@ -1,29 +1,29 @@
-package controllers
+package handler
 
 import (
 	"net/http"
 
-	"singxd/internal/services/draft"
-	t "singxd/internal/services/types"
+	"singxd/internal/service/draft"
 	"singxd/internal/transport"
+	t "singxd/internal/types"
 
 	"github.com/gin-gonic/gin"
 )
 
 type DraftService = draft.DraftService
 
-type DraftController struct {
+type DraftHandler struct {
 	draftService *DraftService
 }
 
-func NewDraftController(service *DraftService) *DraftController {
-	return &DraftController{draftService: service}
+func NewDraftHandler(service *DraftService) *DraftHandler {
+	return &DraftHandler{draftService: service}
 }
 
 // ============================================================================================
 // Handlers
 
-func (a *DraftController) SeparateAudio(c *gin.Context) {
+func (a *DraftHandler) SeparateAudio(c *gin.Context) {
 	file, err := c.FormFile("audio")
 	if err != nil {
 		transport.BadRequest(c, "no audio file provided")
@@ -48,7 +48,7 @@ func (a *DraftController) SeparateAudio(c *gin.Context) {
 	})
 }
 
-func (a *DraftController) UploadImage(c *gin.Context) {
+func (a *DraftHandler) UploadImage(c *gin.Context) {
 	sessionID := c.PostForm("sessionID")
 	file, err := c.FormFile("image")
 	if err != nil {
@@ -68,7 +68,7 @@ func (a *DraftController) UploadImage(c *gin.Context) {
 	c.JSON(http.StatusOK, Response{ImageURL: imageURL})
 }
 
-func (a *DraftController) GenerateTimings(c *gin.Context) {
+func (a *DraftHandler) GenerateTimings(c *gin.Context) {
 	sessionID := c.PostForm("sessionID")
 	lyrics := c.PostForm("lyrics")
 	if sessionID == "" {

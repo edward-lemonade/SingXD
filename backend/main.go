@@ -9,11 +9,10 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/joho/godotenv"
 
-	"singxd/internal/controllers"
-	"singxd/internal/routes"
-	"singxd/internal/services/chart"
-	"singxd/internal/services/draft"
-	"singxd/internal/services/game"
+	"singxd/internal/handler"
+	"singxd/internal/service/chart"
+	"singxd/internal/service/draft"
+	"singxd/internal/service/game"
 	"singxd/internal/storage"
 
 	"github.com/gin-gonic/gin"
@@ -40,7 +39,7 @@ func main() {
 	if databaseURL == "" {
 		log.Fatal("DATABASE_URL environment variable not set")
 	}
-	gormDB, err := storage.NewGormDB(databaseURL)
+	gormDB, err := storage.NewGormClient(databaseURL)
 	if err != nil {
 		log.Fatalf("Failed to create Postgres connection: %v", err)
 	}
@@ -56,10 +55,10 @@ func main() {
 	draftService := draft.NewDraftService(s3Client, gormDB)
 	gameService := game.NewGameService(44100, 0.2)
 
-	controllers := routes.Controllers{
-		Chart: controllers.NewChartController(chartService),
-		Draft: controllers.NewDraftController(draftService),
-		Game:  controllers.NewGameController(gameService, chartService),
+	controllers := Handlers{
+		Chart: handler.NewChartHandler(chartService),
+		Draft: handler.NewDraftHandler(draftService),
+		Game:  handler.NewGameHandler(gameService, chartService),
 	}
 
 	router := gin.Default()
@@ -73,7 +72,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	routes.SetupRoutes(router, controllers)
+	SetupRoutes(router, controllers)
 
 	router.Run(":8080")
 }

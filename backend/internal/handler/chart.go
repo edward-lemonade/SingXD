@@ -1,30 +1,30 @@
-package controllers
+package handler
 
 import (
 	"net/http"
 	"strconv"
 
-	"singxd/internal/services/chart"
-	t "singxd/internal/services/types"
+	"singxd/internal/service/chart"
 	"singxd/internal/transport"
+	t "singxd/internal/types"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ChartService = chart.ChartService
 
-type ChartController struct {
+type ChartHandler struct {
 	chartService *ChartService
 }
 
-func NewChartController(service *ChartService) *ChartController {
-	return &ChartController{chartService: service}
+func NewChartHandler(service *ChartService) *ChartHandler {
+	return &ChartHandler{chartService: service}
 }
 
 // ============================================================================================
 // Handlers
 
-func (a *ChartController) CreateMap(c *gin.Context) {
+func (a *ChartHandler) CreateMap(c *gin.Context) {
 	type Request struct {
 		SessionID  string       `json:"sessionId"`
 		ChartDraft t.ChartDraft `json:"chartDraft"`
@@ -52,7 +52,7 @@ func (a *ChartController) CreateMap(c *gin.Context) {
 	c.JSON(http.StatusOK, Response{Chart: *chart})
 }
 
-func (a *ChartController) GetChart(c *gin.Context) {
+func (a *ChartHandler) GetChart(c *gin.Context) {
 	idStr := c.Param("id")
 	if idStr == "" {
 		transport.BadRequest(c, "missing id")

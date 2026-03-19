@@ -14,8 +14,8 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	t "singxd/internal/services/types"
 	"singxd/internal/storage"
+	t "singxd/internal/types"
 )
 
 type DraftService struct {

@@ -1,20 +1,20 @@
-package routes
+package main
 
 import (
-	"singxd/internal/controllers"
+	"singxd/internal/handler"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Controllers struct {
-	Draft *controllers.DraftController
-	Chart *controllers.ChartController
-	Game  *controllers.GameController
+type Handlers struct {
+	Draft *handler.DraftHandler
+	Chart *handler.ChartHandler
+	Game  *handler.GameHandler
 }
 
 func SetupRoutes(
 	router *gin.Engine,
-	c Controllers,
+	c Handlers,
 ) {
 	api := router.Group("/api")
 	{

@@ -5,6 +5,6 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewGormDB(databaseURL string) (*gorm.DB, error) {
+func NewGormClient(databaseURL string) (*gorm.DB, error) {
 	return gorm.Open(gormpostgres.Open(databaseURL), &gorm.Config{})
 }

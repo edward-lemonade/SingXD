@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"singxd/internal/services/chart"
-	"singxd/internal/services/draft"
-	"singxd/internal/services/game"
+	"singxd/internal/service/chart"
+	"singxd/internal/service/draft"
+	"singxd/internal/service/game"
 
 	"github.com/gin-gonic/gin"
 )

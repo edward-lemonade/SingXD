@@ -1,4 +1,4 @@
-package controllers
+package handler
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"sync"
 
-	"singxd/internal/services/game"
+	"singxd/internal/service/game"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -20,22 +20,22 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
 
-type GameController struct {
+type GameHandler struct {
 	gameService  *GameService
 	chartService *ChartService
 	vocalsCache  map[uint][]byte
 	vocalsMu     sync.RWMutex
 }
 
-func NewGameController(gameService *GameService, chartService *ChartService) *GameController {
-	return &GameController{
+func NewGameHandler(gameService *GameService, chartService *ChartService) *GameHandler {
+	return &GameHandler{
 		gameService:  gameService,
 		chartService: chartService,
 		vocalsCache:  make(map[uint][]byte),
 	}
 }
 
-func (g *GameController) getOrLoadVocals(id uint) ([]byte, error) {
+func (g *GameHandler) getOrLoadVocals(id uint) ([]byte, error) {
 	g.vocalsMu.RLock()
 	cached := g.vocalsCache[id]
 	g.vocalsMu.RUnlock()
@@ -79,7 +79,7 @@ type wsSummaryMsg struct {
 // ====================================================================================
 // Handler
 
-func (g *GameController) PreloadVocals(c *gin.Context) {
+func (g *GameHandler) PreloadVocals(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
@@ -98,7 +98,7 @@ func (g *GameController) PreloadVocals(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (g *GameController) GameSocket(c *gin.Context) {
+func (g *GameHandler) GameSocket(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {

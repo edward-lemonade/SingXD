@@ -7,7 +7,7 @@ import (
 
 	"gorm.io/gorm"
 
-	t "singxd/internal/services/types"
+	t "singxd/internal/types"
 )
 
 type ChartService struct {
