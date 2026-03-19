@@ -1,10 +1,5 @@
 package game
 
-import (
-	"encoding/binary"
-	"math"
-)
-
 const (
 	DefaultSampleRate = 44100
 	DefaultThreshold  = 0.15
@@ -15,8 +10,7 @@ const (
 	MaxCentDiff = 48 // maximum cent diff before 0 score (4 semitones)
 )
 
-func Detect(pcm []byte, sampleRate int, threshold float64) float64 {
-	samples := pcm16ToFloat(pcm)
+func DetectHz(samples []float64, sampleRate int, threshold float64) float64 {
 	if len(samples) < 2 {
 		return 0
 	}
@@ -89,23 +83,13 @@ func Detect(pcm []byte, sampleRate int, threshold float64) float64 {
 	return 0
 }
 
-func Score(detected, reference float64) float64 { // score in [0, 1]
-	if reference == 0 || detected == 0 {
+func DetectReferenceHz(samples []float64, offset, windowSize, sampleRate int, threshold float64) float64 {
+	end := offset + windowSize
+	if offset >= len(samples) {
 		return 0
 	}
-	centDiff := math.Abs(1200 * math.Log2(detected/reference))
-	if centDiff >= MaxCentDiff {
-		return 0
+	if end > len(samples) {
+		end = len(samples)
 	}
-	return 1 - centDiff/MaxCentDiff
-}
-
-func pcm16ToFloat(pcm []byte) []float64 {
-	n := len(pcm) / 2
-	out := make([]float64, n)
-	for i := 0; i < n; i++ {
-		sample := int16(binary.LittleEndian.Uint16(pcm[i*2 : i*2+2]))
-		out[i] = float64(sample) / 32768.0
-	}
-	return out
+	return DetectHz(samples[offset:end], sampleRate, threshold)
 }

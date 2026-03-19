@@ -7,6 +7,8 @@ export interface WsScoreMsg {
     timestamp: number;
     detected: number;
     reference: number;
+    detectedSemitone: number;
+    referenceSemitone: number;
     score: number;
 }
 export interface WsSummaryMsg {

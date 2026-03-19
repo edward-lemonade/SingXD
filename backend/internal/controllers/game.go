@@ -61,17 +61,19 @@ type wsInMsg struct {
 }
 
 type wsScoreMsg struct {
-	Type      string  `json:"type"`
-	Timestamp float64 `json:"timestamp"`
-	Detected  float64 `json:"detected"`
-	Reference float64 `json:"reference"`
-	Score     float64 `json:"score"`
+	Type              string  `json:"type"`
+	Timestamp         float64 `json:"timestamp"`
+	Detected          float64 `json:"detected"`
+	Reference         float64 `json:"reference"`
+	DetectedSemitone  float64 `json:"detectedSemitone"`
+	ReferenceSemitone float64 `json:"referenceSemitone"`
+	Score             float64 `json:"score"`
 }
 
 type wsSummaryMsg struct {
-	Type        string       `json:"type"`
-	TotalScore  float64      `json:"totalScore"`
-	ChunkScores []wsScoreMsg `json:"chunkScores"`
+	Type        string            `json:"type"`
+	TotalScore  float64           `json:"totalScore"`
+	ChunkScores []game.ChunkScore `json:"chunkScores"`
 }
 
 // ====================================================================================
@@ -111,8 +113,7 @@ func (g *GameController) GameSocket(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": game.ErrVocalsUnavailable.Error()})
 		return
 	}
-	reference := g.gameService.DecodePCM16(vocalsData)
-	session := g.gameService.NewSession(reference)
+	session := g.gameService.NewSession(vocalsData)
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -124,14 +125,15 @@ func (g *GameController) GameSocket(c *gin.Context) {
 
 	writeSummary := func() {
 		summary := g.gameService.Summarise(session)
-		out := make([]wsScoreMsg, len(summary.ChunkScores))
+		out := make([]game.ChunkScore, len(summary.ChunkScores))
 		for i, c := range summary.ChunkScores {
-			out[i] = wsScoreMsg{
-				Type:      "score",
-				Timestamp: c.Timestamp,
-				Detected:  c.Detected,
-				Reference: c.Reference,
-				Score:     c.Score,
+			out[i] = game.ChunkScore{
+				Timestamp:         c.Timestamp,
+				Detected:          c.Detected,
+				Reference:         c.Reference,
+				DetectedSemitone:  c.DetectedSemitone,
+				ReferenceSemitone: c.ReferenceSemitone,
+				Score:             c.Score,
 			}
 		}
 		_ = conn.WriteJSON(wsSummaryMsg{
@@ -173,11 +175,13 @@ func (g *GameController) GameSocket(c *gin.Context) {
 
 		chunk := g.gameService.ProcessChunk(session, data)
 		if err := conn.WriteJSON(wsScoreMsg{
-			Type:      "score",
-			Timestamp: chunk.Timestamp,
-			Detected:  chunk.Detected,
-			Reference: chunk.Reference,
-			Score:     chunk.Score,
+			Type:              "score",
+			Timestamp:         chunk.Timestamp,
+			Detected:          chunk.Detected,
+			Reference:         chunk.Reference,
+			DetectedSemitone:  chunk.DetectedSemitone,
+			ReferenceSemitone: chunk.ReferenceSemitone,
+			Score:             chunk.Score,
 		}); err != nil {
 			log.Printf("[GameSocket] failed to write score message for chart %d: %v", id, err)
 			break
