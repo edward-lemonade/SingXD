@@ -18,7 +18,7 @@ func chartTempAudioKey(sessionID string, fileType string) string {
 // ----------------------------------------------------------------
 // Draft Audio File (vocals / inst / combined)
 
-func SaveChartTempAudioFile(ctx context.Context, s3Client *S3Client, sessionID string, fileType string, data io.Reader, expiryMinutes int) (string, error) {
+func SaveChartTempAudioFile(ctx context.Context, s3Client *S3Client, sessionID string, fileType string, data io.Reader, expiryMinutes uint) (string, error) {
 	key := chartTempAudioKey(sessionID, fileType)
 	if err := s3Client.UploadFileWithExpiry(ctx, key, data, expiryMinutes); err != nil {
 		return "", err
@@ -26,9 +26,9 @@ func SaveChartTempAudioFile(ctx context.Context, s3Client *S3Client, sessionID s
 	return key, nil
 }
 
-func GetChartTempAudioFileURL(ctx context.Context, s3Client *S3Client, sessionID string, fileType string, expirySeconds int64) (string, error) {
+func GetChartTempAudioFileURL(ctx context.Context, s3Client *S3Client, sessionID string, fileType string, expiryMinutes uint) (string, error) {
 	key := chartTempAudioKey(sessionID, fileType)
-	return s3Client.GetPresignedURL(ctx, key, expirySeconds)
+	return s3Client.GetPresignedURL(ctx, key, expiryMinutes)
 }
 
 func DownloadChartTempAudioFile(ctx context.Context, s3Client *S3Client, sessionID string, fileType string) ([]byte, error) {
@@ -57,6 +57,6 @@ func SaveChartTempBackgroundImage(ctx context.Context, s3Client *S3Client, sessi
 	return key, nil
 }
 
-func GetChartTempBackgroundImageURL(ctx context.Context, s3Client *S3Client, key string, expirySeconds int64) (string, error) {
-	return s3Client.GetPresignedURL(ctx, key, expirySeconds)
+func GetChartTempBackgroundImageURL(ctx context.Context, s3Client *S3Client, key string, expiryMinutes uint) (string, error) {
+	return s3Client.GetPresignedURL(ctx, key, expiryMinutes)
 }

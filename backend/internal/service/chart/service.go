@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"gorm.io/gorm"
 
@@ -18,6 +19,8 @@ type ChartService struct {
 func NewChartService(s3Client *S3Client, db *gorm.DB) *ChartService {
 	return &ChartService{s3Client: s3Client, db: db}
 }
+
+const ChartURLMinutes = 60
 
 // =========================================================
 // Operations
@@ -62,6 +65,9 @@ func (s *ChartService) Create(ctx context.Context, sessionId string, chartDraft 
 	if findKeyByPrefix(movedKeys, vocalsPrefix) == "" {
 		return nil, ErrNoVocalsFile
 	}
+	if findKeyByPrefix(movedKeys, backgroundPrefix) == "" {
+		log.Println("No background moved")
+	}
 
 	return chart, nil
 }
@@ -76,13 +82,13 @@ func (s *ChartService) FindByID(ctx context.Context, id uint) (*t.Chart, error) 
 		return nil, fmt.Errorf("%w: %w", ErrChartNotFound, err)
 	}
 
-	audioURL, err := GetInstrumentalURL(ctx, s.s3Client, chart.ID, 3600)
+	audioURL, err := GetInstrumentalURL(ctx, s.s3Client, chart.ID, ChartURLMinutes)
 	if err != nil {
 		return nil, err
 	}
 	chart.Properties.AudioURL = &audioURL
 
-	bgURL, err := GetBackgroundURL(ctx, s.s3Client, chart.ID, 3600)
+	bgURL, err := GetBackgroundURL(ctx, s.s3Client, chart.ID, ChartURLMinutes)
 	if err != nil {
 		return nil, err
 	}

@@ -30,6 +30,9 @@ func NewDraftService(s3Client *S3Client, db *gorm.DB) *DraftService {
 	}
 }
 
+const TempExpiryMinutes = 60 * 24
+const TempURLMinutes = 60 * 24
+
 // =========================================================
 // Python Paths
 
@@ -89,7 +92,7 @@ func (s *DraftService) SeparateAudio(ctx context.Context, file *multipart.FileHe
 		return SeparateAudioResult{}, fmt.Errorf("opening vocals: %w", err)
 	}
 	defer vocalsFile.Close()
-	if _, err := SaveChartTempAudioFile(ctx, s.s3Client, sessionID, "vocals", vocalsFile, 60*24); err != nil {
+	if _, err := SaveChartTempAudioFile(ctx, s.s3Client, sessionID, "vocals", vocalsFile, TempExpiryMinutes); err != nil {
 		return SeparateAudioResult{}, fmt.Errorf("uploading vocals: %w", err)
 	}
 
@@ -98,15 +101,15 @@ func (s *DraftService) SeparateAudio(ctx context.Context, file *multipart.FileHe
 		return SeparateAudioResult{}, fmt.Errorf("opening instrumental: %w", err)
 	}
 	defer instFile.Close()
-	if _, err := SaveChartTempAudioFile(ctx, s.s3Client, sessionID, "instrumental", instFile, 60*24); err != nil {
+	if _, err := SaveChartTempAudioFile(ctx, s.s3Client, sessionID, "instrumental", instFile, TempExpiryMinutes); err != nil {
 		return SeparateAudioResult{}, fmt.Errorf("uploading instrumental: %w", err)
 	}
 
-	vocalsURL, err := GetChartTempAudioFileURL(ctx, s.s3Client, sessionID, "vocals", 3600)
+	vocalsURL, err := GetChartTempAudioFileURL(ctx, s.s3Client, sessionID, "vocals", TempURLMinutes)
 	if err != nil {
 		return SeparateAudioResult{}, fmt.Errorf("getting vocals url: %w", err)
 	}
-	instrumentalURL, err := GetChartTempAudioFileURL(ctx, s.s3Client, sessionID, "instrumental", 3600)
+	instrumentalURL, err := GetChartTempAudioFileURL(ctx, s.s3Client, sessionID, "instrumental", TempURLMinutes)
 	if err != nil {
 		return SeparateAudioResult{}, fmt.Errorf("getting instrumental url: %w", err)
 	}
@@ -145,7 +148,7 @@ func (s *DraftService) UploadImage(ctx context.Context, sessionID string, file *
 		return "", fmt.Errorf("uploading image: %w", err)
 	}
 
-	url, err := GetChartTempBackgroundImageURL(ctx, s.s3Client, key, 24*3600)
+	url, err := GetChartTempBackgroundImageURL(ctx, s.s3Client, key, TempURLMinutes)
 	if err != nil {
 		return "", fmt.Errorf("getting image url: %w", err)
 	}

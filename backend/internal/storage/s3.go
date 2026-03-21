@@ -41,11 +41,12 @@ func (sc *S3Client) UploadFile(ctx context.Context, key string, body io.Reader) 
 	return err
 }
 
-func (sc *S3Client) UploadFileWithExpiry(ctx context.Context, key string, body io.Reader, expiryMinutes int) error {
+func (sc *S3Client) UploadFileWithExpiry(ctx context.Context, key string, body io.Reader, expiryMinutes uint) error {
 	_, err := sc.client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(sc.bucket),
-		Key:    aws.String(key),
-		Body:   body,
+		Bucket:  aws.String(sc.bucket),
+		Key:     aws.String(key),
+		Body:    body,
+		Expires: aws.Time(time.Now().Add(time.Duration(expiryMinutes) * time.Minute)),
 	})
 	return err
 }
@@ -71,13 +72,13 @@ func (sc *S3Client) DeleteFile(ctx context.Context, key string) error {
 	return err
 }
 
-func (sc *S3Client) GetPresignedURL(ctx context.Context, key string, expirySeconds int64) (string, error) {
+func (sc *S3Client) GetPresignedURL(ctx context.Context, key string, expiryMinutes uint) (string, error) {
 	presigner := s3.NewPresignClient(sc.client)
 	result, err := presigner.PresignGetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(sc.bucket),
 		Key:    aws.String(key),
 	}, func(opts *s3.PresignOptions) {
-		opts.Expires = time.Duration(expirySeconds) * time.Second
+		opts.Expires = time.Duration(expiryMinutes) * time.Minute
 	})
 	if err != nil {
 		return "", err

@@ -3,6 +3,7 @@ package chart
 import (
 	"context"
 	"fmt"
+	"log"
 	"path/filepath"
 	"singxd/internal/storage"
 	"strings"
@@ -48,6 +49,7 @@ func MoveTempToChart(ctx context.Context, s3Client *S3Client, sessionId string, 
 	for _, key := range keys {
 		trimmed := strings.TrimPrefix(key, prefix)
 		if trimmed == "" {
+			log.Printf("skipping moving key %s, trimmed was empty", key)
 			continue
 		}
 		destKey := ChartKey(id, trimmed)
@@ -60,7 +62,7 @@ func MoveTempToChart(ctx context.Context, s3Client *S3Client, sessionId string, 
 	return movedKeys, nil
 }
 
-func GetInstrumentalURL(ctx context.Context, s3Client *S3Client, id uint, expirySeconds int64) (string, error) {
+func GetInstrumentalURL(ctx context.Context, s3Client *S3Client, id uint, expiryMinutes uint) (string, error) {
 	files, err := s3Client.ListFiles(ctx, ChartPrefix(id))
 	if err != nil {
 		return "", fmt.Errorf("listing files for id=%d: %w", id, err)
@@ -69,14 +71,14 @@ func GetInstrumentalURL(ctx context.Context, s3Client *S3Client, id uint, expiry
 	if key == "" {
 		return "", ErrNoInstrumentalFile
 	}
-	url, err := s3Client.GetPresignedURL(ctx, key, expirySeconds)
+	url, err := s3Client.GetPresignedURL(ctx, key, expiryMinutes)
 	if err != nil {
 		return "", fmt.Errorf("getting presigned url for instrumental id=%d: %w", id, err)
 	}
 	return url, nil
 }
 
-func GetVocalsURL(ctx context.Context, s3Client *S3Client, id uint, expirySeconds int64) (string, error) {
+func GetVocalsURL(ctx context.Context, s3Client *S3Client, id uint, expiryMinutes uint) (string, error) {
 	files, err := s3Client.ListFiles(ctx, ChartPrefix(id))
 	if err != nil {
 		return "", fmt.Errorf("listing files for id=%d: %w", id, err)
@@ -85,23 +87,24 @@ func GetVocalsURL(ctx context.Context, s3Client *S3Client, id uint, expirySecond
 	if key == "" {
 		return "", ErrNoVocalsFile
 	}
-	url, err := s3Client.GetPresignedURL(ctx, key, expirySeconds)
+	url, err := s3Client.GetPresignedURL(ctx, key, expiryMinutes)
 	if err != nil {
 		return "", fmt.Errorf("getting presigned url for vocals id=%d: %w", id, err)
 	}
 	return url, nil
 }
 
-func GetBackgroundURL(ctx context.Context, s3Client *S3Client, id uint, expirySeconds int64) (string, error) {
+func GetBackgroundURL(ctx context.Context, s3Client *S3Client, id uint, expiryMinutes uint) (string, error) {
 	files, err := s3Client.ListFiles(ctx, ChartPrefix(id))
 	if err != nil {
 		return "", fmt.Errorf("listing files for id=%d: %w", id, err)
 	}
 	key := findKeyByPrefix(files, backgroundPrefix)
 	if key == "" {
+		log.Printf("No background key found for chart id=%d", id)
 		return "", nil
 	}
-	url, err := s3Client.GetPresignedURL(ctx, key, expirySeconds)
+	url, err := s3Client.GetPresignedURL(ctx, key, expiryMinutes)
 	if err != nil {
 		return "", fmt.Errorf("getting presigned url for background id=%d: %w", id, err)
 	}
