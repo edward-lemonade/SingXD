@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Providers from './providers';
-import Navbar from '../components/Navbar';
 
 import '@/src/lib/middleware/auth';
 
@@ -19,7 +18,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <html lang="en">
             <body className={`${geistSans.variable} ${geistMono.variable}`}>
                 <Providers>
-                    <Navbar />
                     {children}
                 </Providers>
             </body>
