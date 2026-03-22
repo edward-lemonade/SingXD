@@ -49,6 +49,5 @@ export interface DraftChart extends ChartBase {
     readonly uuid: string;
     readonly createdAt: Date;
     readonly updatedAt: Date;
-    readonly sessionId?: string;
     author: string | null;
 }

@@ -77,7 +77,6 @@ export default function CreateClient() {
         properties: chartProps,
         createdAt: new Date(),
         updatedAt: new Date(),
-        sessionId: "",
     };
 
     // Cleanup
