@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"mime/multipart"
 	"os"
 	"os/exec"
@@ -24,6 +25,9 @@ type DraftService struct {
 }
 
 func NewDraftService(s3Client *S3Client, db *gorm.DB) *DraftService {
+	if err := db.AutoMigrate(&DraftRecord{}); err != nil {
+		log.Fatal(err)
+	}
 	return &DraftService{
 		s3Client: s3Client,
 		db:       db,

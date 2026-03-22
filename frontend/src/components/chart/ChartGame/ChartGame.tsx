@@ -5,7 +5,7 @@ import {
     WsSummaryMsg,
     type ChartGameSocketHandle,
 } from '@src/lib/api/GameAPI';
-import { Chart } from '@/src/lib/types/models';
+import { PublicChart } from '@/src/lib/types/models';
 import { LyricStateKind, useChartEngine } from '../internal/useChartEngine';
 import ChartLyrics from '../internal/ChartLyrics';
 import GameProgressBar, { GAME_PROGRESS_BAR_HEIGHT_PX } from './ProgressBar';
@@ -52,7 +52,7 @@ export default function ChartGame({
     onFinished,
 }: {
     chartId: number;
-    chart: Chart;
+    chart: PublicChart;
     onQuit?: (summary?: WsSummaryMsg) => void;
     onFinished?: (summary?: WsSummaryMsg) => void;
 }) {

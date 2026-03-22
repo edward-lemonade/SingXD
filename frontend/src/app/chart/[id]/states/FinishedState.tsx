@@ -1,5 +1,5 @@
 import { WsSummaryMsg } from '@/src/lib/api/GameAPI';
-import { Chart } from '@/src/lib/types/models';
+import { PublicChart } from '@/src/lib/types/models';
 import { IntroPane } from './shared';
 
 function formatPercent(x: number) {
@@ -48,7 +48,7 @@ export default function FinishedState({
     summary,
     onPlay,
 }: {
-    chart: Chart;
+    chart: PublicChart;
     summary: WsSummaryMsg | null;
     onPlay: () => void;
 }) {

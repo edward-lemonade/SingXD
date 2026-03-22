@@ -7,7 +7,7 @@ import AudioStep from '@/src/app/create/steps/AudioStep';
 import LyricsStep from '@/src/app/create/steps/LyricsStep';
 import VideoStep from './steps/VideoStep';
 import {
-    ChartDraft,
+    DraftChart,
     Timing,
     ChartProperties,
     Line,
@@ -69,10 +69,15 @@ export default function CreateClient() {
         vocals: null,
     });
 
-    const chart: ChartDraft = {
+    const chart: DraftChart = {
+        uuid: "",
+        author: "",
         lines: lines,
         timings: timings,
         properties: chartProps,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        sessionId: "",
     };
 
     // Cleanup

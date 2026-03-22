@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { preloadVocals, WsSummaryMsg } from '@/src/lib/api/GameAPI';
-import { Chart } from '@/src/lib/types/models';
+import { PublicChart } from '@/src/lib/types/models';
 import InitialState from './states/InitialState';
 import PlayingState from './states/PlayingState';
 import FinishedState from './states/FinishedState';
@@ -12,7 +12,7 @@ enum GameState {
 }
 
 interface ChartPageClientProps {
-    chart: Chart | null;
+    chart: PublicChart | null;
     chartId: number;
 }
 

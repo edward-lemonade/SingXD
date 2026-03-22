@@ -1,12 +1,12 @@
 import { ChartPreview } from '@/src/components/Chart';
-import { Chart } from '@/src/lib/types/models';
+import { PublicChart } from '@/src/lib/types/models';
 
 export function IntroPane({
     chart,
     isFinished,
     onPlay,
 }: {
-    chart: Chart;
+    chart: PublicChart;
     isFinished: boolean;
     onPlay: () => void;
 }) {

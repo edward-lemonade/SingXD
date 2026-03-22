@@ -1,4 +1,4 @@
-import { Chart, Timing } from './models';
+import { PublicChart, Timing } from './models';
 
 export interface SeparateAudioResponse {
     vocalsUrl: string;
@@ -15,11 +15,11 @@ export interface UploadImageResponse {
 }
 
 export interface ChartResponse {
-    chart: Chart;
+    chart: PublicChart;
 }
 
 export interface ListChartsResponse {
-    charts: Chart[];
+    charts: PublicChart[];
     total: number;
     page: number;
     limit: number;

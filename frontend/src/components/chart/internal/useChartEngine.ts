@@ -1,4 +1,4 @@
-import { ChartDraft } from '@/src/lib/types/models';
+import { ChartBase, DraftChart } from '@/src/lib/types/models';
 import { useState, useEffect, useRef, useMemo } from 'react';
 
 // ---------------------------------------------------------------------------
@@ -71,7 +71,7 @@ const DISPLAY_WINDOW = { before: 1, after: 1 };
 // Hook
 
 export function useChartEngine(
-    chart: ChartDraft,
+    chart: ChartBase,
     options: {
         game?: boolean;
         onEnded?: () => void;

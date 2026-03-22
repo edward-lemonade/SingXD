@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useChartEngine } from '../internal/useChartEngine';
 import ChartLyrics from '../internal/ChartLyrics';
 import ChartControls from './Controls';
-import { ChartDraft } from '@/src/lib/types/models';
+import { ChartBase, DraftChart } from '@/src/lib/types/models';
 
 export interface ChartPreviewSettings {
     width: number;
@@ -28,7 +28,7 @@ function computePlayerLyricSizes(playerHeight: number) {
 }
 
 interface ChartPreviewProps {
-    chart: ChartDraft;
+    chart: ChartBase;
     playerSettings?: Partial<ChartPreviewSettings>;
     onEnded?: () => void;
 }

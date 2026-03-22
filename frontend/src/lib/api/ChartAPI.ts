@@ -1,11 +1,11 @@
 import { ChartResponse, ListChartsResponse } from '../types/api';
-import { ChartDraft } from '../types/models';
+import { DraftChart } from '../types/models';
 import { ROUTE_CONFIG } from './routes';
 import { API } from '../axios';
 
 export const createChart = async (
     sessionId: string,
-    chartDraft: ChartDraft
+    chartDraft: DraftChart
 ): Promise<ChartResponse> => {
     const url = ROUTE_CONFIG.chart.create();
     const response = await API.post<ChartResponse>(url, { sessionId, chartDraft });

@@ -1,11 +1,11 @@
 'use client';
 
 import Card from '@/src/components/Card';
-import { ChartDraft, ChartProperties } from '@/src/lib/types/models';
+import { DraftChart, ChartProperties } from '@/src/lib/types/models';
 import { SetStateAction } from 'react';
 
 interface PublishStepProps {
-    chart: ChartDraft;
+    chart: DraftChart;
     chartProps: ChartProperties;
     setChartProps: (video: SetStateAction<ChartProperties>) => void;
     loading: boolean;

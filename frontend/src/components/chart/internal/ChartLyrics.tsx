@@ -1,4 +1,4 @@
-import { ChartDraft } from '@/src/lib/types/models';
+import { ChartBase, DraftChart } from '@/src/lib/types/models';
 import { useCallback, useRef, useEffect, useState } from 'react';
 import { ChartEngine, ActiveWordState, LyricLineState, LyricStateKind } from './useChartEngine';
 
@@ -16,7 +16,7 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
 }
 
 interface ChartLyricsProps {
-    chart: ChartDraft;
+    chart: ChartBase;
     engine: ChartEngine;
     lineHeightPx: number;
     fontSize: string;

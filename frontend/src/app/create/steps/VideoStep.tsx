@@ -2,11 +2,11 @@
 
 import Card from '@/src/components/Card';
 import { ChartPreview } from '@/src/components/Chart';
-import { ChartDraft, ChartProperties } from '@/src/lib/types/models';
+import { DraftChart, ChartProperties } from '@/src/lib/types/models';
 import { SetStateAction } from 'react';
 
 type VideoStepProps = {
-    chart: ChartDraft;
+    chart: DraftChart;
     chartProps: ChartProperties;
     setChartProps: (video: SetStateAction<ChartProperties>) => void;
     onBackgroundImageFileSelect: (file: File) => void | Promise<void>;

@@ -32,18 +32,23 @@ export const DEFAULT_CHART_PROPERTIES: ChartProperties = {
     duration: 0,
 };
 
-export interface Chart {
-    readonly id: number;
-    readonly createdAt: Date;
-    updatedAt: Date;
-    author: string | null;
+export interface ChartBase {
     lines: Line[];
     timings: Timing[];
     properties: ChartProperties;
 }
-export type ChartDraft = Pick<
-    Chart, 
-    "lines" |
-    "timings" |
-    "properties"
->
+export interface PublicChart extends ChartBase {
+    readonly id: number;
+    readonly createdAt: Date;
+    readonly updatedAt: Date;
+    author: string | null;
+    playCount: number;
+    likeCount: number;
+}
+export interface DraftChart extends ChartBase {
+    readonly uuid: string;
+    readonly createdAt: Date;
+    readonly updatedAt: Date;
+    readonly sessionId?: string;
+    author: string | null;
+}

@@ -4,11 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Wallpaper from '@/src/components/Wallpaper';
 import * as ChartAPI from '@/src/lib/api/ChartAPI';
-import { Chart } from '@/src/lib/types/models';
+import { PublicChart } from '@/src/lib/types/models';
 
 const PAGE_SIZE = 12;
 
-function ChartCard({ chart }: { chart: Chart }) {
+function ChartCard({ chart }: { chart: PublicChart }) {
     const title = chart.properties.title || 'Untitled';
     const artist = chart.properties.artist || '';
     const songTitle = chart.properties.songTitle || '';
@@ -48,7 +48,7 @@ function ChartCard({ chart }: { chart: Chart }) {
 }
 
 export default function BrowsePageClient() {
-    const [charts, setCharts] = useState<Chart[]>([]);
+    const [charts, setCharts] = useState<PublicChart[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');

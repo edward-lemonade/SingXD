@@ -1,6 +1,6 @@
 import { ChartGame } from '@/src/components/Chart';
 import { WsSummaryMsg } from '@/src/lib/api/GameAPI';
-import { Chart } from '@/src/lib/types/models';
+import { PublicChart } from '@/src/lib/types/models';
 
 export default function PlayingState({
     chart,
@@ -8,7 +8,7 @@ export default function PlayingState({
     onQuit,
     onFinished,
 }: {
-    chart: Chart;
+    chart: PublicChart;
     chartId: number;
     onQuit: (summary?: WsSummaryMsg) => void;
     onFinished: (summary?: WsSummaryMsg) => void;
