@@ -3,87 +3,89 @@ package draft
 import (
 	"context"
 	"fmt"
-	"io"
-	"path/filepath"
 	"singxd/internal/storage"
-	"strings"
 )
 
 type S3Client = storage.S3Client
 
 const draftPrefix = "draft"
 
-func draftAudioKey(UUID string, fileType string) string {
-	return fmt.Sprintf("%s/%s/%s.wav", draftPrefix, UUID, fileType)
+const (
+	instrumentalPrefix = "instrumental"
+	vocalsPrefix       = "vocals"
+	backgroundPrefix   = "background"
+)
+
+func dirPrefix(uuid string) string {
+	return fmt.Sprintf("%s/%s/", draftPrefix, uuid)
 }
 
-// ----------------------------------------------------------------
-// Draft Audio File (vocals / inst / combined)
+func audioKey(uuid, fileType, ext string) string {
+	return fmt.Sprintf("%s/%s/%s%s", draftPrefix, uuid, fileType, ext)
+}
 
-func SaveAudioFile(ctx context.Context, s3Client *S3Client, UUID string, fileType string, data io.Reader, expiryMinutes uint) (string, error) {
-	key := draftAudioKey(UUID, fileType)
-	if err := s3Client.UploadFileWithExpiry(ctx, key, data, expiryMinutes); err != nil {
+func saveFile(ctx context.Context, s3Client *S3Client, uuid, fileType, ext string, data interface{ Read([]byte) (int, error) }, expiryMinutes uint) (string, error) {
+	k := audioKey(uuid, fileType, ext)
+	if err := s3Client.UploadFileWithExpiry(ctx, k, data, expiryMinutes); err != nil {
 		return "", err
 	}
-	return key, nil
+	return k, nil
 }
 
-func GetAudioFileURL(ctx context.Context, s3Client *S3Client, UUID string, fileType string, expiryMinutes uint) (string, error) {
-	key := draftAudioKey(UUID, fileType)
-	return s3Client.GetPresignedURL(ctx, key, expiryMinutes)
+func getURL(ctx context.Context, s3Client *S3Client, uuid, fileType string, expiryMinutes uint) (string, error) {
+	files, err := s3Client.ListFiles(ctx, dirPrefix(uuid))
+	if err != nil {
+		return "", fmt.Errorf("listing files for uuid=%s: %w", uuid, err)
+	}
+	k := storage.FindByPrefix(files, fileType)
+	if k == "" {
+		return "", fmt.Errorf("no %s file found for uuid=%s", fileType, uuid)
+	}
+	return s3Client.GetPresignedURL(ctx, k, expiryMinutes)
 }
 
-func DownloadAudioFile(ctx context.Context, s3Client *S3Client, UUID string, fileType string) ([]byte, error) {
-	key := draftAudioKey(UUID, fileType)
-	return s3Client.DownloadFile(ctx, key)
+func downloadFile(ctx context.Context, s3Client *S3Client, uuid, fileType string) ([]byte, error) {
+	files, err := s3Client.ListFiles(ctx, dirPrefix(uuid))
+	if err != nil {
+		return nil, fmt.Errorf("listing files for uuid=%s: %w", uuid, err)
+	}
+	k := storage.FindByPrefix(files, fileType)
+	if k == "" {
+		return nil, fmt.Errorf("no %s file found for uuid=%s", fileType, uuid)
+	}
+	return s3Client.DownloadFile(ctx, k)
 }
 
-func DeleteAudioFile(ctx context.Context, s3Client *S3Client, UUID string, fileType string) error {
-	key := draftAudioKey(UUID, fileType)
-	return s3Client.DeleteFile(ctx, key)
-}
+func getDraftURLs(ctx context.Context, s3Client *S3Client, uuid string, expiryMinutes uint) (instrumental, vocals, background *string, err error) {
+	files, err := s3Client.ListFiles(ctx, dirPrefix(uuid))
+	if err != nil {
+		return nil, nil, nil, fmt.Errorf("listing files for uuid=%s: %w", uuid, err)
+	}
 
-func ListAudioFiles(ctx context.Context, s3Client *S3Client, UUID string) ([]string, error) {
-	prefix := fmt.Sprintf("%s/%s/", draftPrefix, UUID)
-	return s3Client.ListFiles(ctx, prefix)
-}
-
-func GetDraftURLs(ctx context.Context, s3Client *S3Client, UUID string, expiryMinutes uint) (instrumental, vocals, background *string, err error) {
-	toPtr := func(url string, e error) *string {
-		if e != nil || url == "" {
+	toPtr := func(p string) *string {
+		k := storage.FindByPrefix(files, p)
+		if k == "" {
+			return nil
+		}
+		url, e := s3Client.GetPresignedURL(ctx, k, expiryMinutes)
+		if e != nil {
 			return nil
 		}
 		return &url
 	}
 
-	instURL, instErr := GetAudioFileURL(ctx, s3Client, UUID, "instrumental", expiryMinutes)
-	vocalsURL, vocalsErr := GetAudioFileURL(ctx, s3Client, UUID, "vocals", expiryMinutes)
+	return toPtr(instrumentalPrefix), toPtr(vocalsPrefix), toPtr(backgroundPrefix), nil
+}
 
-	files, listErr := ListAudioFiles(ctx, s3Client, UUID)
-	var bgURL string
-	if listErr == nil {
-		for _, f := range files {
-			if strings.Contains(filepath.Base(f), "background") {
-				bgURL, _ = GetBackgroundImageURL(ctx, s3Client, f, expiryMinutes)
-				break
-			}
+func deleteDraftFiles(ctx context.Context, s3Client *S3Client, uuid string) error {
+	files, err := s3Client.ListFiles(ctx, dirPrefix(uuid))
+	if err != nil {
+		return err
+	}
+	for _, k := range files {
+		if err := s3Client.DeleteFile(ctx, k); err != nil {
+			return fmt.Errorf("deleting %s: %w", k, err)
 		}
 	}
-
-	return toPtr(instURL, instErr), toPtr(vocalsURL, vocalsErr), toPtr(bgURL, nil), nil
-}
-
-// ----------------------------------------------------------------
-// Draft Background Image
-
-func SaveBackgroundImage(ctx context.Context, s3Client *S3Client, UUID string, ext string, data io.Reader) (string, error) {
-	key := fmt.Sprintf("%s/%s/background%s", draftPrefix, UUID, ext)
-	if err := s3Client.UploadFile(ctx, key, data); err != nil {
-		return "", err
-	}
-	return key, nil
-}
-
-func GetBackgroundImageURL(ctx context.Context, s3Client *S3Client, key string, expiryMinutes uint) (string, error) {
-	return s3Client.GetPresignedURL(ctx, key, expiryMinutes)
+	return nil
 }

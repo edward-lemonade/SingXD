@@ -4,17 +4,13 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"path/filepath"
 	"singxd/internal/storage"
 	"strings"
 )
 
 type S3Client = storage.S3Client
 
-const (
-	chartPrefix = "chart"
-	draftPrefix = "draft"
-)
+const chartPrefix = "chart"
 
 const (
 	instrumentalPrefix = "instrumental"
@@ -22,133 +18,85 @@ const (
 	backgroundPrefix   = "background"
 )
 
-func ChartPrefix(id uint) string {
+func dirPrefix(id uint) string {
 	return fmt.Sprintf("%s/%d/", chartPrefix, id)
 }
 
-func ChartKey(id uint, filename string) string {
+func key(id uint, filename string) string {
 	return fmt.Sprintf("%s/%d/%s", chartPrefix, id, filename)
 }
 
-// ====================================================================================
-// Operations
+func moveDraftToChart(ctx context.Context, s3Client *S3Client, uuid string, id uint) error {
+	draftPrefix := fmt.Sprintf("draft/%s/", uuid)
 
-func ListChartFiles(ctx context.Context, s3Client *S3Client, id uint) ([]string, error) {
-	return s3Client.ListFiles(ctx, ChartPrefix(id))
-}
-
-func MoveDraftToChart(ctx context.Context, s3Client *S3Client, uuid string, id uint) ([]string, error) {
-	prefix := fmt.Sprintf("%s/%s/", draftPrefix, uuid)
-
-	keys, err := s3Client.ListFiles(ctx, prefix)
+	keys, err := s3Client.ListFiles(ctx, draftPrefix)
 	if err != nil {
-		return nil, fmt.Errorf("listing files for draft uuid=%s: %w", uuid, err)
+		return fmt.Errorf("listing files for draft uuid=%s: %w", uuid, err)
+	}
+	if len(keys) == 0 {
+		return ErrNoAudioFilesForUUID
 	}
 
 	var movedKeys []string
-	for _, key := range keys {
-		trimmed := strings.TrimPrefix(key, prefix)
+	for _, k := range keys {
+		trimmed := strings.TrimPrefix(k, draftPrefix)
 		if trimmed == "" {
-			log.Printf("skipping moving key %s, trimmed was empty", key)
+			log.Printf("skipping moving key %s, trimmed was empty", k)
 			continue
 		}
-		destKey := ChartKey(id, trimmed)
-		if err := s3Client.MoveObject(ctx, key, destKey); err != nil {
-			return nil, fmt.Errorf("moving %s -> %s: %w", key, destKey, err)
+		dest := key(id, trimmed)
+		if err := s3Client.MoveObject(ctx, k, dest); err != nil {
+			return fmt.Errorf("moving %s -> %s: %w", k, dest, err)
 		}
-		movedKeys = append(movedKeys, destKey)
+		movedKeys = append(movedKeys, dest)
 	}
 
-	return movedKeys, nil
+	if storage.FindByPrefix(movedKeys, instrumentalPrefix) == "" {
+		return ErrNoInstrumentalFile
+	}
+	if storage.FindByPrefix(movedKeys, vocalsPrefix) == "" {
+		return ErrNoVocalsFile
+	}
+	if storage.FindByPrefix(movedKeys, backgroundPrefix) == "" {
+		log.Println("No background moved")
+	}
+
+	return nil
 }
 
-func GetInstrumentalURL(ctx context.Context, s3Client *S3Client, id uint, expiryMinutes uint) (string, error) {
-	files, err := s3Client.ListFiles(ctx, ChartPrefix(id))
-	if err != nil {
-		return "", fmt.Errorf("listing files for id=%d: %w", id, err)
-	}
-	key := findKeyByPrefix(files, instrumentalPrefix)
-	if key == "" {
-		return "", ErrNoInstrumentalFile
-	}
-	url, err := s3Client.GetPresignedURL(ctx, key, expiryMinutes)
-	if err != nil {
-		return "", fmt.Errorf("getting presigned url for instrumental id=%d: %w", id, err)
-	}
-	return url, nil
-}
-
-func GetVocalsURL(ctx context.Context, s3Client *S3Client, id uint, expiryMinutes uint) (string, error) {
-	files, err := s3Client.ListFiles(ctx, ChartPrefix(id))
-	if err != nil {
-		return "", fmt.Errorf("listing files for id=%d: %w", id, err)
-	}
-	key := findKeyByPrefix(files, vocalsPrefix)
-	if key == "" {
-		return "", ErrNoVocalsFile
-	}
-	url, err := s3Client.GetPresignedURL(ctx, key, expiryMinutes)
-	if err != nil {
-		return "", fmt.Errorf("getting presigned url for vocals id=%d: %w", id, err)
-	}
-	return url, nil
-}
-
-func GetBackgroundURL(ctx context.Context, s3Client *S3Client, id uint, expiryMinutes uint) (string, error) {
-	files, err := s3Client.ListFiles(ctx, ChartPrefix(id))
-	if err != nil {
-		return "", fmt.Errorf("listing files for id=%d: %w", id, err)
-	}
-	key := findKeyByPrefix(files, backgroundPrefix)
-	if key == "" {
-		log.Printf("No background key found for chart id=%d", id)
-		return "", nil
-	}
-	url, err := s3Client.GetPresignedURL(ctx, key, expiryMinutes)
-	if err != nil {
-		return "", fmt.Errorf("getting presigned url for background id=%d: %w", id, err)
-	}
-	return url, nil
-}
-
-func GetVocalsFile(ctx context.Context, s3Client *S3Client, id uint) ([]byte, error) {
-	file := fmt.Sprintf("%s.%s", vocalsPrefix, "wav")
-	return downloadFile(ctx, s3Client, ChartKey(id, file))
-}
-
-func GetInstrumentalFile(ctx context.Context, s3Client *S3Client, id uint) ([]byte, error) {
-	file := fmt.Sprintf("%s.%s", instrumentalPrefix, "wav")
-	return downloadFile(ctx, s3Client, ChartKey(id, file))
-}
-
-func GetBackgroundFile(ctx context.Context, s3Client *S3Client, id uint) ([]byte, error) {
-	files, err := s3Client.ListFiles(ctx, ChartPrefix(id))
+func getVocalsFile(ctx context.Context, s3Client *S3Client, id uint) ([]byte, error) {
+	files, err := s3Client.ListFiles(ctx, dirPrefix(id))
 	if err != nil {
 		return nil, fmt.Errorf("listing files for id=%d: %w", id, err)
 	}
-	key := findKeyByPrefix(files, backgroundPrefix)
-	if key == "" {
-		return nil, nil
+	k := storage.FindByPrefix(files, vocalsPrefix)
+	if k == "" {
+		return nil, ErrNoVocalsFile
 	}
-	return downloadFile(ctx, s3Client, key)
-}
-
-// ====================================================================================
-// Helpers
-
-func findKeyByPrefix(keys []string, prefix string) string {
-	for _, k := range keys {
-		if strings.HasPrefix(strings.ToLower(filepath.Base(k)), prefix) {
-			return k
-		}
-	}
-	return ""
-}
-
-func downloadFile(ctx context.Context, s3Client *S3Client, key string) ([]byte, error) {
-	data, err := s3Client.DownloadFile(ctx, key)
+	data, err := s3Client.DownloadFile(ctx, k)
 	if err != nil {
-		return nil, fmt.Errorf("downloading key=%s: %w", key, err)
+		return nil, fmt.Errorf("downloading vocals id=%d: %w", id, err)
 	}
 	return data, nil
+}
+
+func getChartURLs(ctx context.Context, s3Client *S3Client, id uint, expiryMinutes uint) (audio, background *string, err error) {
+	files, err := s3Client.ListFiles(ctx, dirPrefix(id))
+	if err != nil {
+		return nil, nil, fmt.Errorf("listing files for id=%d: %w", id, err)
+	}
+
+	toPtr := func(p string) *string {
+		k := storage.FindByPrefix(files, p)
+		if k == "" {
+			return nil
+		}
+		url, err := s3Client.GetPresignedURL(ctx, k, expiryMinutes)
+		if err != nil {
+			return nil
+		}
+		return &url
+	}
+
+	return toPtr(instrumentalPrefix), toPtr(backgroundPrefix), nil
 }

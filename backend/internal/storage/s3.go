@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/url"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -100,6 +102,15 @@ func (sc *S3Client) ListFiles(ctx context.Context, prefix string) ([]string, err
 		keys = append(keys, *obj.Key)
 	}
 	return keys, nil
+}
+
+func FindByPrefix(keys []string, prefix string) string {
+	for _, k := range keys {
+		if strings.HasPrefix(strings.ToLower(filepath.Base(k)), prefix) {
+			return k
+		}
+	}
+	return ""
 }
 
 func (sc *S3Client) MoveObject(ctx context.Context, sourceKey string, destKey string) error {

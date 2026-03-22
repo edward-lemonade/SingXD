@@ -24,26 +24,24 @@ func SetupRoutes(router *gin.Engine, c Handlers, authService *auth.AuthService) 
 		api.POST("/chart", c.Chart.CreateChart)
 		api.GET("/charts", c.Chart.ListCharts)
 
-		api.POST("/draft/separate-audio", c.Draft.SeparateAudio)
-		api.POST("/draft/upload-instrumental", c.Draft.UploadInstrumental)
-		api.POST("/draft/upload-vocals", c.Draft.UploadVocals)
-		api.POST("/draft/upload-image", c.Draft.UploadImage)
-		api.POST("/draft/generate-timings", c.Draft.GenerateTimings)
-
 		api.GET("/game/:id/load", c.Game.PreloadVocals)
 		api.GET("/game/:id/run", c.Game.GameSocket)
 
 		api.GET("/auth/me", c.User.Me)
 
-		api.POST("/draft/init", c.Draft.InitDraft)
-		authApi := router.Group("/", authMiddleware)
+		api.POST("/drafts/init", c.Draft.InitDraft)
+		api.POST("/drafts/:uuid/publish", c.Draft.PublishDraft)
+		userDraftApi := router.Group("/", authMiddleware)
 		{
-			authApi.GET("/drafts", c.Draft.ListDrafts)
-			authApi.GET("/drafts/:id", c.Draft.GetDraft)
-			authApi.PUT("/drafts/:id", c.Draft.UpdateDraft)
-			authApi.DELETE("/drafts/:id", c.Draft.DeleteDraft)
-			authApi.POST("/drafts/:id/publish-as-user", c.Draft.PublishDraftAsUser)
+			userDraftApi.GET("/drafts", c.Draft.ListDrafts)
+			userDraftApi.GET("/drafts/:id", c.Draft.GetDraft)
+			userDraftApi.PUT("/drafts/:id", c.Draft.UpdateDraft)
+			userDraftApi.DELETE("/drafts/:id", c.Draft.DeleteDraft)
 		}
-		api.POST("/drafts/:uuid/publish-as-guest", c.Draft.PublishDraftAsGuest)
+		api.POST("/draft/separate-audio", c.Draft.SeparateAudio)
+		api.POST("/draft/upload-instrumental", c.Draft.UploadInstrumental)
+		api.POST("/draft/upload-vocals", c.Draft.UploadVocals)
+		api.POST("/draft/upload-image", c.Draft.UploadImage)
+		api.POST("/draft/generate-timings", c.Draft.GenerateTimings)
 	}
 }

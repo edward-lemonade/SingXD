@@ -11,7 +11,6 @@ type VideoStepProps = {
     setChartProps: (video: SetStateAction<ChartProperties>) => void;
     onBackgroundImageFileSelect: (file: File) => void | Promise<void>;
     backgroundImageUploading: boolean;
-    backgroundImageError: string | null;
 };
 
 export default function VideoStep({
@@ -20,7 +19,6 @@ export default function VideoStep({
     setChartProps,
     onBackgroundImageFileSelect,
     backgroundImageUploading,
-    backgroundImageError,
 }: VideoStepProps) {
     const onBackgroundImageFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -82,9 +80,6 @@ export default function VideoStep({
                         />
                         {backgroundImageUploading && (
                             <p className="text-sm text-gray-500 mt-1">Uploading…</p>
-                        )}
-                        {backgroundImageError && (
-                            <p className="text-sm text-red-500 mt-1">{backgroundImageError}</p>
                         )}
                     </div>
                 </div>

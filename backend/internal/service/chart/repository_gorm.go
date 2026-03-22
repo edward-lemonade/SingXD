@@ -28,7 +28,69 @@ func AutoMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(&ChartRecord{})
 }
 
-func (r *ChartRecord) ToPublicChart() (*t.PublicChart, error) {
+// ==============================================================================
+// Operations
+
+func save(ctx context.Context, db *gorm.DB, authorUID *string, chart t.ChartBase) (*t.PublicChart, error) {
+	lines, timings, props, err := marshalChart(chart)
+	if err != nil {
+		return nil, err
+	}
+	record := ChartRecord{
+		Lines:      lines,
+		Timings:    timings,
+		Properties: props,
+		AuthorUID:  authorUID,
+	}
+	if err := db.WithContext(ctx).Create(&record).Error; err != nil {
+		return nil, err
+	}
+	return record.toPublicChart()
+}
+
+func findByID(ctx context.Context, db *gorm.DB, id uint) (*t.PublicChart, error) {
+	var record ChartRecord
+	if err := db.WithContext(ctx).First(&record, id).Error; err != nil {
+		return nil, err
+	}
+	return record.toPublicChart()
+}
+
+func list(ctx context.Context, db *gorm.DB, page, limit int, search string) ([]t.PublicChart, int, error) {
+	var records []ChartRecord
+	var total int64
+
+	q := db.WithContext(ctx).Model(&ChartRecord{})
+	if search != "" {
+		q = q.Where("properties->>'title' ILIKE ? OR properties->>'songTitle' ILIKE ? OR properties->>'artist' ILIKE ?",
+			"%"+search+"%", "%"+search+"%", "%"+search+"%")
+	}
+
+	if err := q.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * limit
+	if err := q.Order("created_at DESC").Offset(offset).Limit(limit).Find(&records).Error; err != nil {
+		return nil, 0, err
+	}
+
+	charts := make([]t.PublicChart, 0, len(records))
+	for _, r := range records {
+		chart, err := r.toPublicChart()
+		if err != nil {
+			return nil, 0, err
+		}
+		charts = append(charts, *chart)
+	}
+
+	return charts, int(total), nil
+}
+
+// ==============================================================================
+// Helpers
+
+func (r *ChartRecord) toPublicChart() (*t.PublicChart, error) {
 	chart := &t.PublicChart{
 		ID:        r.ID,
 		CreatedAt: r.CreatedAt,
@@ -56,63 +118,4 @@ func marshalChart(chart t.ChartBase) (lines, timings, props datatypes.JSON, err 
 	}
 	props, err = json.Marshal(chart.Properties)
 	return
-}
-
-// ==============================================================================
-// Operations
-
-func Save(ctx context.Context, db *gorm.DB, authorUID *string, chart t.ChartBase) (*t.PublicChart, error) {
-	lines, timings, props, err := marshalChart(chart)
-	if err != nil {
-		return nil, err
-	}
-	record := ChartRecord{
-		Lines:      lines,
-		Timings:    timings,
-		Properties: props,
-		AuthorUID:  authorUID,
-	}
-	if err := db.WithContext(ctx).Create(&record).Error; err != nil {
-		return nil, err
-	}
-	return record.ToPublicChart()
-}
-
-func FindByID(ctx context.Context, db *gorm.DB, id uint) (*t.PublicChart, error) {
-	var record ChartRecord
-	if err := db.WithContext(ctx).First(&record, id).Error; err != nil {
-		return nil, err
-	}
-	return record.ToPublicChart()
-}
-
-func List(ctx context.Context, db *gorm.DB, page, limit int, search string) ([]t.PublicChart, int, error) {
-	var records []ChartRecord
-	var total int64
-
-	q := db.WithContext(ctx).Model(&ChartRecord{})
-	if search != "" {
-		q = q.Where("properties->>'title' ILIKE ? OR properties->>'songTitle' ILIKE ? OR properties->>'artist' ILIKE ?",
-			"%"+search+"%", "%"+search+"%", "%"+search+"%")
-	}
-
-	if err := q.Count(&total).Error; err != nil {
-		return nil, 0, err
-	}
-
-	offset := (page - 1) * limit
-	if err := q.Order("created_at DESC").Offset(offset).Limit(limit).Find(&records).Error; err != nil {
-		return nil, 0, err
-	}
-
-	charts := make([]t.PublicChart, 0, len(records))
-	for _, r := range records {
-		chart, err := r.ToPublicChart()
-		if err != nil {
-			return nil, 0, err
-		}
-		charts = append(charts, *chart)
-	}
-
-	return charts, int(total), nil
 }

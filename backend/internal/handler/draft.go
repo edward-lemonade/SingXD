@@ -32,7 +32,7 @@ func (a *DraftHandler) SeparateAudio(c *gin.Context) {
 		transport.BadRequest(c, "no audio file provided")
 		return
 	}
-	result, err := a.draftService.SeparateAudio(c.Request.Context(), UUID, file)
+	vocalsURL, instrumentalURL, err := a.draftService.SeparateAudio(c.Request.Context(), UUID, file)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return
@@ -42,8 +42,8 @@ func (a *DraftHandler) SeparateAudio(c *gin.Context) {
 		InstrumentalURL string `json:"instrumentalUrl"`
 	}
 	c.JSON(http.StatusOK, Response{
-		VocalsURL:       result.VocalsURL,
-		InstrumentalURL: result.InstrumentalURL,
+		VocalsURL:       vocalsURL,
+		InstrumentalURL: instrumentalURL,
 	})
 }
 
@@ -184,18 +184,7 @@ func (a *DraftHandler) DeleteDraft(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (a *DraftHandler) PublishDraftAsUser(c *gin.Context) {
-	uid := getUID(c)
-	uuid := c.Param("uuid")
-	chart, err := a.draftService.PublishDraftAsUser(c.Request.Context(), uid, uuid, a.chartService)
-	if err != nil {
-		transport.ServiceError(c, err)
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"chart": chart})
-}
-
-func (a *DraftHandler) PublishDraftAsGuest(c *gin.Context) {
+func (a *DraftHandler) PublishDraft(c *gin.Context) {
 	uuid := c.Param("uuid")
 	type Request struct {
 		ChartBase t.ChartBase `json:"chartBase"`
@@ -205,7 +194,7 @@ func (a *DraftHandler) PublishDraftAsGuest(c *gin.Context) {
 		transport.BadRequest(c, "invalid request body")
 		return
 	}
-	chart, err := a.draftService.PublishDraftAsGuest(c.Request.Context(), uuid, req.ChartBase, a.chartService)
+	chart, err := a.draftService.PublishDraft(c.Request.Context(), uuid, req.ChartBase, a.chartService)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return
@@ -213,7 +202,8 @@ func (a *DraftHandler) PublishDraftAsGuest(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"chart": chart})
 }
 
-// ── helpers ───────────────────────────────────────────────────────────────────
+// ====================================================================================
+// Helpers
 
 func getUID(c *gin.Context) string {
 	uid, _ := c.Get(middleware.UIDKey)
