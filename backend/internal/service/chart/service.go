@@ -17,6 +17,9 @@ type ChartService struct {
 }
 
 func NewChartService(s3Client *S3Client, db *gorm.DB) *ChartService {
+	if err := db.AutoMigrate(&ChartRecord{}); err != nil {
+		log.Fatal(err)
+	}
 	return &ChartService{s3Client: s3Client, db: db}
 }
 
@@ -101,4 +104,46 @@ func (s *ChartService) FindByID(ctx context.Context, id uint) (*t.Chart, error) 
 
 func (s *ChartService) FindVocalsFileByID(ctx context.Context, id uint) ([]byte, error) {
 	return GetVocalsFile(ctx, s.s3Client, id)
+}
+
+func (s *ChartService) List(ctx context.Context, page, limit int, search string) ([]t.Chart, int, error) {
+	if s.db == nil {
+		return nil, 0, ErrDbNotConfigured
+	}
+
+	records, total, err := ListCharts(ctx, s.db, page, limit, search)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	charts := make([]t.Chart, 0, len(records))
+	for _, record := range records {
+		var chart t.Chart
+		chart.ID = record.ID
+		chart.Author = record.Author
+		chart.CreatedAt = record.CreatedAt
+		chart.UpdatedAt = record.UpdatedAt
+
+		if err := json.Unmarshal(record.Lines, &chart.Lines); err != nil {
+			return nil, 0, fmt.Errorf("unmarshal lines id=%d: %w", record.ID, err)
+		}
+		if err := json.Unmarshal(record.Timings, &chart.Timings); err != nil {
+			return nil, 0, fmt.Errorf("unmarshal timings id=%d: %w", record.ID, err)
+		}
+		if err := json.Unmarshal(record.Properties, &chart.Properties); err != nil {
+			return nil, 0, fmt.Errorf("unmarshal properties id=%d: %w", record.ID, err)
+		}
+
+		bgURL, err := GetBackgroundURL(ctx, s.s3Client, chart.ID, ChartURLMinutes)
+		if err != nil {
+			log.Printf("warn: background url for chart %d: %v", chart.ID, err)
+		}
+		if bgURL != "" {
+			chart.Properties.BackgroundImageURL = &bgURL
+		}
+
+		charts = append(charts, chart)
+	}
+
+	return charts, total, nil
 }

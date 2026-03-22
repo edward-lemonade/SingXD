@@ -17,3 +17,10 @@ export interface UploadImageResponse {
 export interface ChartResponse {
     chart: Chart;
 }
+
+export interface ListChartsResponse {
+    charts: Chart[];
+    total: number;
+    page: number;
+    limit: number;
+}

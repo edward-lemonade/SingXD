@@ -5,6 +5,14 @@ export const ROUTE_CONFIG = {
     chart: {
         get: (chartId: number) => `${API}/chart/${chartId}`,
         create: () => `${API}/chart`,
+        list: (page: number, limit: number, search: string) => {
+            const params = new URLSearchParams({
+                page: String(page),
+                limit: String(limit),
+                ...(search ? { search } : {}),
+            });
+            return `${API}/charts?${params}`;
+        },
     },
     draft: {
         separateAudio: () => `${API}/draft/separate-audio`,

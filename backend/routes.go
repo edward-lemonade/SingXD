@@ -23,6 +23,7 @@ func SetupRoutes(
 	{
 		api.GET("/chart/:id", c.Chart.GetChart)
 		api.POST("/chart", c.Chart.CreateMap)
+		api.GET("/charts", c.Chart.ListCharts)
 
 		api.POST("/draft/separate-audio", c.Draft.SeparateAudio)
 		api.POST("/draft/upload-image", c.Draft.UploadImage)

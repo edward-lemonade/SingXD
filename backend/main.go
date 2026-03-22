@@ -85,11 +85,6 @@ func setupGorm() *gorm.DB {
 		log.Fatalf("Failed to create Postgres connection: %v", err)
 	}
 
-	if err := gormDB.AutoMigrate(
-		&chart.ChartRecord{},
-	); err != nil {
-		log.Fatal(err)
-	}
 	return gormDB
 }
 

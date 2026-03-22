@@ -79,3 +79,38 @@ func (a *ChartHandler) GetChart(c *gin.Context) {
 		Chart: *chart,
 	})
 }
+
+func (a *ChartHandler) ListCharts(c *gin.Context) {
+	pageStr := c.DefaultQuery("page", "1")
+	limitStr := c.DefaultQuery("limit", "12")
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit < 1 || limit > 100 {
+		limit = 12
+	}
+
+	search := c.Query("search")
+
+	charts, total, err := a.chartService.List(c.Request.Context(), page, limit, search)
+	if err != nil {
+		transport.ServiceError(c, err)
+		return
+	}
+
+	type Response struct {
+		Charts []t.Chart `json:"charts"`
+		Total  int       `json:"total"`
+		Page   int       `json:"page"`
+		Limit  int       `json:"limit"`
+	}
+	c.JSON(http.StatusOK, Response{
+		Charts: charts,
+		Total:  total,
+		Page:   page,
+		Limit:  limit,
+	})
+}

@@ -86,3 +86,25 @@ func GetChartByID(ctx context.Context, db *gorm.DB, id uint) (*t.Chart, error) {
 	// Keep Author blank in Chart for now
 	return &chart, nil
 }
+
+func ListCharts(ctx context.Context, db *gorm.DB, page, limit int, search string) ([]ChartRecord, int, error) {
+	var records []ChartRecord
+	var total int64
+
+	q := db.WithContext(ctx).Model(&ChartRecord{})
+	if search != "" {
+		q = q.Where("properties->>'title' ILIKE ? OR properties->>'songTitle' ILIKE ? OR properties->>'artist' ILIKE ?",
+			"%"+search+"%", "%"+search+"%", "%"+search+"%")
+	}
+
+	if err := q.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * limit
+	if err := q.Order("created_at DESC").Offset(offset).Limit(limit).Find(&records).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return records, int(total), nil
+}
