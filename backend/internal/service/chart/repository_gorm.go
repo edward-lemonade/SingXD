@@ -18,10 +18,10 @@ func (ChartRecord) TableName() string {
 }
 
 type ChartRecord struct {
-	ID         uint           `gorm:"primaryKey;column:id"`
-	Lines      datatypes.JSON `gorm:"type:jsonb;column:lines;not null"`
-	Timings    datatypes.JSON `gorm:"type:jsonb;column:timings;not null"`
-	Properties datatypes.JSON `gorm:"type:jsonb;column:properties;not null"`
+	ID         uint           `json:"id" gorm:"primaryKey;autoIncrement"`
+	Lines      datatypes.JSON `json:"lines" gorm:"type:jsonb;not null"`
+	Timings    datatypes.JSON `json:"timings" gorm:"type:jsonb;not null"`
+	Properties datatypes.JSON `json:"properties" gorm:"type:jsonb;not null"`
 	CreatedAt  time.Time      `json:"createdAt"`
 	UpdatedAt  time.Time      `json:"updatedAt"`
 	Author     *string        `json:"author"`
@@ -64,7 +64,7 @@ func SaveChart(ctx context.Context, db *gorm.DB, chartDraft t.ChartDraft) (Chart
 	return record, nil
 }
 
-func GetChart(ctx context.Context, db *gorm.DB, id uint) (*t.Chart, error) {
+func GetChartByID(ctx context.Context, db *gorm.DB, id uint) (*t.Chart, error) {
 	var record ChartRecord
 	if err := db.WithContext(ctx).First(&record, id).Error; err != nil {
 		return nil, err

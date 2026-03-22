@@ -2,12 +2,12 @@ import ChartPageClient from './ChartPageClient';
 import * as ChartAPI from '@/src/lib/api/ChartAPI';
 
 interface PageProps {
-    id: string;
+    id: number;
 }
 
 export default async function Page({ params }: { params: Promise<PageProps> }) {
     const { id } = await params;
-    const chartId = Number(id);
+    const chartId = id;
 
     let chart;
     try {

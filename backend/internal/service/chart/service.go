@@ -77,7 +77,7 @@ func (s *ChartService) FindByID(ctx context.Context, id uint) (*t.Chart, error) 
 		return nil, ErrDbNotConfigured
 	}
 
-	chart, err := GetChart(ctx, s.db, id)
+	chart, err := GetChartByID(ctx, s.db, id)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrChartNotFound, err)
 	}

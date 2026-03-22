@@ -1,3 +1,4 @@
+import { API } from '../axios';
 import { ROUTE_CONFIG } from './routes';
 
 export type GameSocketCloseReason = 'quit' | 'ended' | 'unmount' | string;
@@ -19,11 +20,7 @@ export interface WsSummaryMsg {
 export type WsMsg = WsScoreMsg | WsSummaryMsg;
 
 export async function preloadVocals(chartId: number): Promise<void> {
-    const url = ROUTE_CONFIG.game.load(chartId);
-    const res = await fetch(url);
-    if (!res.ok) {
-        throw new Error(`Preload vocals failed: ${res.status} ${res.statusText}`);
-    }
+    await API.get(ROUTE_CONFIG.game.load(chartId));
 }
 
 export interface ChartGameSocketHandle {
@@ -40,7 +37,7 @@ export function connectChartGameSocket(options: {
 }): ChartGameSocketHandle {
     const { chartId, onMessage, onError, onClose } = options;
 
-    const wsUrl = ROUTE_CONFIG.game.run(options.chartId);
+    const wsUrl = ROUTE_CONFIG.game.run(chartId);
     const ws = new WebSocket(wsUrl);
     ws.binaryType = 'arraybuffer';
     ws.onmessage = onMessage;

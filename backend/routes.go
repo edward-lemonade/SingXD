@@ -2,11 +2,13 @@ package main
 
 import (
 	"singxd/internal/handler"
+	"singxd/internal/service/auth"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Handlers struct {
+	User  *handler.UserHandler
 	Draft *handler.DraftHandler
 	Chart *handler.ChartHandler
 	Game  *handler.GameHandler
@@ -15,6 +17,7 @@ type Handlers struct {
 func SetupRoutes(
 	router *gin.Engine,
 	c Handlers,
+	authService *auth.AuthService,
 ) {
 	api := router.Group("/api")
 	{
@@ -27,5 +30,8 @@ func SetupRoutes(
 
 		api.GET("/game/:id/load", c.Game.PreloadVocals)
 		api.GET("/game/:id/run", c.Game.GameSocket)
+
+		api.GET("/auth/me", c.User.Me)
+
 	}
 }

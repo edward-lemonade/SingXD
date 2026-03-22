@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"singxd/internal/service/auth"
 	"singxd/internal/service/chart"
 	"singxd/internal/service/draft"
 	"singxd/internal/service/game"
@@ -27,6 +28,10 @@ var errorMap = []struct {
 	status   int
 	message  string
 }{
+	// auth
+	{auth.ErrMissingToken, http.StatusUnauthorized, "Authorization token is required."},
+	{auth.ErrInvalidToken, http.StatusUnauthorized, "Authorization token is invalid or expired."},
+
 	// draft
 	{draft.ErrDbNotConfigured, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},
 	{draft.ErrMissingSessionID, http.StatusBadRequest, "Session ID is required."},

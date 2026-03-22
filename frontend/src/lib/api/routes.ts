@@ -15,4 +15,7 @@ export const ROUTE_CONFIG = {
         load: (chartId: number) => `${API}/game/${chartId}/load`,
         run: (chartId: number) => `${API_WS}/game/${chartId}/run`,
     },
+    user: {
+        me: () => `${API}/user/me`,
+    },
 };

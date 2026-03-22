@@ -17,6 +17,7 @@
     "@tanstack/react-query": "^5.90.11",
     "axios": "^1.13.2",
     "clsx": "^2.1.1",
+    "firebase": "^12.11.0",
     "install": "^0.13.0",
     "next": "^16.0.10",
     "npm": "^11.6.4",
