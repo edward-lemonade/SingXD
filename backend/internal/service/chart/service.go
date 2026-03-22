@@ -2,7 +2,6 @@ package chart
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 
@@ -28,39 +27,22 @@ const ChartURLMinutes = 60
 // =========================================================
 // Operations
 
-func (s *ChartService) Create(ctx context.Context, sessionId string, chartDraft t.ChartDraft) (*t.Chart, error) {
+func (s *ChartService) CreateChart(ctx context.Context, draftUUID string, chartBase t.ChartBase) (*t.PublicChart, error) {
 	if s.db == nil {
 		return nil, ErrDbNotConfigured
 	}
 
-	record, err := SaveChart(ctx, s.db, chartDraft)
+	chart, err := Save(ctx, s.db, nil, chartBase)
 	if err != nil {
 		return nil, fmt.Errorf("saving chart: %w", err)
 	}
 
-	chart := &t.Chart{
-		Author:    record.Author,
-		CreatedAt: record.CreatedAt,
-		UpdatedAt: record.UpdatedAt,
-	}
-	chart.ID = record.ID
-
-	if err := json.Unmarshal(record.Lines, &chart.Lines); err != nil {
-		return nil, fmt.Errorf("unmarshal lines: %w", err)
-	}
-	if err := json.Unmarshal(record.Timings, &chart.Timings); err != nil {
-		return nil, fmt.Errorf("unmarshal timings: %w", err)
-	}
-	if err := json.Unmarshal(record.Properties, &chart.Properties); err != nil {
-		return nil, fmt.Errorf("unmarshal properties: %w", err)
-	}
-
-	movedKeys, err := MoveTempToChart(ctx, s.s3Client, sessionId, chart.ID)
+	movedKeys, err := MoveDraftToChart(ctx, s.s3Client, draftUUID, chart.ID)
 	if err != nil {
 		return nil, err
 	}
 	if len(movedKeys) == 0 {
-		return nil, ErrNoAudioFilesForSession
+		return nil, ErrNoAudioFilesForUUID
 	}
 	if findKeyByPrefix(movedKeys, instrumentalPrefix) == "" {
 		return nil, ErrNoInstrumentalFile
@@ -75,12 +57,12 @@ func (s *ChartService) Create(ctx context.Context, sessionId string, chartDraft 
 	return chart, nil
 }
 
-func (s *ChartService) FindByID(ctx context.Context, id uint) (*t.Chart, error) {
+func (s *ChartService) FindChartByID(ctx context.Context, id uint) (*t.PublicChart, error) {
 	if s.db == nil {
 		return nil, ErrDbNotConfigured
 	}
 
-	chart, err := GetChartByID(ctx, s.db, id)
+	chart, err := FindByID(ctx, s.db, id)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrChartNotFound, err)
 	}
@@ -106,43 +88,25 @@ func (s *ChartService) FindVocalsFileByID(ctx context.Context, id uint) ([]byte,
 	return GetVocalsFile(ctx, s.s3Client, id)
 }
 
-func (s *ChartService) List(ctx context.Context, page, limit int, search string) ([]t.Chart, int, error) {
+func (s *ChartService) ListCharts(ctx context.Context, page, limit int, search string) ([]t.PublicChart, int, error) {
 	if s.db == nil {
 		return nil, 0, ErrDbNotConfigured
 	}
 
-	records, total, err := ListCharts(ctx, s.db, page, limit, search)
+	charts, total, err := List(ctx, s.db, page, limit, search)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	charts := make([]t.Chart, 0, len(records))
-	for _, record := range records {
-		var chart t.Chart
-		chart.ID = record.ID
-		chart.Author = record.Author
-		chart.CreatedAt = record.CreatedAt
-		chart.UpdatedAt = record.UpdatedAt
-
-		if err := json.Unmarshal(record.Lines, &chart.Lines); err != nil {
-			return nil, 0, fmt.Errorf("unmarshal lines id=%d: %w", record.ID, err)
-		}
-		if err := json.Unmarshal(record.Timings, &chart.Timings); err != nil {
-			return nil, 0, fmt.Errorf("unmarshal timings id=%d: %w", record.ID, err)
-		}
-		if err := json.Unmarshal(record.Properties, &chart.Properties); err != nil {
-			return nil, 0, fmt.Errorf("unmarshal properties id=%d: %w", record.ID, err)
-		}
-
-		bgURL, err := GetBackgroundURL(ctx, s.s3Client, chart.ID, ChartURLMinutes)
+	for i := range charts {
+		bgURL, err := GetBackgroundURL(ctx, s.s3Client, charts[i].ID, ChartURLMinutes)
 		if err != nil {
-			log.Printf("warn: background url for chart %d: %v", chart.ID, err)
+			log.Printf("warn: background url for chart %d: %v", charts[i].ID, err)
+			continue
 		}
 		if bgURL != "" {
-			chart.Properties.BackgroundImageURL = &bgURL
+			charts[i].Properties.BackgroundImageURL = &bgURL
 		}
-
-		charts = append(charts, chart)
 	}
 
 	return charts, total, nil

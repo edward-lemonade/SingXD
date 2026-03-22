@@ -10,56 +10,110 @@ import (
 	"gorm.io/gorm"
 )
 
-// ==============================================================================
-// Model
-
 func (DraftRecord) TableName() string {
-	return "charts"
+	return "drafts"
 }
 
 type DraftRecord struct {
-	UUID       string         `json:"uuid" gorm:"type:uuid;default:gen_random_uuid();uniqueIndex;not null"` // public id
-	Lines      datatypes.JSON `json:"lines" gorm:"type:jsonb;not null"`
-	Timings    datatypes.JSON `json:"timings" gorm:"type:jsonb;not null"`
-	Properties datatypes.JSON `json:"properties" gorm:"type:jsonb;not null"`
-	CreatedAt  time.Time      `json:"createdAt"`
-	UpdatedAt  time.Time      `json:"updatedAt"`
-	Author     *string        `json:"author"`
+	UUID       string         `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	AuthorUID  *string        `gorm:"index"`
+	Lines      datatypes.JSON `gorm:"type:jsonb;default:'[]'"`
+	Timings    datatypes.JSON `gorm:"type:jsonb;default:'[]'"`
+	Properties datatypes.JSON `gorm:"type:jsonb;default:'{}'"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
-func AutoMigrate(db *gorm.DB) error {
+func AutoMigrateDrafts(db *gorm.DB) error {
 	return db.AutoMigrate(&DraftRecord{})
 }
 
 // ==============================================================================
 // Operations
 
-func SaveDraft(ctx context.Context, db *gorm.DB, chartDraft t.ChartDraft) (DraftRecord, error) {
-	linesJSON, err := json.Marshal(chartDraft.Lines)
-	if err != nil {
-		return DraftRecord{}, err
-	}
-
-	timingsJSON, err := json.Marshal(chartDraft.Timings)
-	if err != nil {
-		return DraftRecord{}, err
-	}
-
-	propertiesJSON, err := json.Marshal(chartDraft.Properties)
-	if err != nil {
-		return DraftRecord{}, err
-	}
-
-	record := DraftRecord{
-		Lines:      datatypes.JSON(linesJSON),
-		Timings:    datatypes.JSON(timingsJSON),
-		Properties: datatypes.JSON(propertiesJSON),
-		Author:     nil, // blank for now
-	}
-
+func InitOne(ctx context.Context, db *gorm.DB) (DraftRecord, error) {
+	record := DraftRecord{}
 	if err := db.WithContext(ctx).Create(&record).Error; err != nil {
 		return DraftRecord{}, err
 	}
-
 	return record, nil
+}
+
+func UpdateByUUIDAndUID(ctx context.Context, db *gorm.DB, uuid, uid string, draft t.ChartBase) (DraftRecord, error) {
+	lines, timings, props, err := MarshalDraft(draft)
+	if err != nil {
+		return DraftRecord{}, err
+	}
+	var record DraftRecord
+	if err := db.WithContext(ctx).Where("uuid = ? AND author_uid = ?", uuid, uid).First(&record).Error; err != nil {
+		return DraftRecord{}, err
+	}
+	record.Lines = lines
+	record.Timings = timings
+	record.Properties = props
+	if err := db.WithContext(ctx).Save(&record).Error; err != nil {
+		return DraftRecord{}, err
+	}
+	return record, nil
+}
+
+func ListByUID(ctx context.Context, db *gorm.DB, uid string) ([]DraftRecord, error) {
+	var records []DraftRecord
+	if err := db.WithContext(ctx).Where("author_uid = ?", uid).Order("updated_at DESC").Find(&records).Error; err != nil {
+		return nil, err
+	}
+	return records, nil
+}
+
+func FindByUUIDAndUID(ctx context.Context, db *gorm.DB, uuid, uid string) (*DraftRecord, error) {
+	var record DraftRecord
+	if err := db.WithContext(ctx).Where("uuid = ? AND author_uid = ?", uuid, uid).First(&record).Error; err != nil {
+		return nil, err
+	}
+	return &record, nil
+}
+
+func DeleteByUUIDAndUID(ctx context.Context, db *gorm.DB, uuid, uid string) error {
+	return db.WithContext(ctx).Where("uuid = ? AND author_uid = ?", uuid, uid).Delete(&DraftRecord{}).Error
+}
+
+func DeleteByUUID(ctx context.Context, db *gorm.DB, uuid string) error {
+	return db.WithContext(ctx).Where("uuid = ?", uuid).Delete(&DraftRecord{}).Error
+}
+
+// ==============================================================================
+// Helpers
+
+func MarshalDraft(draft t.ChartBase) (lines, timings, props datatypes.JSON, err error) {
+	if lines, err = json.Marshal(draft.Lines); err != nil {
+		return
+	}
+	if timings, err = json.Marshal(draft.Timings); err != nil {
+		return
+	}
+	props, err = json.Marshal(draft.Properties)
+	return
+}
+
+func UnmarshalDraft(lines, timings, props datatypes.JSON, dst *t.ChartBase) error {
+	if err := json.Unmarshal(lines, &dst.Lines); err != nil {
+		return err
+	}
+	if err := json.Unmarshal(timings, &dst.Timings); err != nil {
+		return err
+	}
+	return json.Unmarshal(props, &dst.Properties)
+}
+
+func (r *DraftRecord) ToDraftChart() (t.DraftChart, error) {
+	var d t.DraftChart
+	d.UUID = r.UUID
+	d.AuthorUID = r.AuthorUID
+	d.CreatedAt = r.CreatedAt
+	d.UpdatedAt = r.UpdatedAt
+
+	if err := UnmarshalDraft(r.Lines, r.Timings, r.Properties, &d.ChartBase); err != nil {
+		return t.DraftChart{}, err
+	}
+	return d, nil
 }

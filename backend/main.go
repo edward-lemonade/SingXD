@@ -44,7 +44,7 @@ func main() {
 	handlers := Handlers{
 		User:  handler.NewUserHandler(userService),
 		Chart: handler.NewChartHandler(chartService),
-		Draft: handler.NewDraftHandler(draftService),
+		Draft: handler.NewDraftHandler(draftService, chartService),
 		Game:  handler.NewGameHandler(gameService, chartService),
 	}
 

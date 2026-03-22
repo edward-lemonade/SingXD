@@ -85,11 +85,6 @@ export default function BrowsePageClient() {
     return (
         <Wallpaper color="lavender">
             <div className="flex flex-col min-h-screen">
-                {/* Top bar */}
-                <div className="bg-purple-800 text-white px-6 py-4 shrink-0">
-                    <h1 className="text-2xl font-bold">Browse</h1>
-                </div>
-
                 <div className="flex-1 p-6 flex flex-col gap-6 max-w-6xl mx-auto w-full">
                     {/* Search */}
                     <form onSubmit={handleSearch} className="flex gap-3">

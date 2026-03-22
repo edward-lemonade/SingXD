@@ -41,7 +41,7 @@ export interface PublicChart extends ChartBase {
     readonly id: number;
     readonly createdAt: Date;
     readonly updatedAt: Date;
-    author: string | null;
+    authorUid: string | null;
     playCount: number;
     likeCount: number;
 }
@@ -49,5 +49,11 @@ export interface DraftChart extends ChartBase {
     readonly uuid: string;
     readonly createdAt: Date;
     readonly updatedAt: Date;
-    author: string | null;
+    authorUid: string | null;
+}
+export interface DraftChartWithURLs extends DraftChart {
+    combinedUrl?: string;
+    instrumentalUrl?: string;
+    vocalsUrl?: string;
+    backgroundImageUrl?: string
 }

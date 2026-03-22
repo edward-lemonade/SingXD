@@ -6,55 +6,24 @@ import { AudioUrls } from '../CreatePageClient';
 interface AudioStepProps {
     audioUrls: AudioUrls;
     setAudioUrls: React.Dispatch<React.SetStateAction<AudioUrls>>;
-    loading: boolean;
+    separateLoading: boolean;
+    instrumentalUploading: boolean;
+    vocalsUploading: boolean;
     handleSeparateAudio: () => void;
+    handleUploadInstrumental: (file: File) => void;
+    handleUploadVocals: (file: File) => void;
 }
 
 export default function AudioStep({
     audioUrls,
     setAudioUrls,
-    loading,
+    separateLoading,
+    instrumentalUploading,
+    vocalsUploading,
     handleSeparateAudio,
+    handleUploadInstrumental,
+    handleUploadVocals,
 }: AudioStepProps) {
-    const onCombinedFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const url = URL.createObjectURL(file);
-            setAudioUrls(prev => {
-                return {
-                    ...prev,
-                    combined: url,
-                };
-            });
-        }
-    };
-
-    const onInstrumentalFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const url = URL.createObjectURL(file);
-            setAudioUrls(prev => {
-                return {
-                    ...prev,
-                    instrumental: url,
-                };
-            });
-        }
-    };
-
-    const onVocalsFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const url = URL.createObjectURL(file);
-            setAudioUrls(prev => {
-                return {
-                    ...prev,
-                    vocals: url,
-                };
-            });
-        }
-    };
-
     return (
         <section>
             <div className="space-y-6">
@@ -65,7 +34,10 @@ export default function AudioStep({
                     <input
                         type="file"
                         accept="audio/*"
-                        onChange={onCombinedFileInputChange}
+                        onChange={e => {
+                            const file = e.target.files?.[0];
+                            if (file) setAudioUrls(prev => ({ ...prev, combined: URL.createObjectURL(file) }));
+                        }}
                         className="mb-4"
                     />
                     {audioUrls.combined && (
@@ -75,10 +47,10 @@ export default function AudioStep({
                             </div>
                             <button
                                 onClick={handleSeparateAudio}
-                                disabled={loading}
+                                disabled={separateLoading}
                                 className="bg-blue-500 text-white px-4 py-2 rounded"
                             >
-                                {loading ? 'Separating...' : 'Separate into Stems'}
+                                {separateLoading ? 'Separating...' : 'Separate into Stems'}
                             </button>
                         </>
                     )}
@@ -91,12 +63,15 @@ export default function AudioStep({
                             <input
                                 type="file"
                                 accept="audio/*"
-                                onChange={onInstrumentalFileInputChange}
+                                disabled={instrumentalUploading}
+                                onChange={e => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleUploadInstrumental(file);
+                                }}
                             />
+                            {instrumentalUploading && <p className="text-sm text-gray-500 mt-1">Uploading…</p>}
                             {audioUrls.instrumental && (
-                                <div className="mt-2">
-                                    <audio controls src={audioUrls.instrumental} className="mt-1" />
-                                </div>
+                                <audio controls src={audioUrls.instrumental} className="mt-2" />
                             )}
                         </div>
                         <div>
@@ -104,12 +79,15 @@ export default function AudioStep({
                             <input
                                 type="file"
                                 accept="audio/*"
-                                onChange={onVocalsFileInputChange}
+                                disabled={vocalsUploading}
+                                onChange={e => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleUploadVocals(file);
+                                }}
                             />
+                            {vocalsUploading && <p className="text-sm text-gray-500 mt-1">Uploading…</p>}
                             {audioUrls.vocals && (
-                                <div className="mt-2">
-                                    <audio controls src={audioUrls.vocals} className="mt-1" />
-                                </div>
+                                <audio controls src={audioUrls.vocals} className="mt-2" />
                             )}
                         </div>
                     </div>

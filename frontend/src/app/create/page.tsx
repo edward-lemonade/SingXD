@@ -1,5 +1,10 @@
 import CreateClient from './CreatePageClient';
 
-export default function Page() {
-    return <CreateClient />;
+interface PageProps {
+    searchParams: Promise<{ uuid?: string }>;
+}
+
+export default async function Page({ searchParams }: PageProps) {
+    const { uuid } = await searchParams;
+    return <CreateClient initialDraftUuid={uuid} />;
 }

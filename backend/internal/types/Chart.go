@@ -24,20 +24,36 @@ type ChartProperties struct {
 	Font               string  `json:"font"`
 	TextSize           int     `json:"textSize"`
 	TextColor          string  `json:"textColor"`
-	BackgroundImageURL *string `json:"backgroundImageUrl"` // nullable
-	AudioURL           *string `json:"audioUrl"`           // nullable
+	BackgroundImageURL *string `json:"backgroundImageUrl"`
+	AudioURL           *string `json:"audioUrl"`
 }
 
-type ChartDraft struct {
+type ChartBase struct {
 	Lines      []Line          `json:"lines"`
 	Timings    []Timing        `json:"timings"`
 	Properties ChartProperties `json:"properties"`
 }
 
-type Chart struct {
+type PublicChart struct {
 	ID        uint      `json:"id"`
+	AuthorUID *string   `json:"authorUid"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	Author    *string   `json:"author"`
-	ChartDraft
+	ChartBase
+}
+
+type DraftChart struct {
+	UUID      string    `json:"uuid"`
+	AuthorUID *string   `json:"authorUid"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	ChartBase
+}
+
+type DraftChartWithURLs struct {
+	BackgroundImageURL *string `json:"backgroundImageUrl"`
+	CombinedURL        *string `json:"combinedUrl"`
+	InstrumentalURL    *string `json:"instrumentalUrl"`
+	VocalsURL          *string `json:"vocalsUrl"`
+	DraftChart
 }

@@ -16,8 +16,17 @@ export const ROUTE_CONFIG = {
     },
     draft: {
         separateAudio: () => `${API}/draft/separate-audio`,
+        uploadInstrumental: () => `${API}/draft/upload-instrumental`,
+        uploadVocals: () => `${API}/draft/upload-vocals`,
         uploadImage: () => `${API}/draft/upload-image`,
         generateTimings: () => `${API}/draft/generate-timings`,
+        init: () => `${API}/draft/init`,
+        list: () => `${API}/drafts`,
+        get: (id: string) => `${API}/drafts/${id}`,
+        update: (id: string) => `${API}/drafts/${id}`,
+        delete: (id: string) => `${API}/drafts/${id}`,
+        publishAsUser: (id: string) => `${API}/drafts/${id}/publish-as-user`,
+        publishAsGuest: (id: string) => `${API}/drafts/${id}/publish-as-guest`,
     },
     game: {
         load: (chartId: number) => `${API}/game/${chartId}/load`,

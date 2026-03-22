@@ -12,8 +12,8 @@ import (
 type S3Client = storage.S3Client
 
 const (
-	chartPrefix     = "chart"
-	chartTempPrefix = "chart_temp"
+	chartPrefix = "chart"
+	draftPrefix = "draft"
 )
 
 const (
@@ -37,12 +37,12 @@ func ListChartFiles(ctx context.Context, s3Client *S3Client, id uint) ([]string,
 	return s3Client.ListFiles(ctx, ChartPrefix(id))
 }
 
-func MoveTempToChart(ctx context.Context, s3Client *S3Client, sessionId string, id uint) ([]string, error) {
-	prefix := fmt.Sprintf("%s/%s/", chartTempPrefix, sessionId)
+func MoveDraftToChart(ctx context.Context, s3Client *S3Client, uuid string, id uint) ([]string, error) {
+	prefix := fmt.Sprintf("%s/%s/", draftPrefix, uuid)
 
 	keys, err := s3Client.ListFiles(ctx, prefix)
 	if err != nil {
-		return nil, fmt.Errorf("listing temp files for session=%s: %w", sessionId, err)
+		return nil, fmt.Errorf("listing files for draft uuid=%s: %w", uuid, err)
 	}
 
 	var movedKeys []string

@@ -17,6 +17,7 @@ import (
 func BadRequest(c *gin.Context, msg string) {
 	c.JSON(http.StatusBadRequest, gin.H{"error": msg})
 }
+
 func ServiceError(c *gin.Context, err error) {
 	log.Printf("[Service Error]: %v", err)
 	status, msg := resolve(err)
@@ -34,7 +35,7 @@ var errorMap = []struct {
 
 	// draft
 	{draft.ErrDbNotConfigured, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},
-	{draft.ErrMissingSessionID, http.StatusBadRequest, "Session ID is required."},
+	{draft.ErrMissingUUID, http.StatusBadRequest, "Draft UUID is required."},
 	{draft.ErrInvalidImageType, http.StatusBadRequest, "Unsupported image format. Please upload a JPG, PNG, GIF, or WebP file."},
 	{draft.ErrParsingLyrics, http.StatusBadRequest, "The lyrics could not be parsed. Please check the format and try again."},
 	{draft.ErrSeparationFailed, http.StatusUnprocessableEntity, "Audio separation failed. Please check that your file is a valid audio track."},
@@ -42,11 +43,12 @@ var errorMap = []struct {
 	{draft.ErrInstrumentalNotGenerated, http.StatusUnprocessableEntity, "Could not extract the instrumental track. Please try a different file."},
 	{draft.ErrAlignmentFailed, http.StatusUnprocessableEntity, "Lyrics alignment failed. Make sure the lyrics match the audio content."},
 	{draft.ErrPythonInterpreterNotFound, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},
+	{draft.ErrDraftNotFound, http.StatusNotFound, "Draft not found."},
 
 	// chart
 	{chart.ErrChartNotFound, http.StatusNotFound, "The requested sync map could not be found."},
-	{chart.ErrNoAudioFilesForSession, http.StatusNotFound, "No audio files were found for this session."},
-	{chart.ErrNoInstrumentalFile, http.StatusNotFound, "No instrumental track was found for this session."},
+	{chart.ErrNoAudioFilesForUUID, http.StatusNotFound, "No audio files were found for this draft."},
+	{chart.ErrNoInstrumentalFile, http.StatusNotFound, "No instrumental track was found for this draft."},
 	{chart.ErrDbNotConfigured, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},
 
 	// game
@@ -57,12 +59,10 @@ var errorMap = []struct {
 
 func resolve(err error) (int, string) {
 	fmt.Println("[service error]", err)
-
 	for _, e := range errorMap {
 		if errors.Is(err, e.sentinel) {
 			return e.status, e.message
 		}
 	}
-
 	return http.StatusInternalServerError, "An unexpected error occurred. Please try again."
 }

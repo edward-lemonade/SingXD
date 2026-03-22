@@ -24,10 +24,10 @@ func NewChartHandler(service *ChartService) *ChartHandler {
 // ============================================================================================
 // Handlers
 
-func (a *ChartHandler) CreateMap(c *gin.Context) {
+func (a *ChartHandler) CreateChart(c *gin.Context) {
 	type Request struct {
-		SessionID  string       `json:"sessionId"`
-		ChartDraft t.ChartDraft `json:"chartDraft"`
+		DraftUUID string      `json:"draftUuid"`
+		ChartBase t.ChartBase `json:"chartBase"`
 	}
 
 	var request Request
@@ -35,19 +35,19 @@ func (a *ChartHandler) CreateMap(c *gin.Context) {
 		transport.BadRequest(c, "invalid request body")
 		return
 	}
-	if request.SessionID == "" {
-		transport.BadRequest(c, "missing sessionID")
+	if request.DraftUUID == "" {
+		transport.BadRequest(c, "missing draftUuid")
 		return
 	}
 
-	chart, err := a.chartService.Create(c.Request.Context(), request.SessionID, request.ChartDraft)
+	chart, err := a.chartService.CreateChart(c.Request.Context(), request.DraftUUID, request.ChartBase)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return
 	}
 
 	type Response struct {
-		Chart t.Chart `json:"chart"`
+		Chart t.PublicChart `json:"chart"`
 	}
 	c.JSON(http.StatusOK, Response{Chart: *chart})
 }
@@ -65,14 +65,14 @@ func (a *ChartHandler) GetChart(c *gin.Context) {
 		return
 	}
 
-	chart, err := a.chartService.FindByID(c.Request.Context(), uint(id))
+	chart, err := a.chartService.FindChartByID(c.Request.Context(), uint(id))
 	if err != nil {
 		transport.ServiceError(c, err)
 		return
 	}
 
 	type Response struct {
-		Chart t.Chart `json:"chart"`
+		Chart t.PublicChart `json:"chart"`
 	}
 
 	c.JSON(http.StatusOK, Response{
@@ -95,17 +95,17 @@ func (a *ChartHandler) ListCharts(c *gin.Context) {
 
 	search := c.Query("search")
 
-	charts, total, err := a.chartService.List(c.Request.Context(), page, limit, search)
+	charts, total, err := a.chartService.ListCharts(c.Request.Context(), page, limit, search)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return
 	}
 
 	type Response struct {
-		Charts []t.Chart `json:"charts"`
-		Total  int       `json:"total"`
-		Page   int       `json:"page"`
-		Limit  int       `json:"limit"`
+		Charts []t.PublicChart `json:"charts"`
+		Total  int             `json:"total"`
+		Page   int             `json:"page"`
+		Limit  int             `json:"limit"`
 	}
 	c.JSON(http.StatusOK, Response{
 		Charts: charts,
