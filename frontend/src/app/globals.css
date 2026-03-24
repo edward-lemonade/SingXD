@@ -27,17 +27,6 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-
-
-.bg-diamond-overlay {
-    background-color: transparent;
-    background-image: repeating-conic-gradient(
-        rgba(255, 255, 255, 0.5) 0deg 90deg,
-        transparent 90deg 180deg
-    );
-    background-size: 100px 100px;
-}
-
 .hide-scrollbar {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE/Edge */

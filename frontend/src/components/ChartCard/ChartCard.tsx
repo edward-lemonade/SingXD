@@ -1,5 +1,6 @@
 import { PublicChart } from "@/src/lib/types/models";
 import Link from "next/link";
+import styles from "./ChartCard.module.css";
 
 export function ChartCard({ chart }: { chart: PublicChart }) {
     const title = chart.properties.title || 'Untitled';
@@ -8,35 +9,40 @@ export function ChartCard({ chart }: { chart: PublicChart }) {
     const bg = chart.properties.backgroundImageUrl;
 
     return (
-        <Link href={`/chart/${chart.id}`} className="group block">
-            <div className="bg-white border-4 border-black overflow-hidden transition-transform duration-150
-    shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-    group-hover:-translate-y-1
-    group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <Link href={`/chart/${chart.id}`} className={styles.link}>
+            <div className={styles.card}>
+                {/* Thumbnail */}
                 <div
-                    className="h-40 bg-purple-900 relative overflow-hidden"
-                    style={
-                        bg
-                            ? { backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-                            : undefined
-                    }
+                    className={styles.thumbnail}
+                    style={bg ? { backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
                 >
+                    {/* HUD orbit ring */}
+                    <div className={styles.orbitRing} />
+
+                    {/* Corner brackets */}
+                    <div className={`${styles.bracket} ${styles.bracketTL}`} />
+                    <div className={`${styles.bracket} ${styles.bracketTR}`} />
+                    <div className={`${styles.bracket} ${styles.bracketBL}`} />
+                    <div className={`${styles.bracket} ${styles.bracketBR}`} />
+
                     {!bg && (
-                        <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                            <svg viewBox="0 0 24 24" fill="white" className="w-16 h-16">
+                        <div className={styles.placeholder}>
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
                                 <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z" />
                             </svg>
                         </div>
                     )}
-                    {bg && <div className="absolute inset-0 bg-black/30" />}
+                    {bg && <div className={styles.overlay} />}
                 </div>
-                <div className="p-3">
-                    <p className="font-bold text-black truncate leading-tight">{title}</p>
-                    {songTitle && (
-                        <p className="text-sm text-gray-600 truncate mt-0.5">
-                            {songTitle}{artist ? ` — ${artist}` : ''}
+
+                {/* Info row */}
+                <div className={styles.info}>
+                    <div className={styles.infoInner}>
+                        <p className={styles.title}>{title}</p>
+                        <p className={styles.subtitle}>
+                            {songTitle}{` — ${artist}`}
                         </p>
-                    )}
+                    </div>
                 </div>
             </div>
         </Link>
