@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Barlow+Condensed:ital,wght@0,400;0,700;1,700&display=swap');
+
+.container {
+    width: 320px;
+    height: 100vh;
+}
+
+.bg {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 400px;
+    background: linear-gradient(
+        90deg,
+        rgba(8, 4, 18, 0.90) 0%,
+        rgba(8, 4, 18, 0.30) 50%,
+        transparent 100%
+    );
+    pointer-events: none;
+}
+
+.bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(255, 255, 255, 0.015) 3px,
+        rgba(255, 255, 255, 0.015) 4px
+    );
+}
+
+.accent {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        #ffd198 20%,
+        #f0b2e8 80%,
+        transparent 100%
+    );
+    pointer-events: none;
+}
+
+.nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 200px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 0 40px 28px;
+    pointer-events: none;
+}
+
+.links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    pointer-events: all;
+    flex: 1;
+    justify-content: center;
+}
+
+.item {
+    position: relative;
+    display: block;
+    padding: 6px 0;
+    text-decoration: none;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.35);
+    transition: color 0.2s ease, transform 0.2s ease, font-size 0.2s ease, text-shadow 0.2s ease;
+    transform-origin: left center;
+    white-space: nowrap;
+}
+
+/* left tick mark */
+.item::before {
+    content: '';
+    position: absolute;
+    left: -28px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 2px;
+    background: #f1e1ff;
+    transition: width 0.2s ease;
+}
+
+.item:hover {
+    color: rgba(255, 255, 255, 0.75);
+    transform: translateX(4px);
+}
+
+.active {
+    font-size: 52px;
+    color: #ffffff;
+    transform: translateX(10px);
+    letter-spacing: 0.04em;
+    text-shadow:
+        0 0 12px rgba(255, 255, 255, 0.9),
+        -1px 0 0 rgba(0, 220, 255, 0.5),
+        1px 0 0 rgba(255, 70, 85, 0.5);
+}
+
+.active::before {
+    width: 20px;
+    height: 3px;
+}
+
+.top {
+    font-family:
+        'Anton',
+        system-ui,
+        -apple-system,
+        'Segoe UI',
+        Roboto,
+        'Helvetica Neue',
+        Arial,
+        sans-serif;
+
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 100px;
+
+    text-shadow:
+        0 0 4px rgba(255, 255, 255, 0.9),
+        -1px 0 0 rgba(0, 0, 0, 0.5),
+        1px 0 0 rgba(0, 0, 0, 0.5);
+
+    /* Make sure letter shapes are crisp */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.bottom {
+    pointer-events: all;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 40px;
+}
+
+.divider {
+    width: 80px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.5);
+    margin-bottom: 8px;
+}
+
+.profileLabel {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+}
+
+.profileName {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.15s;
+}
+
+.profileName:hover {
+    color: #ffffff;
+}
+
+.logout {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px 0 0;
+    transition: color 0.15s;
+    text-align: left;
+}
+
+.logout:hover {
+    color: rgba(255, 70, 85, 0.7);
+}
+
+.authLink {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: rgba(248, 183, 215, 0.7);
+    transition: color 0.15s, transform 0.15s;
+    padding: 2px 0;
+    display: block;
+}
+
+.authLink:hover {
+    color: #f3bbc0;
+    transform: translateX(3px);
+}
+
+.authLinkSecondary {
+    color: rgba(255, 208, 170, 0.5);
+}
+
+.authLinkSecondary:hover {
+    color: rgba(255, 229, 153, 0.65);
+}

@@ -1,0 +1,53 @@
+/* Gradient themes */
+.peach {
+    background: linear-gradient(to bottom, #fecaca, #ffedd5);
+}
+.lavender {
+    background: linear-gradient(to bottom, #e9d5ff, #cffafe);
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    font-family: sans-serif;
+    overflow: hidden;
+    z-index: -1000;
+}
+
+.overlayFill {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 1.0;
+    animation: diamondMove 30s linear infinite;
+
+    background-color: transparent;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cpolygon points='128,0 256,128 128,256 0,128' fill='rgba(255,255,255,0.5)' stroke='rgba(255,255,255,0.6)' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+}
+
+.overlayOutlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 1.0;
+    animation: diamondMove 30s linear infinite;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpolygon points='40,0 80,40 40,80 0,40' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+}
+
+.content {
+    position: relative;
+    z-index: 10;
+    height: 100%;
+}
+
+@keyframes diamondMove {
+    from { background-position: 0 0; }
+    to   { background-position: 256px 256px; }
+}

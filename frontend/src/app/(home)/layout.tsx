@@ -1,11 +1,15 @@
 import '@/src/lib/middleware/auth';
-import Navbar from '@/src/components/Navbar';
+import Navbar from '@/src/components/Navbar/Navbar';
+import Wallpaper from '@/src/components/Wallpaper/Wallpaper';
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function HomeLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-row min-h-screen">
+            <Wallpaper color="lavender"/>
             <Navbar />
-            {children}
+            <div className="flex flex-1 min-h-screen px-8">
+                {children}
+            </div>
         </div>
     );
 }
