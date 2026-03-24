@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/src/lib/context/AuthContext';
 import { logout } from '@/src/lib/api/AuthAPI';
 import styles from './NavBar.module.css';
+import { Logo } from '../Logo';
 
 const NAV_ITEMS = [
     { label: 'PLAY', href: '/' },
@@ -27,9 +28,7 @@ export default function NavBar() {
             <div className={styles.accent} />
  
             <nav className={styles.nav}>
-                <div className={styles.top}>
-                    SingXD
-                </div>
+                <Logo/>
 
                 <div className={styles.links}>
                     {NAV_ITEMS.map(({ label, href }) => {

@@ -1,12 +1,23 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Inter, Bebas_Neue } from 'next/font/google';
 import './globals.css';
 import Providers from './providers';
 
 import '@/src/lib/middleware/auth';
 
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
-const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
+const inter = Inter({
+    subsets: ['latin'],
+    weight: ['400', '700', '900'],
+    variable: '--font-inter',
+    display: 'swap',
+});
+
+const bebas = Bebas_Neue({
+    subsets: ['latin'],
+    weight: '400',
+    variable: '--font-bebas',
+    display: 'swap',
+});
 
 export const metadata: Metadata = {
     title: 'SingXD',
@@ -15,8 +26,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <html lang="en">
-            <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <html lang="en" className={`${inter.variable} ${bebas.variable}`}>
+            <body>
                 <Providers>
                     {children}
                 </Providers>

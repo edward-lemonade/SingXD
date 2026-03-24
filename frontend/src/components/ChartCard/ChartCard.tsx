@@ -38,9 +38,9 @@ export function ChartCard({ chart }: { chart: PublicChart }) {
                 {/* Info row */}
                 <div className={styles.info}>
                     <div className={styles.infoInner}>
-                        <p className={styles.title}>{title}</p>
+                        <p className={styles.title}>{songTitle}{` — ${artist}`}</p>
                         <p className={styles.subtitle}>
-                            {songTitle}{` — ${artist}`}
+                            {title}
                         </p>
                     </div>
                 </div>
