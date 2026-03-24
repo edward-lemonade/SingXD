@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/src/lib/context/AuthContext';
 import { logout } from '@/src/lib/api/AuthAPI';
-import styles from './Navbar.module.css';
+import styles from './NavBar.module.css';
 
 const NAV_ITEMS = [
     { label: 'PLAY', href: '/' },
@@ -17,7 +17,7 @@ function isActive(href: string, pathname: string) {
     return pathname.startsWith(href);
 }
  
-export default function Navbar() {
+export default function NavBar() {
     const pathname = usePathname();
     const { user, loading } = useAuth();
  

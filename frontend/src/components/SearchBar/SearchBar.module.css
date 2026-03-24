@@ -1,0 +1,82 @@
+.form {
+    display: flex;
+    gap: 0;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--color-dark-base);
+    transition: 200ms;
+}
+
+.form:focus-within {
+    border-color: rgba(0, 0, 0, 1);
+    background: var(--color-dark-highlight);
+}
+
+.inputWrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+}
+
+/* ── Corner brackets ────────────────────────────────── */
+.bracket {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    z-index: 2;
+    transition: transform 250ms ease-out, border-color 200ms;
+}
+
+.bracketTL { top: 6px; left: 6px; border-top: 1px solid rgba(255,255,255,0.3); border-left: 1px solid rgba(255,255,255,0.3); }
+.bracketTR { top: 6px; right: 6px; border-top: 1px solid rgba(255,255,255,0.3); border-right: 1px solid rgba(255,255,255,0.3); }
+.bracketBL { bottom: 6px; left: 6px; border-bottom: 1px solid rgba(255,255,255,0.3); border-left: 1px solid rgba(255,255,255,0.3); }
+.bracketBR { bottom: 6px; right: 6px; border-bottom: 1px solid rgba(255,255,255,0.3); border-right: 1px solid rgba(255,255,255,0.3); }
+.inputWrapper:focus-within .bracketTL { transform: translate(-3px, -3px); border-color: rgba(255,255,255,0.9); }
+.inputWrapper:focus-within .bracketTR { transform: translate( 3px, -3px); border-color: rgba(255,255,255,0.9); }
+.inputWrapper:focus-within .bracketBL { transform: translate(-3px,  3px); border-color: rgba(255,255,255,0.9); }
+.inputWrapper:focus-within .bracketBR { transform: translate( 3px,  3px); border-color: rgba(255,255,255,0.9); }
+
+/* ── Input ──────────────────────────────────────────── */
+.input {
+    flex: 1;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 11px 16px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.85);
+    outline: none;
+}
+
+.input::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+    font-weight: 300;
+}
+
+/* ── Button ─────────────────────────────────────────── */
+.button {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 11px 18px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: color 150ms, background 150ms;
+}
+
+.button:hover {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.button:active {
+    background: rgba(255, 255, 255, 0.08);
+}

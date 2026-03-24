@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { ChartCard } from '@/src/components/ChartCard/ChartCard';
+import SearchBar from '@/src/components/SearchBar/SearchBar';
 import * as ChartAPI from '@/src/lib/api/ChartAPI';
 import { PublicChart } from '@/src/lib/types/models';
 
@@ -12,7 +13,6 @@ export default function BrowsePageClient() {
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
-    const [inputValue, setInputValue] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -36,32 +36,15 @@ export default function BrowsePageClient() {
         fetchCharts(page, search);
     }, [page, search, fetchCharts]);
 
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSearch = (query: string) => {
         setPage(1);
-        setSearch(inputValue.trim());
+        setSearch(query);
     };
 
     return (
         <div className="flex-1 p-6 flex flex-col gap-6 max-w-6xl mx-auto w-full">
-            {/* Search */}
-            <form onSubmit={handleSearch} className="flex gap-3">
-                <input
-                    type="text"
-                    value={inputValue}
-                    onChange={e => setInputValue(e.target.value)}
-                    placeholder="Search by title, song, or artist…"
-                    className="flex-1 border-4 border-black bg-white px-4 py-2 font-medium placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-                <button
-                    type="submit"
-                    className="bg-purple-800 text-white border-4 border-black px-5 py-2 font-bold hover:bg-purple-700 transition-colors"
-                >
-                    Search
-                </button>
-            </form>
+            <SearchBar onSearch={handleSearch} />
 
-            {/* Results meta */}
             {!loading && !error && (
                 <p className="text-sm text-gray-600 -mt-2">
                     {total === 0
@@ -70,7 +53,6 @@ export default function BrowsePageClient() {
                 </p>
             )}
 
-            {/* Grid */}
             {loading ? (
                 <div className="flex-1 flex items-center justify-center">
                     <p className="text-gray-500 font-medium">Loading…</p>
@@ -91,7 +73,6 @@ export default function BrowsePageClient() {
                 </div>
             )}
 
-            {/* Pagination */}
             {!loading && !error && totalPages > 1 && (
                 <div className="flex items-center justify-center gap-4 mt-auto pt-4">
                     <button
