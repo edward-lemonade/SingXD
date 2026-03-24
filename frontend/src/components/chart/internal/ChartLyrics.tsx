@@ -25,16 +25,15 @@ interface ChartLyricsProps {
 const TRANSITION_MS = 350;
 const SLOTS = 3; // always render this many slots so focus line stays centered
 
-type Slot =
-    | { kind: 'line'; line: LyricLineState }
-    | { kind: 'empty'; key: string };
+type Slot = { kind: 'line'; line: LyricLineState } | { kind: 'empty'; key: string };
 
 export default function ChartLyrics({ chart, engine, lineHeightPx, fontSize }: ChartLyricsProps) {
     const { lyricState } = engine;
     const baseColor = chart.properties.textColor ?? '#ffffff';
     const highlightColor = '#FFD700';
 
-    const activeState = lyricState.kind === LyricStateKind.ACTIVE_WORD ? (lyricState as ActiveWordState) : null;
+    const activeState =
+        lyricState.kind === LyricStateKind.ACTIVE_WORD ? (lyricState as ActiveWordState) : null;
     const durationSec = activeState
         ? Math.max(0.05, activeState.activeWordEnd - activeState.activeWordStart)
         : 0.05;
@@ -65,7 +64,8 @@ export default function ChartLyrics({ chart, engine, lineHeightPx, fontSize }: C
         // No current line (e.g. large gap fade-out) — just fill slots with lines or empties.
         if (focusIdx === -1) {
             const result: Slot[] = lines.map(l => ({ kind: 'line', line: l }));
-            while (result.length < SLOTS) result.push({ kind: 'empty', key: `empty-pad-${result.length}` });
+            while (result.length < SLOTS)
+                result.push({ kind: 'empty', key: `empty-pad-${result.length}` });
             return result.slice(0, SLOTS);
         }
 
@@ -74,7 +74,7 @@ export default function ChartLyrics({ chart, engine, lineHeightPx, fontSize }: C
         const centerSlot = Math.floor(SLOTS / 2); // index 1 for SLOTS=3
 
         const emptyAbove = centerSlot - before; // padding slots needed above
-        const emptyBelow = centerSlot - after;  // padding slots needed below
+        const emptyBelow = centerSlot - after; // padding slots needed below
 
         const result: Slot[] = [];
 
@@ -178,7 +178,7 @@ export default function ChartLyrics({ chart, engine, lineHeightPx, fontSize }: C
                             : 'none',
                     }}
                 >
-                    {slots.map((slot) => {
+                    {slots.map(slot => {
                         if (slot.kind === 'empty') {
                             return (
                                 <div

@@ -157,7 +157,7 @@ export default function ChartGame({
             }
 
             if (msg.type === 'score') {
-                const opacity = Math.min(1, 2-2*msg.score);
+                const opacity = Math.min(1, 2 - 2 * msg.score);
                 setVignetteOpacity(opacity);
                 console.log(msg.referenceSemitone, msg.detectedSemitone);
                 return;

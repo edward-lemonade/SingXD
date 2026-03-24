@@ -22,7 +22,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 1.0;
+    opacity: 1;
     animation: diamondMove 30s linear infinite;
 
     background-color: transparent;
@@ -34,7 +34,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 1.0;
+    opacity: 1;
     animation: diamondMove 30s linear infinite;
 
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpolygon points='40,0 80,40 40,80 0,40' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='1'/%3E%3C/svg%3E");
@@ -48,6 +48,10 @@
 }
 
 @keyframes diamondMove {
-    from { background-position: 0 0; }
-    to   { background-position: 256px 256px; }
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 256px 256px;
+    }
 }

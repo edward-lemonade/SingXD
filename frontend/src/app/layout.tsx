@@ -28,9 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang="en" className={`${inter.variable} ${bebas.variable}`}>
             <body>
-                <Providers>
-                    {children}
-                </Providers>
+                <Providers>{children}</Providers>
             </body>
         </html>
     );

@@ -25,17 +25,51 @@
     height: 10px;
     pointer-events: none;
     z-index: 2;
-    transition: transform 250ms ease-out, border-color 200ms;
+    transition:
+        transform 250ms ease-out,
+        border-color 200ms;
 }
 
-.bracketTL { top: 6px; left: 6px; border-top: 1px solid rgba(255,255,255,0.3); border-left: 1px solid rgba(255,255,255,0.3); }
-.bracketTR { top: 6px; right: 6px; border-top: 1px solid rgba(255,255,255,0.3); border-right: 1px solid rgba(255,255,255,0.3); }
-.bracketBL { bottom: 6px; left: 6px; border-bottom: 1px solid rgba(255,255,255,0.3); border-left: 1px solid rgba(255,255,255,0.3); }
-.bracketBR { bottom: 6px; right: 6px; border-bottom: 1px solid rgba(255,255,255,0.3); border-right: 1px solid rgba(255,255,255,0.3); }
-.inputWrapper:focus-within .bracketTL { transform: translate(-3px, -3px); border-color: rgba(255,255,255,0.9); }
-.inputWrapper:focus-within .bracketTR { transform: translate( 3px, -3px); border-color: rgba(255,255,255,0.9); }
-.inputWrapper:focus-within .bracketBL { transform: translate(-3px,  3px); border-color: rgba(255,255,255,0.9); }
-.inputWrapper:focus-within .bracketBR { transform: translate( 3px,  3px); border-color: rgba(255,255,255,0.9); }
+.bracketTL {
+    top: 6px;
+    left: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+.bracketTR {
+    top: 6px;
+    right: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+.bracketBL {
+    bottom: 6px;
+    left: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+.bracketBR {
+    bottom: 6px;
+    right: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+.inputWrapper:focus-within .bracketTL {
+    transform: translate(-3px, -3px);
+    border-color: rgba(255, 255, 255, 0.9);
+}
+.inputWrapper:focus-within .bracketTR {
+    transform: translate(3px, -3px);
+    border-color: rgba(255, 255, 255, 0.9);
+}
+.inputWrapper:focus-within .bracketBL {
+    transform: translate(-3px, 3px);
+    border-color: rgba(255, 255, 255, 0.9);
+}
+.inputWrapper:focus-within .bracketBR {
+    transform: translate(3px, 3px);
+    border-color: rgba(255, 255, 255, 0.9);
+}
 
 /* ── Input ──────────────────────────────────────────── */
 .input {
@@ -61,7 +95,7 @@
     display: flex;
     align-items: center;
     gap: 7px;
-    background: rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 11px 18px;
@@ -69,7 +103,9 @@
     font-size: 0.9rem;
     letter-spacing: 0.12em;
     cursor: pointer;
-    transition: color 150ms, background 150ms;
+    transition:
+        color 150ms,
+        background 150ms;
 }
 
 .button:hover {

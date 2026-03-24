@@ -2,6 +2,61 @@
     display: block;
 }
 
+/* Large featured card (home carousel): square art + roomy info */
+.linkHero .thumbnail {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+}
+
+.linkHero .orbitRing {
+    width: min(42%, 280px);
+    height: min(42%, 280px);
+}
+
+.linkHero .bracket {
+    width: 16px;
+    height: 16px;
+}
+
+.linkHero .bracketTL {
+    top: 16px;
+    left: 16px;
+}
+.linkHero .bracketTR {
+    top: 16px;
+    right: 16px;
+}
+.linkHero .bracketBL {
+    bottom: 16px;
+    left: 16px;
+}
+.linkHero .bracketBR {
+    bottom: 16px;
+    right: 16px;
+}
+
+.linkHero .placeholder svg {
+    width: 52px;
+    height: 52px;
+}
+
+.linkHero .info {
+    padding: 22px 26px;
+    gap: 12px;
+}
+
+.linkHero .title {
+    font-size: 1.65rem;
+    line-height: 1.15;
+}
+
+.linkHero .subtitle {
+    font-size: 1.05rem;
+    margin-top: 8px;
+    letter-spacing: 0.06em;
+}
+
 .card {
     background: var(--color-dark-base);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -35,7 +90,6 @@
     background: rgba(0, 0, 0, 0);
 }
 
-
 /* ── HUD orbit ring ─────────────────────────────────── */
 .orbitRing {
     position: absolute;
@@ -48,7 +102,9 @@
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.2);
     pointer-events: none;
-    transition: border-color 200ms, transform 400ms;
+    transition:
+        border-color 200ms,
+        transform 400ms;
     z-index: 1;
 }
 
@@ -66,18 +122,52 @@
     z-index: 2;
 }
 
-.bracketTL { top: 8px;  left: 8px;  border-top: 1px solid rgba(255,255,255,0.5); border-left: 1px solid rgba(255,255,255,0.5); }
-.bracketTR { top: 8px;  right: 8px; border-top: 1px solid rgba(255,255,255,0.5); border-right: 1px solid rgba(255,255,255,0.5); }
-.bracketBL { bottom: 8px; left: 8px;  border-bottom: 1px solid rgba(255,255,255,0.5); border-left: 1px solid rgba(255,255,255,0.5); }
-.bracketBR { bottom: 8px; right: 8px; border-bottom: 1px solid rgba(255,255,255,0.5); border-right: 1px solid rgba(255,255,255,0.5); }
+.bracketTL {
+    top: 8px;
+    left: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+}
+.bracketTR {
+    top: 8px;
+    right: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+.bracketBL {
+    bottom: 8px;
+    left: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+}
+.bracketBR {
+    bottom: 8px;
+    right: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
 
-.link:hover .bracketTL { transform: translate(-3px, -3px); }
-.link:hover .bracketTR { transform: translate(3px,  -3px); }
-.link:hover .bracketBL { transform: translate(-3px,  3px); }
-.link:hover .bracketBR { transform: translate(3px,   3px); }
- 
-.bracket { transition: transform 250ms ease-out, border-color 200ms; }
-.link:hover .bracket { border-color: rgba(255, 255, 255, 0.9); }
+.link:hover .bracketTL {
+    transform: translate(-3px, -3px);
+}
+.link:hover .bracketTR {
+    transform: translate(3px, -3px);
+}
+.link:hover .bracketBL {
+    transform: translate(-3px, 3px);
+}
+.link:hover .bracketBR {
+    transform: translate(3px, 3px);
+}
+
+.bracket {
+    transition:
+        transform 250ms ease-out,
+        border-color 200ms;
+}
+.link:hover .bracket {
+    border-color: rgba(255, 255, 255, 0.9);
+}
 
 /* ── Placeholder (no bg image) ──────────────────────── */
 .placeholder {
@@ -109,7 +199,7 @@
     font-family: var(--font-wide);
     font-weight: 700;
     font-size: 1.05rem;
-    color: rgba(255, 255, 255, 1.0);
+    color: rgba(255, 255, 255, 1);
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -36,7 +36,11 @@ export default function AudioStep({
                         accept="audio/*"
                         onChange={e => {
                             const file = e.target.files?.[0];
-                            if (file) setAudioUrls(prev => ({ ...prev, combined: URL.createObjectURL(file) }));
+                            if (file)
+                                setAudioUrls(prev => ({
+                                    ...prev,
+                                    combined: URL.createObjectURL(file),
+                                }));
                         }}
                         className="mb-4"
                     />
@@ -69,7 +73,9 @@ export default function AudioStep({
                                     if (file) handleUploadInstrumental(file);
                                 }}
                             />
-                            {instrumentalUploading && <p className="text-sm text-gray-500 mt-1">Uploading…</p>}
+                            {instrumentalUploading && (
+                                <p className="text-sm text-gray-500 mt-1">Uploading…</p>
+                            )}
                             {audioUrls.instrumental && (
                                 <audio controls src={audioUrls.instrumental} className="mt-2" />
                             )}
@@ -85,7 +91,9 @@ export default function AudioStep({
                                     if (file) handleUploadVocals(file);
                                 }}
                             />
-                            {vocalsUploading && <p className="text-sm text-gray-500 mt-1">Uploading…</p>}
+                            {vocalsUploading && (
+                                <p className="text-sm text-gray-500 mt-1">Uploading…</p>
+                            )}
                             {audioUrls.vocals && (
                                 <audio controls src={audioUrls.vocals} className="mt-2" />
                             )}

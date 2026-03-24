@@ -9,9 +9,7 @@ const queryClient = new QueryClient();
 export default function Providers({ children }: { children: ReactNode }) {
     return (
         <AuthProvider>
-            <QueryClientProvider client={queryClient}>
-                {children}
-            </QueryClientProvider>
+            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         </AuthProvider>
     );
 }

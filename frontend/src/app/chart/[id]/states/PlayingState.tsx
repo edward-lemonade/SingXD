@@ -13,8 +13,5 @@ export default function PlayingState({
     onQuit: (summary?: WsSummaryMsg) => void;
     onFinished: (summary?: WsSummaryMsg) => void;
 }) {
-    return (
-        <ChartGame chart={chart} chartId={chartId} onQuit={onQuit} onFinished={onFinished} />
-    );
+    return <ChartGame chart={chart} chartId={chartId} onQuit={onQuit} onFinished={onFinished} />;
 }
-

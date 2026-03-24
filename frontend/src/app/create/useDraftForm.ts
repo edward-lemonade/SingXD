@@ -133,7 +133,10 @@ export function useDraftForm(initialDraftUuid?: string): DraftFormState {
                 .then(draft => {
                     setLyricsString(linesToString(draft.lines));
                     setTimings(draft.timings);
-                    setChartProps({ ...draft.properties, backgroundImageUrl: draft.backgroundImageUrl ?? null });
+                    setChartProps({
+                        ...draft.properties,
+                        backgroundImageUrl: draft.backgroundImageUrl ?? null,
+                    });
                     setAudioUrls(prev => ({
                         ...prev,
                         vocals: draft.vocalsUrl ?? null,
@@ -152,13 +155,32 @@ export function useDraftForm(initialDraftUuid?: string): DraftFormState {
     }, []);
 
     // cleanup
-    useEffect(() => () => { if (audioUrls.combined) URL.revokeObjectURL(audioUrls.combined); }, [audioUrls.combined]);
-    useEffect(() => () => { if (audioUrls.instrumental?.startsWith('blob:')) URL.revokeObjectURL(audioUrls.instrumental!); }, [audioUrls.instrumental]);
-    useEffect(() => () => { if (audioUrls.vocals) URL.revokeObjectURL(audioUrls.vocals!); }, [audioUrls.vocals]);
-    useEffect(() => () => {
-        const url = chartProps.backgroundImageUrl;
-        if (url?.startsWith('blob:')) URL.revokeObjectURL(url);
-    }, [chartProps.backgroundImageUrl]);
+    useEffect(
+        () => () => {
+            if (audioUrls.combined) URL.revokeObjectURL(audioUrls.combined);
+        },
+        [audioUrls.combined]
+    );
+    useEffect(
+        () => () => {
+            if (audioUrls.instrumental?.startsWith('blob:'))
+                URL.revokeObjectURL(audioUrls.instrumental!);
+        },
+        [audioUrls.instrumental]
+    );
+    useEffect(
+        () => () => {
+            if (audioUrls.vocals) URL.revokeObjectURL(audioUrls.vocals!);
+        },
+        [audioUrls.vocals]
+    );
+    useEffect(
+        () => () => {
+            const url = chartProps.backgroundImageUrl;
+            if (url?.startsWith('blob:')) URL.revokeObjectURL(url);
+        },
+        [chartProps.backgroundImageUrl]
+    );
 
     // derive duration
     useEffect(() => {
@@ -170,7 +192,11 @@ export function useDraftForm(initialDraftUuid?: string): DraftFormState {
             try {
                 const buf = await fetch(audioUrls.instrumental).then(r => r.arrayBuffer());
                 const decoded = await new AudioContext().decodeAudioData(buf);
-                setChartProps(prev => ({ ...prev, duration: decoded.duration, audioUrl: audioUrls.instrumental }));
+                setChartProps(prev => ({
+                    ...prev,
+                    duration: decoded.duration,
+                    audioUrl: audioUrls.instrumental,
+                }));
             } catch {
                 setChartProps(prev => ({ ...prev, audioUrl: audioUrls.instrumental }));
             }
@@ -234,7 +260,11 @@ export function useDraftForm(initialDraftUuid?: string): DraftFormState {
         try {
             const blob = await fetch(audioUrls.combined).then(r => r.blob());
             const res = await DraftAPI.separateAudio(uuid.current, blob);
-            setAudioUrls(prev => ({ ...prev, vocals: res.vocalsUrl, instrumental: res.instrumentalUrl }));
+            setAudioUrls(prev => ({
+                ...prev,
+                vocals: res.vocalsUrl,
+                instrumental: res.instrumentalUrl,
+            }));
         } catch (err) {
             console.error('Failed to separate audio', err);
         } finally {
@@ -295,7 +325,9 @@ export function useDraftForm(initialDraftUuid?: string): DraftFormState {
             setPublishError(
                 axios.isAxiosError(err) && err.response?.data?.error
                     ? err.response.data.error
-                    : err instanceof Error ? err.message : 'Failed to publish'
+                    : err instanceof Error
+                      ? err.message
+                      : 'Failed to publish'
             );
         } finally {
             setPublishLoading(false);

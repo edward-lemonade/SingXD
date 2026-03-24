@@ -17,18 +17,18 @@ function isActive(href: string, pathname: string) {
     if (href === '/') return pathname === '/';
     return pathname.startsWith(href);
 }
- 
+
 export default function NavBar() {
     const pathname = usePathname();
     const { user, loading } = useAuth();
- 
+
     return (
         <div className={styles.container}>
             <div className={styles.bg} />
             <div className={styles.accent} />
- 
+
             <nav className={styles.nav}>
-                <Logo/>
+                <Logo />
 
                 <div className={styles.links}>
                     {NAV_ITEMS.map(({ label, href }) => {
@@ -45,11 +45,11 @@ export default function NavBar() {
                         );
                     })}
                 </div>
- 
+
                 <div className={styles.bottom}>
                     <div className={styles.divider} />
-                    {!loading && (
-                        user ? (
+                    {!loading &&
+                        (user ? (
                             <>
                                 <span className={styles.profileLabel}>Signed in as</span>
                                 <span className={styles.profileName}>
@@ -61,14 +61,19 @@ export default function NavBar() {
                             </>
                         ) : (
                             <>
-                                <Link href="/login" className={styles.authLink}>Login</Link>
-                                <Link href="/register" className={`${styles.authLink} ${styles.authLinkSecondary}`}>Register</Link>
+                                <Link href="/login" className={styles.authLink}>
+                                    Login
+                                </Link>
+                                <Link
+                                    href="/register"
+                                    className={`${styles.authLink} ${styles.authLinkSecondary}`}
+                                >
+                                    Register
+                                </Link>
                             </>
-                        )
-                    )}
+                        ))}
                 </div>
             </nav>
         </div>
     );
 }
- 

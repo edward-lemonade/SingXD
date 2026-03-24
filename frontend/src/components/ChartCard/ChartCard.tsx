@@ -1,20 +1,36 @@
-import { PublicChart } from "@/src/lib/types/models";
-import Link from "next/link";
-import styles from "./ChartCard.module.css";
+import { PublicChart } from '@/src/lib/types/models';
+import Link from 'next/link';
+import styles from './ChartCard.module.css';
 
-export function ChartCard({ chart }: { chart: PublicChart }) {
+export function ChartCard({
+    chart,
+    variant = 'default',
+}: {
+    chart: PublicChart;
+    variant?: 'default' | 'hero';
+}) {
     const title = chart.properties.title || 'Untitled';
     const artist = chart.properties.artist || '';
     const songTitle = chart.properties.songTitle || '';
     const bg = chart.properties.backgroundImageUrl;
 
+    const linkClass = variant === 'hero' ? `${styles.link} ${styles.linkHero}` : styles.link;
+
     return (
-        <Link href={`/chart/${chart.id}`} className={styles.link}>
+        <Link href={`/chart/${chart.id}`} className={linkClass}>
             <div className={styles.card}>
                 {/* Thumbnail */}
                 <div
                     className={styles.thumbnail}
-                    style={bg ? { backgroundImage: `url(${bg})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+                    style={
+                        bg
+                            ? {
+                                  backgroundImage: `url(${bg})`,
+                                  backgroundSize: 'cover',
+                                  backgroundPosition: 'center',
+                              }
+                            : undefined
+                    }
                 >
                     {/* HUD orbit ring */}
                     <div className={styles.orbitRing} />
@@ -38,10 +54,11 @@ export function ChartCard({ chart }: { chart: PublicChart }) {
                 {/* Info row */}
                 <div className={styles.info}>
                     <div className={styles.infoInner}>
-                        <p className={styles.title}>{songTitle}{` — ${artist}`}</p>
-                        <p className={styles.subtitle}>
-                            {title}
+                        <p className={styles.title}>
+                            {songTitle}
+                            {` — ${artist}`}
                         </p>
+                        <p className={styles.subtitle}>{title}</p>
                     </div>
                 </div>
             </div>

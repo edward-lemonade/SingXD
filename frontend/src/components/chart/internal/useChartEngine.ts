@@ -17,7 +17,10 @@ export interface LyricLineState {
 }
 
 export enum LyricStateKind {
-    ACTIVE_WORD, INACTIVE_WORD, SMALL_LINE_GAP, LARGE_LINE_GAP
+    ACTIVE_WORD,
+    INACTIVE_WORD,
+    SMALL_LINE_GAP,
+    LARGE_LINE_GAP,
 }
 interface BaseLyricState {
     displayedLines: LyricLineState[];
@@ -113,15 +116,24 @@ export function useChartEngine(
         };
     }, [isPlaying]);
 
-    const play = () => { audioRef.current?.play(); setIsPlaying(true); };
-    const pause = () => { audioRef.current?.pause(); setIsPlaying(false); };
+    const play = () => {
+        audioRef.current?.play();
+        setIsPlaying(true);
+    };
+    const pause = () => {
+        audioRef.current?.pause();
+        setIsPlaying(false);
+    };
     const togglePlayPause = () => (isPlaying ? pause() : play());
     const seek = (time: number) => {
         setCurrentTime(time);
         if (audioRef.current) audioRef.current.currentTime = time;
     };
 
-    const handleEnded = () => { setIsPlaying(false); onEnded?.(); };
+    const handleEnded = () => {
+        setIsPlaying(false);
+        onEnded?.();
+    };
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
@@ -256,7 +268,7 @@ export function useChartEngine(
             endIdx: number,
             currentFocusIdx: number,
             pastWordsInFocus: number,
-            activeWIdx: number,
+            activeWIdx: number
         ): LyricLineState[] => {
             const result: LyricLineState[] = [];
             for (let li = startIdx; li <= endIdx; li++) {
@@ -278,17 +290,19 @@ export function useChartEngine(
         // 6. Group-aware window builder — clamps display window to the line's group.
 
         const groupOf = (lineIdx: number) =>
-            lineGroups.find(g => lineIdx >= g.start && lineIdx <= g.end)
-            ?? { start: 0, end: lines.length - 1 };
+            lineGroups.find(g => lineIdx >= g.start && lineIdx <= g.end) ?? {
+                start: 0,
+                end: lines.length - 1,
+            };
 
         const buildLinesInGroup = (
             focusIdx: number,
             pastWordsInFocus: number,
-            activeWIdx: number,
+            activeWIdx: number
         ) => {
             const group = groupOf(focusIdx);
             const windowStart = Math.max(group.start, focusIdx - DISPLAY_WINDOW.before);
-            const windowEnd   = Math.min(group.end,   focusIdx + DISPLAY_WINDOW.after);
+            const windowEnd = Math.min(group.end, focusIdx + DISPLAY_WINDOW.after);
             return buildLines(windowStart, windowEnd, focusIdx, pastWordsInFocus, activeWIdx);
         };
 
@@ -308,7 +322,11 @@ export function useChartEngine(
                     activeWordKey: `${activeLineIdx}-${activeWordIdx}`,
                 };
             }
-            return { kind: LyricStateKind.INACTIVE_WORD, displayedLines: builtLines, visible: true };
+            return {
+                kind: LyricStateKind.INACTIVE_WORD,
+                displayedLines: builtLines,
+                visible: true,
+            };
         }
 
         const gap = gapBefore(focusLineIdx);
@@ -321,7 +339,11 @@ export function useChartEngine(
             if (currentTime < nextLineStart - LARGE_GAP_LEAD_IN_S) {
                 const prevIdx = focusLineIdx - 1;
                 if (prevIdx < 0) {
-                    return { kind: LyricStateKind.LARGE_LINE_GAP, displayedLines: [], visible: false };
+                    return {
+                        kind: LyricStateKind.LARGE_LINE_GAP,
+                        displayedLines: [],
+                        visible: false,
+                    };
                 }
                 return {
                     kind: LyricStateKind.LARGE_LINE_GAP,
@@ -341,10 +363,18 @@ export function useChartEngine(
         const builtLines = buildLinesInGroup(focusLineIdx, pastWordCountInFocusLine, -1);
 
         if (currentTime < firstWordStart) {
-            return { kind: LyricStateKind.SMALL_LINE_GAP, displayedLines: builtLines, visible: gap < LARGE_GAP_THRESHOLD_S };
+            return {
+                kind: LyricStateKind.SMALL_LINE_GAP,
+                displayedLines: builtLines,
+                visible: gap < LARGE_GAP_THRESHOLD_S,
+            };
         }
         if (currentTime >= lastWordEnd) {
-            return { kind: LyricStateKind.INACTIVE_WORD, displayedLines: builtLines, visible: true };
+            return {
+                kind: LyricStateKind.INACTIVE_WORD,
+                displayedLines: builtLines,
+                visible: true,
+            };
         }
 
         return { kind: LyricStateKind.SMALL_LINE_GAP, displayedLines: builtLines, visible: true };
@@ -352,7 +382,9 @@ export function useChartEngine(
 
     return {
         audioRef,
-        get audioElement() { return audioRef.current; },
+        get audioElement() {
+            return audioRef.current;
+        },
         currentTime,
         isPlaying,
         play,
