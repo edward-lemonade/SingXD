@@ -8,7 +8,9 @@ import PlayingState from './states/PlayingState';
 import FinishedState from './states/FinishedState';
 
 enum GameState {
-    INITIAL, PLAYING, FINISHED
+    INITIAL,
+    PLAYING,
+    FINISHED,
 }
 
 interface ChartPageClientProps {

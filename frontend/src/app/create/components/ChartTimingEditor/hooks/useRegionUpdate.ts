@@ -107,8 +107,7 @@ export function useRegionUpdate({
             // Cascade only if compressed to min AND right edge was touching next region
             const isAtMin = newStart >= minStart;
             const nextOrig = base[i + 1];
-            const touchingNext =
-                nextOrig && Math.abs(orig.end - nextOrig.start) <= TOUCH_THRESHOLD;
+            const touchingNext = nextOrig && Math.abs(orig.end - nextOrig.start) <= TOUCH_THRESHOLD;
             if (isAtMin && touchingNext) {
                 cursor = orig.end; // drive next region's start from this one's fixed end
             } else {
@@ -135,8 +134,7 @@ export function useRegionUpdate({
             // Cascade only if compressed to min AND left edge was touching prev region
             const isAtMin = newEnd <= maxEnd;
             const prevOrig = base[i - 1];
-            const touchingPrev =
-                prevOrig && Math.abs(orig.start - prevOrig.end) <= TOUCH_THRESHOLD;
+            const touchingPrev = prevOrig && Math.abs(orig.start - prevOrig.end) <= TOUCH_THRESHOLD;
             if (isAtMin && touchingPrev) {
                 cursor = orig.start;
             } else {
@@ -164,15 +162,20 @@ export function useRegionUpdate({
             const nextStart = ds.index < ts.length - 1 ? ts[ds.index + 1].start : duration;
             newStart = ds.origStart + deltaSec;
             newEnd = ds.origEnd + deltaSec;
-            if (newStart < prevEnd) { newStart = prevEnd; newEnd = newStart + regionDuration; }
-            if (newEnd > nextStart) { newEnd = nextStart; newStart = newEnd - regionDuration; }
+            if (newStart < prevEnd) {
+                newStart = prevEnd;
+                newEnd = newStart + regionDuration;
+            }
+            if (newEnd > nextStart) {
+                newEnd = nextStart;
+                newStart = newEnd - regionDuration;
+            }
             newStart = Math.max(0, newStart);
             newEnd = Math.min(duration, newEnd);
 
             ds.liveStart = newStart;
             ds.liveEnd = newEnd;
             applyStyle(ds.index, newStart, newEnd);
-
         } else if (ds.mode === 'resize-right') {
             newEnd = ds.origEnd + deltaSec;
             newEnd = Math.max(ds.origStart + MIN_REGION_DURATION, newEnd);
@@ -196,7 +199,6 @@ export function useRegionUpdate({
                 const pushed = pushRight(ds.index + 1, newEnd, base);
                 pushed.forEach(({ start, end }, i) => applyStyle(i, start, end));
             }
-
         } else if (ds.mode === 'resize-left') {
             newStart = ds.origStart + deltaSec;
             newStart = Math.min(ds.origEnd - MIN_REGION_DURATION, newStart);

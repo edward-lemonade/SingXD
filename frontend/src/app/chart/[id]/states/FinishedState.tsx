@@ -27,11 +27,15 @@ function SummaryPane({ summary }: { summary: WsSummaryMsg | null }) {
             <div className="mt-4 grid grid-cols-1 gap-4">
                 <div className="rounded-xl bg-black/25 border border-white/10 p-4">
                     <div className="text-white/70 text-xs uppercase tracking-wide">Total score</div>
-                    <div className="mt-1 text-3xl font-extrabold">{formatPercent(summary?.totalScore ?? NaN)}</div>
+                    <div className="mt-1 text-3xl font-extrabold">
+                        {formatPercent(summary?.totalScore ?? NaN)}
+                    </div>
                 </div>
                 <div className="rounded-xl bg-black/25 border border-white/10 p-4">
                     <div className="text-white/70 text-xs uppercase tracking-wide">Average</div>
-                    <div className="mt-1 text-2xl font-bold">{avg == null ? '—' : formatPercent(avg)}</div>
+                    <div className="mt-1 text-2xl font-bold">
+                        {avg == null ? '—' : formatPercent(avg)}
+                    </div>
                 </div>
             </div>
             {summary == null && (
@@ -65,4 +69,3 @@ export default function FinishedState({
         </div>
     );
 }
-

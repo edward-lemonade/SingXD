@@ -1,5 +1,10 @@
 import { ChartBase, DraftChart, DraftChartWithURLs, Line, Timing } from '../types/models';
-import { GenerateTimingsResponse, SeparateAudioResponse, UploadAudioResponse, UploadImageResponse } from '../types/api';
+import {
+    GenerateTimingsResponse,
+    SeparateAudioResponse,
+    UploadAudioResponse,
+    UploadImageResponse,
+} from '../types/api';
 import { ROUTE_CONFIG } from './routes';
 import { API } from '../axios';
 
@@ -11,7 +16,9 @@ export const initDraft = async (): Promise<string> => {
 };
 
 export const updateDraft = async (uuid: string, chartBase: ChartBase): Promise<DraftChart> => {
-    const res = await API.put<{ draft: DraftChart }>(ROUTE_CONFIG.draft.update(uuid), { chartBase });
+    const res = await API.put<{ draft: DraftChart }>(ROUTE_CONFIG.draft.update(uuid), {
+        chartBase,
+    });
     return res.data.draft;
 };
 
@@ -30,18 +37,25 @@ export const deleteDraft = async (uuid: string): Promise<void> => {
 };
 
 export const publishDraft = async (uuid: string, chartBase: ChartBase): Promise<{ id: number }> => {
-    const res = await API.post<{ chart: { id: number } }>(ROUTE_CONFIG.draft.publish(uuid), { chartBase });
+    const res = await API.post<{ chart: { id: number } }>(ROUTE_CONFIG.draft.publish(uuid), {
+        chartBase,
+    });
     return res.data.chart;
 };
 
 // Long Work
 
-export const separateAudio = async (uuid: string, audioCombined: Blob): Promise<SeparateAudioResponse> => {
+export const separateAudio = async (
+    uuid: string,
+    audioCombined: Blob
+): Promise<SeparateAudioResponse> => {
     const url = ROUTE_CONFIG.draft.separateAudio();
     const formData = new FormData();
     formData.append('uuid', uuid);
     formData.append('audio', audioCombined);
-    const response = await API.post<SeparateAudioResponse>(url, formData, { timeout: 5 * 60 * 1000 });
+    const response = await API.post<SeparateAudioResponse>(url, formData, {
+        timeout: 5 * 60 * 1000,
+    });
     return response.data;
 };
 
@@ -77,6 +91,8 @@ export const generateTimings = async (uuid: string, lines: Line[]): Promise<Timi
     const formData = new FormData();
     formData.append('uuid', uuid);
     formData.append('lyrics', JSON.stringify(lines));
-    const response = await API.post<GenerateTimingsResponse>(url, formData, { timeout: 5 * 60 * 1000 });
+    const response = await API.post<GenerateTimingsResponse>(url, formData, {
+        timeout: 5 * 60 * 1000,
+    });
     return response.data.timings;
 };

@@ -1,0 +1,50 @@
+.scroller {
+    scroll-behavior: smooth;
+    scroll-timeline: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-stop: always;
+}
+
+@supports (scroll-behavior: smooth) {
+    .scroller {
+        transition-duration: 150ms;
+    }
+}
+
+.navTop {
+    cursor: pointer;
+    background-image: radial-gradient(
+        ellipse 50% 100% at 50% 0%,
+        rgba(0, 0, 0, 0.70) 0%,
+        rgba(0, 0, 0, 0.30) 50%,
+        rgba(0, 0, 0, 0.00) 100%
+    );
+    background-size: 100% 100%;
+    background-position: center top;
+    background-repeat: no-repeat;
+    transition: opacity 300ms;
+    opacity: 0.75;
+}
+
+.navTop:hover:not(:disabled) {
+    opacity: 1;
+}
+
+.navBottom {
+    cursor: pointer;
+    background-image: radial-gradient(
+        ellipse 50% 100% at 50% 100%,
+        rgba(0, 0, 0, 0.70) 0%,
+        rgba(0, 0, 0, 0.30) 50%,
+        rgba(0, 0, 0, 0.00) 100%
+    );
+    background-size: 100% 100%;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    transition: opacity 300ms;
+    opacity: 0.75;
+}
+
+.navBottom:hover:not(:disabled) {
+    opacity: 1;
+}

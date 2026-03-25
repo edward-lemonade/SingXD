@@ -55,5 +55,5 @@ export interface DraftChartWithURLs extends DraftChart {
     combinedUrl?: string;
     instrumentalUrl?: string;
     vocalsUrl?: string;
-    backgroundImageUrl?: string
+    backgroundImageUrl?: string;
 }

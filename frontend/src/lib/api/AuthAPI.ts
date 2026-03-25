@@ -17,10 +17,8 @@ export const loginWithEmail = (email: string, password: string) =>
 export const registerWithEmail = (email: string, password: string) =>
     createUserWithEmailAndPassword(auth, email, password);
 
-export const loginWithGoogle = () =>
-    signInWithPopup(auth, new GoogleAuthProvider());
+export const loginWithGoogle = () => signInWithPopup(auth, new GoogleAuthProvider());
 
 export const logout = () => signOut(auth);
 
-export const onAuthChanged = (cb: (user: User | null) => void) =>
-    onAuthStateChanged(auth, cb);
+export const onAuthChanged = (cb: (user: User | null) => void) => onAuthStateChanged(auth, cb);

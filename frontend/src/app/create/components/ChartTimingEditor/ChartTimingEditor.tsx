@@ -133,7 +133,7 @@ function ChartTimingEditor({
     // =====================================================================================
 
     return (
-        <div className='gap-6 flex flex-row'>
+        <div className="gap-6 flex flex-row">
             {/* Controls */}
             {isReady && (
                 <div className="flex flex-col shrink">

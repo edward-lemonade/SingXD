@@ -33,7 +33,11 @@ interface ChartPreviewProps {
     onEnded?: () => void;
 }
 
-export default function ChartPreview({ chart, playerSettings: partial, onEnded }: ChartPreviewProps) {
+export default function ChartPreview({
+    chart,
+    playerSettings: partial,
+    onEnded,
+}: ChartPreviewProps) {
     const settings = { ...defaultPlayerSettings, ...partial };
     const engine = useChartEngine(chart, { onEnded });
     const [isHovered, setIsHovered] = useState(false);
@@ -144,7 +148,13 @@ export default function ChartPreview({ chart, playerSettings: partial, onEnded }
                                     <rect x="15" y="3" width="4" height="18" rx="1" />
                                 </svg>
                             ) : (
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="white" style={{ marginLeft: 3 }}>
+                                <svg
+                                    width="28"
+                                    height="28"
+                                    viewBox="0 0 24 24"
+                                    fill="white"
+                                    style={{ marginLeft: 3 }}
+                                >
                                     <polygon points="5,3 19,12 5,21" />
                                 </svg>
                             )}

@@ -3,10 +3,7 @@ import { ChartBase, DraftChart } from '../types/models';
 import { ROUTE_CONFIG } from './routes';
 import { API } from '../axios';
 
-export const createChart = async (
-    uuid: string,
-    chartBase: ChartBase
-): Promise<ChartResponse> => {
+export const createChart = async (uuid: string, chartBase: ChartBase): Promise<ChartResponse> => {
     const url = ROUTE_CONFIG.chart.create();
     const response = await API.post<ChartResponse>(url, { uuid, chartBase });
     return response.data;

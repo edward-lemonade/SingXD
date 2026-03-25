@@ -37,11 +37,7 @@ export default function ChartControls({
                 max={duration}
                 step="0.01"
                 value={currentTime}
-                onChange={
-                    isGame || !onSeek
-                        ? undefined
-                        : e => onSeek(parseFloat(e.target.value))
-                }
+                onChange={isGame || !onSeek ? undefined : e => onSeek(parseFloat(e.target.value))}
                 disabled={isGame}
                 style={{
                     flex: 1,
