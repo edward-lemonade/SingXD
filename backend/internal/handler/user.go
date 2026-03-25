@@ -23,5 +23,12 @@ func NewUserHandler(service *user.UserService) *UserHandler {
 func (a *UserHandler) Me(c *gin.Context) {
 	uid, _ := c.Get(middleware.UIDKey)
 	uidString, _ := uid.(string)
-	c.JSON(http.StatusOK, gin.H{"uid": uidString})
+
+	currentUser, err := a.userService.GetOrCreateByUID(c.Request.Context(), uidString)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch current user."})
+		return
+	}
+
+	c.JSON(http.StatusOK, currentUser)
 }

@@ -14,6 +14,11 @@
     /* custom colors */
     --color-dark-base: #1e1e25;
     --color-dark-highlight: #32323b;
+    --color-light-base: #8e8eaa;
+    --color-light-highlight: #afafcf;
+
+    --color-accent-rose: #f3bbc0;
+    --color-accent-peach: #f3debb;
 }
 
 @theme inline {

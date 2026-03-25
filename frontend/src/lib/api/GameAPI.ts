@@ -1,5 +1,5 @@
 import { API } from '../axios';
-import { ROUTE_CONFIG } from './routes';
+import { ROUTE_CONFIG } from '../routes';
 
 export type GameSocketCloseReason = 'quit' | 'ended' | 'unmount' | string;
 

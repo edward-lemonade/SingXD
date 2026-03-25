@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChartCard } from '@/src/components/ChartCard/ChartCard';
 import SearchBar from '@/src/components/SearchBar/SearchBar';
 import * as ChartAPI from '@/src/lib/api/ChartAPI';
@@ -8,14 +8,22 @@ import { PublicChart } from '@/src/lib/types/models';
 
 const PAGE_SIZE = 12;
 
-export default function BrowsePageClient() {
-    const [charts, setCharts] = useState<PublicChart[]>([]);
-    const [total, setTotal] = useState(0);
-    const [page, setPage] = useState(1);
-    const [search, setSearch] = useState('');
-    const [loading, setLoading] = useState(true);
+export interface BrowsePageProps {
+    initialCharts: PublicChart[],
+    initialTotal: number,
+    initialPage: number,
+    initialSearch: string,
+}
+
+export default function BrowsePage({ initialCharts, initialTotal, initialPage, initialSearch }: BrowsePageProps) {
+    const [charts, setCharts] = useState<PublicChart[]>(initialCharts);
+    const [total, setTotal] = useState(initialTotal);
+    const [page, setPage] = useState(initialPage);
+    const [search, setSearch] = useState(initialSearch);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const isInitialRender = useRef(true);
     const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
     const fetchCharts = useCallback(async (p: number, q: string) => {
@@ -33,6 +41,12 @@ export default function BrowsePageClient() {
     }, []);
 
     useEffect(() => {
+        if (isInitialRender.current) {
+            isInitialRender.current = false;
+            setLoading(false);
+            return () => { isInitialRender.current = true; };
+        }
+
         fetchCharts(page, search);
     }, [page, search, fetchCharts]);
 

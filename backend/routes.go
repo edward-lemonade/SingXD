@@ -9,6 +9,7 @@ import (
 )
 
 type Handlers struct {
+	Auth  *handler.AuthHandler
 	User  *handler.UserHandler
 	Draft *handler.DraftHandler
 	Chart *handler.ChartHandler
@@ -27,7 +28,9 @@ func SetupRoutes(router *gin.Engine, c Handlers, authService *auth.AuthService) 
 		api.GET("/game/:id/load", c.Game.PreloadVocals)
 		api.GET("/game/:id/run", c.Game.GameSocket)
 
-		api.GET("/auth/me", c.User.Me)
+		api.POST("/auth/session", c.Auth.CreateSession)
+		api.DELETE("/auth/session", c.Auth.ClearSession)
+		api.GET("/auth/me", authMiddleware, c.User.Me)
 
 		api.POST("/drafts/init", c.Draft.InitDraft)
 		api.POST("/drafts/:uuid/publish", c.Draft.PublishDraft)
