@@ -3,8 +3,6 @@ import { Inter, Bebas_Neue } from 'next/font/google';
 import './globals.css';
 import Providers from './providers';
 
-import '@/src/lib/middleware/auth';
-
 const inter = Inter({
     subsets: ['latin'],
     weight: ['400', '700', '900'],

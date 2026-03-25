@@ -3,23 +3,25 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/src/lib/context/AuthContext';
-import { logout } from '@/src/lib/api/AuthAPI';
+import type { User } from '@/src/lib/types/models';
 import styles from './NavBar.module.css';
 import { Logo } from '../Logo';
+import { logout as logoutFromAuthAPI } from '@/src/lib/api/AuthAPI';
 
 function isActive(href: string, pathname: string) {
     if (href === '/') return pathname === '/';
     return pathname.startsWith(href);
 }
 
-export default function NavBar() {
+export default function NavBar({ user }: { user: User | null }) {
     const pathname = usePathname();
-    const { user, loading } = useAuth();
+    const isAuthed = Boolean(user);
+    const { loggingOut } = useAuth();
 
     const NAV_ITEMS = [
         { label: 'PLAY', href: '/' },
         { label: 'BROWSE', href: '/browse' },
-        { label: 'CREATE', href: user ? '/drafts' : '/create' },
+        { label: 'CREATE', href: isAuthed ? '/drafts' : '/create' },
     ] as const;
 
     return (
@@ -48,30 +50,31 @@ export default function NavBar() {
 
                 <div className={styles.bottom}>
                     <div className={styles.divider} />
-                    {!loading &&
-                        (user ? (
-                            <>
-                                <span className={styles.profileLabel}>Signed in as</span>
-                                <span className={styles.profileName}>
-                                    {user.displayName ?? user.email?.split('@')[0] ?? 'Agent'}
-                                </span>
-                                <button className={styles.logout} onClick={() => logout()}>
-                                    Log out
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <Link href="/login" className={styles.authLink}>
-                                    Login
-                                </Link>
-                                <Link
-                                    href="/register"
-                                    className={`${styles.authLink} ${styles.authLinkSecondary}`}
-                                >
-                                    Register
-                                </Link>
-                            </>
-                        ))}
+                    {isAuthed ? (
+                        <>
+                            <span className={styles.profileLabel}>Signed in as</span>
+                            <span className={styles.profileName}>{user?.username || 'Agent'}</span>
+                            <button
+                                className={styles.logout}
+                                onClick={() => logoutFromAuthAPI()}
+                                disabled={loggingOut}
+                            >
+                                {loggingOut ? 'Logging out…' : 'Log out'}
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link href="/login" className={styles.authLink}>
+                                Login
+                            </Link>
+                            <Link
+                                href="/register"
+                                className={`${styles.authLink} ${styles.authLinkSecondary}`}
+                            >
+                                Register
+                            </Link>
+                        </>
+                    )}
                 </div>
             </nav>
         </div>

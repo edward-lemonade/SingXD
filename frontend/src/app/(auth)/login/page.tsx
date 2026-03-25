@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { loginWithEmail, loginWithGoogle } from '@/src/lib/api/AuthAPI';
-import Wallpaper from '@/src/components/Wallpaper/Wallpaper';
-import { Logo } from '@/src/components/Logo';
 import styles from '../auth.module.css';
 
 export default function LoginPage() {

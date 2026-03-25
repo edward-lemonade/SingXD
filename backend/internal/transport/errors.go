@@ -32,6 +32,7 @@ var errorMap = []struct {
 	// auth
 	{auth.ErrMissingToken, http.StatusUnauthorized, "Authorization token is required."},
 	{auth.ErrInvalidToken, http.StatusUnauthorized, "Authorization token is invalid or expired."},
+	{auth.ErrMissingIDToken, http.StatusBadRequest, "Firebase ID token is required."},
 
 	// draft
 	{draft.ErrDbNotConfigured, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},

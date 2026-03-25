@@ -57,3 +57,13 @@ export interface DraftChartWithURLs extends DraftChart {
     vocalsUrl?: string;
     backgroundImageUrl?: string;
 }
+
+export interface User {
+    id: string;
+    uid: string;
+    createdAt: string;
+    updatedAt: string;
+    lastVisited: string;
+    username: string;
+    description: string;
+}

@@ -5,7 +5,7 @@ import {
     UploadAudioResponse,
     UploadImageResponse,
 } from '../types/api';
-import { ROUTE_CONFIG } from './routes';
+import { ROUTE_CONFIG } from '../routes';
 import { API } from '../axios';
 
 // CRUD

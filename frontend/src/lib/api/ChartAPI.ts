@@ -1,6 +1,6 @@
 import { ChartResponse, ListChartsResponse } from '../types/api';
 import { ChartBase, DraftChart } from '../types/models';
-import { ROUTE_CONFIG } from './routes';
+import { ROUTE_CONFIG } from '../routes';
 import { API } from '../axios';
 
 export const createChart = async (uuid: string, chartBase: ChartBase): Promise<ChartResponse> => {
