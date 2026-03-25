@@ -1,5 +1,5 @@
 import DraftsPageClient from './DraftsPageClient';
 
-export default function Page() {
+export default function DraftsPage() {
     return <DraftsPageClient />;
 }

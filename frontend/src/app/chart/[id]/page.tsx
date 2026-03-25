@@ -5,8 +5,10 @@ interface PageProps {
     id: number;
 }
 
-export default async function Page({ params }: { params: Promise<PageProps> }) {
+export default async function ChartPage({ params }: { params: Promise<PageProps> }) {
     // TODO: check user, fetch stats/history, pass into Client
+    // TODO: display "info", such as lyrics (good for SEO)
+    // TODO: display "social", such as comments and leaderboards
 
     const { id } = await params;
     const chartId = id;

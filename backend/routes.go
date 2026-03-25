@@ -23,7 +23,7 @@ func SetupRoutes(router *gin.Engine, c Handlers, authService *auth.AuthService) 
 	{
 		api.GET("/chart/:id", c.Chart.GetChart)
 		api.POST("/chart", c.Chart.CreateChart)
-		api.GET("/charts", authMiddleware, c.Chart.ListCharts)
+		api.GET("/charts", c.Chart.ListCharts)
 
 		api.GET("/game/:id/load", c.Game.PreloadVocals)
 		api.GET("/game/:id/run", c.Game.GameSocket)

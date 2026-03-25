@@ -7,6 +7,7 @@ import type { User } from '@/src/lib/types/models';
 import styles from './NavBar.module.css';
 import { Logo } from '../Logo';
 import { logout as logoutFromAuthAPI } from '@/src/lib/api/AuthAPI';
+import { useState, useEffect } from 'react';
 
 function isActive(href: string, pathname: string) {
     if (href === '/') return pathname === '/';
@@ -17,6 +18,11 @@ export default function NavBar({ user }: { user: User | null }) {
     const pathname = usePathname();
     const isAuthed = Boolean(user);
     const { loggingOut } = useAuth();
+    const [pendingHref, setPendingHref] = useState<string | null>(null);
+
+    useEffect(() => {
+        setPendingHref(null);
+    }, [pathname]);
 
     const NAV_ITEMS = [
         { label: 'PLAY', href: '/' },
@@ -34,13 +40,16 @@ export default function NavBar({ user }: { user: User | null }) {
 
                 <div className={styles.links}>
                     {NAV_ITEMS.map(({ label, href }) => {
-                        const active = isActive(href, pathname);
+                        const active = pendingHref
+                            ? pendingHref === href
+                            : isActive(href, pathname);
                         return (
                             <Link
                                 key={label}
                                 href={href}
                                 data-label={label}
                                 className={`${styles.item} ${active ? styles.active : ''}`}
+                                onClick={() => setPendingHref(href)}
                             >
                                 {label}
                             </Link>
