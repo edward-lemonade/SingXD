@@ -7,12 +7,6 @@ import { logout } from '@/src/lib/api/AuthAPI';
 import styles from './NavBar.module.css';
 import { Logo } from '../Logo';
 
-const NAV_ITEMS = [
-    { label: 'PLAY', href: '/' },
-    { label: 'BROWSE', href: '/browse' },
-    { label: 'CREATE', href: '/drafts' },
-] as const;
-
 function isActive(href: string, pathname: string) {
     if (href === '/') return pathname === '/';
     return pathname.startsWith(href);
@@ -21,6 +15,12 @@ function isActive(href: string, pathname: string) {
 export default function NavBar() {
     const pathname = usePathname();
     const { user, loading } = useAuth();
+
+    const NAV_ITEMS = [
+        { label: 'PLAY', href: '/' },
+        { label: 'BROWSE', href: '/browse' },
+        { label: 'CREATE', href: user ? '/drafts' : '/create' },
+    ] as const;
 
     return (
         <div className={styles.container}>
@@ -35,7 +35,7 @@ export default function NavBar() {
                         const active = isActive(href, pathname);
                         return (
                             <Link
-                                key={href}
+                                key={label}
                                 href={href}
                                 data-label={label}
                                 className={`${styles.item} ${active ? styles.active : ''}`}
