@@ -6,6 +6,8 @@ interface PageProps {
 }
 
 export default async function Page({ params }: { params: Promise<PageProps> }) {
+    // TODO: check user, fetch stats/history, pass into Client
+
     const { id } = await params;
     const chartId = id;
 

@@ -34,14 +34,14 @@
 .accent {
     position: fixed;
     left: 0;
-    top: 0;
-    bottom: 0;
+    top: 20px;
+    bottom: 20px;
     width: 2px;
     background: linear-gradient(
         to bottom,
         transparent 0%,
-        #ffd198 20%,
-        #f0b2e8 80%,
+        var(--color-accent-peach) 20%,
+        var(--color-accent-rose) 80%,
         transparent 100%
     );
     pointer-events: none;
@@ -134,7 +134,8 @@
     pointer-events: all;
     display: flex;
     flex-direction: column;
-    height: 80px;
+    justify-content: end;
+    height: 100px;
     gap: 10px;
     margin-top: 40px;
 }
@@ -186,28 +187,23 @@
 
 .authLink {
     font-family: var(--font-wide);
-    font-size: 13px;
+    font-size: 20px;
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     text-decoration: none;
-    color: rgba(248, 183, 215, 0.7);
-    transition:
-        color 0.15s,
-        transform 0.15s;
+    color: var(--color-accent-peach);
+    opacity: 0.9;
+    transition: 0.15s;
     padding: 2px 0;
     display: block;
 }
 
 .authLink:hover {
-    color: #f3bbc0;
+    opacity: 1.0;
     transform: translateX(3px);
 }
 
 .authLinkSecondary {
-    color: rgba(255, 208, 170, 0.5);
-}
-
-.authLinkSecondary:hover {
-    color: rgba(255, 229, 153, 0.65);
+    color: var(--color-accent-rose);
 }
