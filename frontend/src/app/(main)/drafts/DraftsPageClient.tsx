@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Wallpaper from '@/src/components/Wallpaper/Wallpaper';
 import { useAuth } from '@/src/lib/context/AuthContext';
 import * as DraftAPI from '@/src/lib/api/DraftAPI';
 import { DraftChart } from '@/src/lib/types/models';

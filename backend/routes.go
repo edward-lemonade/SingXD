@@ -9,11 +9,12 @@ import (
 )
 
 type Handlers struct {
-	Auth  *handler.AuthHandler
-	User  *handler.UserHandler
-	Draft *handler.DraftHandler
-	Chart *handler.ChartHandler
-	Game  *handler.GameHandler
+	Auth   *handler.AuthHandler
+	User   *handler.UserHandler
+	Draft  *handler.DraftHandler
+	Editor *handler.EditorHandler
+	Chart  *handler.ChartHandler
+	Game   *handler.GameHandler
 }
 
 func SetupRoutes(router *gin.Engine, c Handlers, authService *auth.AuthService) {
@@ -32,19 +33,16 @@ func SetupRoutes(router *gin.Engine, c Handlers, authService *auth.AuthService) 
 		api.DELETE("/auth/session", c.Auth.ClearSession)
 		api.GET("/auth/me", authMiddleware, c.User.Me)
 
-		api.POST("/drafts/init", c.Draft.InitDraft)
-		api.POST("/drafts/:uuid/publish", c.Draft.PublishDraft)
-		userDraftApi := router.Group("/", authMiddleware)
-		{
-			userDraftApi.GET("/drafts", c.Draft.ListDrafts)
-			userDraftApi.GET("/drafts/:id", c.Draft.GetDraft)
-			userDraftApi.PUT("/drafts/:id", c.Draft.UpdateDraft)
-			userDraftApi.DELETE("/drafts/:id", c.Draft.DeleteDraft)
-		}
-		api.POST("/draft/separate-audio", c.Draft.SeparateAudio)
-		api.POST("/draft/upload-instrumental", c.Draft.UploadInstrumental)
-		api.POST("/draft/upload-vocals", c.Draft.UploadVocals)
-		api.POST("/draft/upload-image", c.Draft.UploadImage)
-		api.POST("/draft/generate-timings", c.Draft.GenerateTimings)
+		api.GET("/draft", c.Draft.ListDrafts)
+		api.GET("/draft/:uuid", c.Draft.GetDraft)
+		api.POST("/draft", c.Draft.InitDraft)
+		api.POST("/draft/:uuid/publish", authMiddleware, c.Draft.PublishDraft)
+		api.PUT("/draft/:uuid", c.Draft.UpdateDraft)
+		api.DELETE("/draft/:uuid", c.Draft.DeleteDraft)
+		api.POST("/draft/:uuid/separate-audio", c.Editor.SeparateAudio)
+		api.POST("/draft/:uuid/upload-instrumental", c.Editor.UploadInstrumental)
+		api.POST("/draft/:uuid/upload-vocals", c.Editor.UploadVocals)
+		api.POST("/draft/:uuid/upload-image", c.Editor.UploadImage)
+		api.POST("/draft/:uuid/generate-timings", c.Editor.GenerateTimings)
 	}
 }

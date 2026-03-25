@@ -49,9 +49,8 @@ export const separateAudio = async (
     uuid: string,
     audioCombined: Blob
 ): Promise<SeparateAudioResponse> => {
-    const url = ROUTE_CONFIG.draft.separateAudio();
+    const url = ROUTE_CONFIG.draft.separateAudio(uuid);
     const formData = new FormData();
-    formData.append('uuid', uuid);
     formData.append('audio', audioCombined);
     const response = await API.post<SeparateAudioResponse>(url, formData, {
         timeout: 5 * 60 * 1000,
@@ -60,36 +59,32 @@ export const separateAudio = async (
 };
 
 export const uploadInstrumental = async (uuid: string, audio: Blob): Promise<string> => {
-    const url = ROUTE_CONFIG.draft.uploadInstrumental();
+    const url = ROUTE_CONFIG.draft.uploadInstrumental(uuid);
     const formData = new FormData();
-    formData.append('uuid', uuid);
     formData.append('instrumental', audio);
     const response = await API.post<UploadAudioResponse>(url, formData);
     return response.data.audioUrl;
 };
 
 export const uploadVocals = async (uuid: string, audio: Blob): Promise<string> => {
-    const url = ROUTE_CONFIG.draft.uploadVocals();
+    const url = ROUTE_CONFIG.draft.uploadVocals(uuid);
     const formData = new FormData();
-    formData.append('uuid', uuid);
     formData.append('vocals', audio);
     const response = await API.post<UploadAudioResponse>(url, formData);
     return response.data.audioUrl;
 };
 
 export const uploadImage = async (uuid: string, image: Blob): Promise<string> => {
-    const url = ROUTE_CONFIG.draft.uploadImage();
+    const url = ROUTE_CONFIG.draft.uploadImage(uuid);
     const formData = new FormData();
-    formData.append('uuid', uuid);
     formData.append('image', image);
     const response = await API.post<UploadImageResponse>(url, formData);
     return response.data.imageUrl;
 };
 
 export const generateTimings = async (uuid: string, lines: Line[]): Promise<Timing[]> => {
-    const url = ROUTE_CONFIG.draft.generateTimings();
+    const url = ROUTE_CONFIG.draft.generateTimings(uuid);
     const formData = new FormData();
-    formData.append('uuid', uuid);
     formData.append('lyrics', JSON.stringify(lines));
     const response = await API.post<GenerateTimingsResponse>(url, formData, {
         timeout: 5 * 60 * 1000,

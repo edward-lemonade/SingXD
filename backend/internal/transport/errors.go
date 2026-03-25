@@ -9,6 +9,7 @@ import (
 	"singxd/internal/service/auth"
 	"singxd/internal/service/chart"
 	"singxd/internal/service/draft"
+	"singxd/internal/service/editor"
 	"singxd/internal/service/game"
 
 	"github.com/gin-gonic/gin"
@@ -37,14 +38,16 @@ var errorMap = []struct {
 	// draft
 	{draft.ErrDbNotConfigured, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},
 	{draft.ErrMissingUUID, http.StatusBadRequest, "Draft UUID is required."},
-	{draft.ErrInvalidImageType, http.StatusBadRequest, "Unsupported image format. Please upload a JPG, PNG, GIF, or WebP file."},
-	{draft.ErrParsingLyrics, http.StatusBadRequest, "The lyrics could not be parsed. Please check the format and try again."},
-	{draft.ErrSeparationFailed, http.StatusUnprocessableEntity, "Audio separation failed. Please check that your file is a valid audio track."},
-	{draft.ErrVocalsNotGenerated, http.StatusUnprocessableEntity, "Could not extract vocals from the audio. Please try a different file."},
-	{draft.ErrInstrumentalNotGenerated, http.StatusUnprocessableEntity, "Could not extract the instrumental track. Please try a different file."},
-	{draft.ErrAlignmentFailed, http.StatusUnprocessableEntity, "Lyrics alignment failed. Make sure the lyrics match the audio content."},
-	{draft.ErrPythonInterpreterNotFound, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},
 	{draft.ErrDraftNotFound, http.StatusNotFound, "Draft not found."},
+
+	// editor
+	{editor.ErrInvalidImageType, http.StatusBadRequest, "Unsupported image format. Please upload a JPG, PNG, GIF, or WebP file."},
+	{editor.ErrParsingLyrics, http.StatusBadRequest, "The lyrics could not be parsed. Please check the format and try again."},
+	{editor.ErrSeparationFailed, http.StatusUnprocessableEntity, "Audio separation failed. Please check that your file is a valid audio track."},
+	{editor.ErrVocalsNotGenerated, http.StatusUnprocessableEntity, "Could not extract vocals from the audio. Please try a different file."},
+	{editor.ErrInstrumentalNotGenerated, http.StatusUnprocessableEntity, "Could not extract the instrumental track. Please try a different file."},
+	{editor.ErrAlignmentFailed, http.StatusUnprocessableEntity, "Lyrics alignment failed. Make sure the lyrics match the audio content."},
+	{editor.ErrPythonInterpreterNotFound, http.StatusInternalServerError, "The server is not configured correctly. Please contact support."},
 
 	// chart
 	{chart.ErrChartNotFound, http.StatusNotFound, "The requested sync map could not be found."},

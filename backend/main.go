@@ -14,6 +14,7 @@ import (
 	"singxd/internal/service/auth"
 	"singxd/internal/service/chart"
 	"singxd/internal/service/draft"
+	"singxd/internal/service/editor"
 	"singxd/internal/service/game"
 	"singxd/internal/service/user"
 	"singxd/internal/storage"
@@ -39,14 +40,16 @@ func main() {
 	userService := user.NewUserService(s3Client, gormDB)
 	chartService := chart.NewChartService(s3Client, gormDB)
 	draftService := draft.NewDraftService(s3Client, gormDB)
+	editorService := editor.NewEditorService(s3Client)
 	gameService := game.NewGameService(44100, 0.2)
 
 	handlers := Handlers{
-		Auth:  handler.NewAuthHandler(authService),
-		User:  handler.NewUserHandler(userService),
-		Chart: handler.NewChartHandler(chartService),
-		Draft: handler.NewDraftHandler(draftService, chartService),
-		Game:  handler.NewGameHandler(gameService, chartService),
+		Auth:   handler.NewAuthHandler(authService),
+		User:   handler.NewUserHandler(userService),
+		Chart:  handler.NewChartHandler(chartService),
+		Draft:  handler.NewDraftHandler(draftService, chartService),
+		Editor: handler.NewEditorHandler(editorService),
+		Game:   handler.NewGameHandler(gameService, chartService),
 	}
 
 	router := gin.Default()
