@@ -2,8 +2,10 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { type User } from 'firebase/auth';
-import { clearSessionCookie, createSessionCookie, hasSessionCookie, onAuthChanged } from '../api/AuthAPI';
+import { getIdToken, type User } from 'firebase/auth';
+import { onAuthChanged } from '../api/AuthAPI';
+import { COOKIE } from '../types/enums';
+import { deleteCookie, setCookie } from '../actions/cookies';
 
 interface AuthContextValue {
     user: User | null;
@@ -28,12 +30,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(u);
             try {
                 if (u) {
-                    if (!hasSessionCookie()) {
-                        const token = await u.getIdToken();
-                        await createSessionCookie(token);
-                    }
+                    const token = await getIdToken(u);
+                    if (token) await setCookie(COOKIE.TOKEN, token);
                 } else {
-                    await clearSessionCookie();
+                    await deleteCookie(COOKIE.TOKEN);
                 }
             } catch (err) {
                 console.error('Failed to sync auth cookie', err);

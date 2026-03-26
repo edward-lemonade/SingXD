@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import * as DraftAPI from '@/src/lib/api/DraftAPI';
 import * as ChartAPI from '@/src/lib/api/ChartAPI';

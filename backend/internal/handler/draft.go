@@ -35,7 +35,7 @@ func (a *DraftHandler) InitDraft(c *gin.Context) {
 }
 
 func (a *DraftHandler) ListDrafts(c *gin.Context) {
-	uid, _ := getRequiredUID(c)
+	uid := getRequiredUID(c)
 	drafts, err := a.draftService.ListDrafts(c.Request.Context(), uid)
 	if err != nil {
 		transport.ServiceError(c, err)
@@ -45,7 +45,7 @@ func (a *DraftHandler) ListDrafts(c *gin.Context) {
 }
 
 func (a *DraftHandler) GetDraft(c *gin.Context) {
-	uid, _ := getRequiredUID(c)
+	uid := getRequiredUID(c)
 	uuid := c.Param("uuid")
 	draft, err := a.draftService.GetDraft(c.Request.Context(), uuid, uid)
 	if err != nil {
@@ -56,7 +56,7 @@ func (a *DraftHandler) GetDraft(c *gin.Context) {
 }
 
 func (a *DraftHandler) UpdateDraft(c *gin.Context) {
-	uid, _ := getRequiredUID(c)
+	uid := getRequiredUID(c)
 	uuid := c.Param("uuid")
 	type Request struct {
 		ChartBase t.ChartBase `json:"chartBase"`
@@ -75,7 +75,7 @@ func (a *DraftHandler) UpdateDraft(c *gin.Context) {
 }
 
 func (a *DraftHandler) DeleteDraft(c *gin.Context) {
-	uid, _ := getRequiredUID(c)
+	uid := getRequiredUID(c)
 	uuid := c.Param("uuid")
 	if err := a.draftService.DeleteDraft(c.Request.Context(), uuid, uid); err != nil {
 		transport.ServiceError(c, err)
@@ -85,7 +85,7 @@ func (a *DraftHandler) DeleteDraft(c *gin.Context) {
 }
 
 func (a *DraftHandler) PublishDraft(c *gin.Context) {
-	uid, _ := getRequiredUID(c)
+	uid := getRequiredUID(c)
 	uuid := c.Param("uuid")
 	type Request struct {
 		ChartBase t.ChartBase `json:"chartBase"`

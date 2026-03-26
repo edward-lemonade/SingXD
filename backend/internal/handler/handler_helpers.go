@@ -20,11 +20,11 @@ func getUID(c *gin.Context) *string {
 	return &s
 }
 
-func getRequiredUID(c *gin.Context) (string, bool) {
+func getRequiredUID(c *gin.Context) string {
 	uid := getUID(c)
 	if uid == nil {
 		transport.Unauthorized(c)
-		return "", false
+		return ""
 	}
-	return *uid, true
+	return *uid
 }

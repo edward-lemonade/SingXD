@@ -20,9 +20,13 @@ func NewUserHandler(service *user.UserService) *UserHandler {
 // Operations
 
 func (a *UserHandler) Me(c *gin.Context) {
-	uid, _ := getRequiredUID(c)
+	uid := getUID(c)
+	if uid == nil {
+		c.JSON(http.StatusOK, nil)
+		return
+	}
 
-	currentUser, err := a.userService.GetOrCreateByUID(c.Request.Context(), uid)
+	currentUser, err := a.userService.GetOrCreateByUID(c.Request.Context(), *uid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch current user."})
 		return

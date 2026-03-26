@@ -21,7 +21,8 @@ export const listCharts = async (
 };
 
 export const listMyCharts = async (): Promise<PublicChart[]> => {
-    const response = await API.get<{ charts: PublicChart[] }>(ROUTE_CONFIG.chart.mine());
+    const url = ROUTE_CONFIG.chart.mine();
+    const response = await API.get<{ charts: PublicChart[] }>(url);
     return response.data.charts;
 };
  

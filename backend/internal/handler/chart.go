@@ -88,7 +88,7 @@ func (a *ChartHandler) ListCharts(c *gin.Context) {
 }
 
 func (a *ChartHandler) ListMyCharts(c *gin.Context) {
-	uid, _ := getRequiredUID(c)
+	uid := getRequiredUID(c)
 
 	charts, err := a.chartService.ListChartsByUID(c.Request.Context(), uid)
 	if err != nil {
