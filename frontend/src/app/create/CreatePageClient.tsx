@@ -7,6 +7,7 @@ import VideoStep from './steps/VideoStep';
 import PublishStep from './steps/PublishStep';
 import { useAuth } from '@/src/lib/context/AuthContext';
 import { useDraftForm } from './useDraftForm';
+import { User } from '@/src/lib/types/models';
 
 const steps = [
     { id: 1, name: 'Audio' },
@@ -16,14 +17,15 @@ const steps = [
 ] as const;
 
 interface CreateClientProps {
+    currentUser: User | null;
     initialDraftUuid?: string;
 }
 
-export default function CreateClient({ initialDraftUuid }: CreateClientProps = {}) {
+export default function CreateClient({ currentUser, initialDraftUuid }: CreateClientProps) {
     const { user } = useAuth();
     const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
 
-    const state = useDraftForm(initialDraftUuid);
+    const state = useDraftForm(currentUser, initialDraftUuid);
 
     if (state.draftLoading) {
         return (

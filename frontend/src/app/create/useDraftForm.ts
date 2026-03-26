@@ -10,6 +10,7 @@ import {
     DraftChart,
     Line,
     Timing,
+    User,
 } from '@/src/lib/types/models';
 import { useAuth } from '@/src/lib/context/AuthContext';
 import * as DraftAPI from '@/src/lib/api/DraftAPI';
@@ -82,7 +83,7 @@ export interface DraftFormState {
     handlePublish: () => Promise<void>;
 }
 
-export function useDraftForm(initialDraftUuid?: string): DraftFormState {
+export function useDraftForm(currentUser: User|null, initialDraftUuid?: string): DraftFormState {
     const { user } = useAuth();
     const router = useRouter();
 
@@ -112,7 +113,7 @@ export function useDraftForm(initialDraftUuid?: string): DraftFormState {
 
     // initialize
     useEffect(() => {
-        if (!uuid.current) {
+        if (!uuid.current && !currentUser) {
             uuid.current = sessionStorage.getItem(DRAFT_UUID_KEY);
         }
 

@@ -1,3 +1,4 @@
+import { getSessionUser } from '@/src/lib/server/CookieService';
 import CreateClient from './CreatePageClient';
 
 interface PageProps {
@@ -5,6 +6,7 @@ interface PageProps {
 }
 
 export default async function CreatePage({ searchParams }: PageProps) {
+    const currentUser = await getSessionUser();
     const { uuid } = await searchParams;
-    return <CreateClient initialDraftUuid={uuid} />;
+    return <CreateClient currentUser={currentUser} initialDraftUuid={uuid} />;
 }
