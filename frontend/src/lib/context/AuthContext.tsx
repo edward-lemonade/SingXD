@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { type User } from 'firebase/auth';
-import { clearSessionCookie, onAuthChanged } from '../api/AuthAPI';
+import { clearSessionCookie, createSessionCookie, hasSessionCookie, onAuthChanged } from '../api/AuthAPI';
 
 interface AuthContextValue {
     user: User | null;
@@ -27,9 +27,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return onAuthChanged(async u => {
             setUser(u);
             try {
-                // Cookie creation is handled by explicit login flows.
-                // Only clear cookies when Firebase reports the user is signed out.
-                if (!u) {
+                if (u) {
+                    if (!hasSessionCookie()) {
+                        const token = await u.getIdToken();
+                        await createSessionCookie(token);
+                    }
+                } else {
                     await clearSessionCookie();
                 }
             } catch (err) {

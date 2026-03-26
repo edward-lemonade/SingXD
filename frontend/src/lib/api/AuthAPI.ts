@@ -14,6 +14,10 @@ import { redirect } from 'next/navigation';
 
 export const getIdToken = () => auth.currentUser?.getIdToken() ?? Promise.resolve(null);
 
+export function hasSessionCookie(): boolean {
+    return document.cookie.split(';').some(c => c.trim().startsWith('singxd_session='));
+}
+
 export const createSessionCookie = (idToken: string) =>
     API.post(
         ROUTE_CONFIG.auth.session(),

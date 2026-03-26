@@ -37,7 +37,7 @@ func NewAuthService(ctx context.Context, credentialsFile string) (*AuthService, 
 	return &AuthService{client: client}, nil
 }
 
-// VerifyIDToken validates a Firebase ID token and returns the decoded token.
+// validates a Firebase ID token and returns the decoded token
 func (s *AuthService) VerifyIDToken(ctx context.Context, idToken string) (*firebaseauth.Token, error) {
 	token, err := s.client.VerifyIDToken(ctx, idToken)
 	if err != nil {
@@ -46,7 +46,7 @@ func (s *AuthService) VerifyIDToken(ctx context.Context, idToken string) (*fireb
 	return token, nil
 }
 
-// CreateSessionCookie exchanges a Firebase ID token for a Firebase session cookie.
+// exchanges a Firebase ID token for a Firebase session cookie
 func (s *AuthService) CreateSessionCookie(ctx context.Context, idToken string, expiresIn time.Duration) (string, error) {
 	if idToken == "" {
 		return "", ErrMissingIDToken
@@ -60,7 +60,7 @@ func (s *AuthService) CreateSessionCookie(ctx context.Context, idToken string, e
 	return cookie, nil
 }
 
-// VerifySessionCookie validates a Firebase session cookie and returns the decoded token.
+// validates a Firebase session cookie and returns the decoded token
 func (s *AuthService) VerifySessionCookie(ctx context.Context, sessionCookie string) (*firebaseauth.Token, error) {
 	token, err := s.client.VerifySessionCookie(ctx, sessionCookie)
 	if err != nil {
