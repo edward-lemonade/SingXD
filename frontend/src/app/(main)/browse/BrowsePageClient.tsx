@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { ChartCard } from '@/src/components/ChartCard/ChartCard';
 import SearchBar from '@/src/components/SearchBar/SearchBar';
 import * as ChartAPI from '@/src/lib/api/ChartAPI';
@@ -9,47 +10,28 @@ import { Card } from '@/src/components/Card/Card';
 
 const PAGE_SIZE = 12;
 
-export interface BrowsePageProps {
-    initialCharts: PublicChart[],
-    initialTotal: number,
-    initialPage: number,
-    initialSearch: string,
+interface BrowsePageClientProps {
+    initialData: {
+        charts: PublicChart[];
+        total: number;
+    };
 }
 
-export default function BrowsePage({ initialCharts, initialTotal, initialPage, initialSearch }: BrowsePageProps) {
-    const [charts, setCharts] = useState<PublicChart[]>(initialCharts);
-    const [total, setTotal] = useState(initialTotal);
-    const [page, setPage] = useState(initialPage);
-    const [search, setSearch] = useState(initialSearch);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+export default function BrowsePageClient({ initialData }: BrowsePageClientProps) {
+    const [page, setPage] = useState(1);
+    const [search, setSearch] = useState('');
+    const initialDataUpdatedAt = useRef(Date.now());
 
-    const isInitialRender = useRef(true);
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ['charts', page, PAGE_SIZE, search],
+        queryFn: () => ChartAPI.listCharts(page, PAGE_SIZE, search),
+        initialData: page === 1 && search === '' ? initialData : undefined,
+        initialDataUpdatedAt: initialDataUpdatedAt.current,
+    });
+
+    const charts = data?.charts ?? [];
+    const total = data?.total ?? 0;
     const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-
-    const fetchCharts = useCallback(async (p: number, q: string) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const res = await ChartAPI.listCharts(p, PAGE_SIZE, q);
-            setCharts(res.charts);
-            setTotal(res.total);
-        } catch {
-            setError('Failed to load charts.');
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (isInitialRender.current) {
-            isInitialRender.current = false;
-            setLoading(false);
-            return;
-        }
-
-        fetchCharts(page, search);
-    }, [page, search, fetchCharts]);
 
     const handleSearch = (query: string) => {
         setPage(1);
@@ -62,13 +44,13 @@ export default function BrowsePage({ initialCharts, initialTotal, initialPage, i
 
             <Card>
                 <div className="flex-1 min-h-0 p-4">
-                    {loading ? (
+                    {isLoading ? (
                         <div className="flex-1 flex items-center justify-center">
                             <p className="text-gray-500 font-medium">Loading…</p>
                         </div>
-                    ) : error ? (
+                    ) : isError ? (
                         <div className="flex-1 flex items-center justify-center">
-                            <p className="text-red-600 font-medium">{error}</p>
+                            <p className="text-red-600 font-medium">Failed to load charts.</p>
                         </div>
                     ) : charts.length === 0 ? (
                         <div className="flex-1 flex items-center justify-center">
@@ -83,7 +65,7 @@ export default function BrowsePage({ initialCharts, initialTotal, initialPage, i
                     )}
                 </div>
             </Card>
-            
+
             <div className="flex items-center justify-center gap-4 mt-auto">
                 <button
                     onClick={() => setPage(p => Math.max(1, p - 1))}

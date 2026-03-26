@@ -1,15 +1,24 @@
 'use client';
 
-import { QueryClient, QueryClientContext, QueryClientProvider } from '@tanstack/react-query';
-import React, { ReactNode } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactNode, useState } from 'react';
 import { AuthProvider } from '../lib/context/AuthContext';
 
-const queryClient = new QueryClient();
+export const makeQueryClient = () => new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: 1000 * 60 * 5, // 5 min
+		}
+	}
+})
 
 export default function Providers({ children }: { children: ReactNode }) {
-    return (
-        <AuthProvider>
-            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-        </AuthProvider>
-    );
+	const [queryClient] = useState(() => makeQueryClient());
+	return (
+		<AuthProvider>
+			<QueryClientProvider client={queryClient}>
+                {children}
+            </QueryClientProvider>
+		</AuthProvider>
+	);
 }
