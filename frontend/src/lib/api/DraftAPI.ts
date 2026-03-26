@@ -7,6 +7,7 @@ import {
 } from '../types/api';
 import { ROUTE_CONFIG } from '../routes';
 import { API } from '../axios';
+import { parseChart, parseCharts, Serialized } from '../types/transformers';
 
 // CRUD
 
@@ -16,20 +17,20 @@ export const initDraft = async (): Promise<string> => {
 };
 
 export const updateDraft = async (uuid: string, chartBase: ChartBase): Promise<DraftChart> => {
-    const res = await API.put<{ draft: DraftChart }>(ROUTE_CONFIG.draft.update(uuid), {
+    const res = await API.put<{ draft: Serialized<DraftChart> }>(ROUTE_CONFIG.draft.update(uuid), {
         chartBase,
     });
-    return res.data.draft;
+    return parseChart(res.data.draft);
 };
 
 export const listDrafts = async (): Promise<DraftChart[]> => {
-    const res = await API.get<{ drafts: DraftChart[] }>(ROUTE_CONFIG.draft.list());
-    return res.data.drafts;
+    const res = await API.get<{ drafts: Serialized<DraftChart>[] }>(ROUTE_CONFIG.draft.list());
+    return parseCharts(res.data.drafts);
 };
 
 export const getDraft = async (uuid: string): Promise<DraftChartWithURLs> => {
-    const res = await API.get<{ draft: DraftChart }>(ROUTE_CONFIG.draft.get(uuid));
-    return res.data.draft;
+    const res = await API.get<{ draft: Serialized<DraftChartWithURLs> }>(ROUTE_CONFIG.draft.get(uuid));
+    return parseChart(res.data.draft);
 };
 
 export const deleteDraft = async (uuid: string): Promise<void> => {

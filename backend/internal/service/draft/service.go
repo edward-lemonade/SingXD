@@ -38,8 +38,8 @@ const PythonVenv = "./internal/service/draft/scripts/.venv/bin/python"
 // =========================================================
 // CRUD
 
-func (s *DraftService) InitDraft(ctx context.Context) (string, error) {
-	record, err := initOne(ctx, s.db)
+func (s *DraftService) InitDraft(ctx context.Context, uid *string) (string, error) {
+	record, err := initOne(ctx, s.db, uid)
 	if err != nil {
 		return "", err
 	}

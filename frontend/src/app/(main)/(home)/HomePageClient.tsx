@@ -28,7 +28,7 @@ export default function HomePageClient() {
                 );
                 if (cancelled) return;
                 const next: (PublicChart | null)[] = results.map(r =>
-                    r.status === 'fulfilled' ? r.value.chart : null
+                    r.status === 'fulfilled' ? r.value : null
                 );
                 if (next.every(c => c === null)) {
                     setError('Could not load featured charts.');

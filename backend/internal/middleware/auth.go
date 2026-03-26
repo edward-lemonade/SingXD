@@ -29,3 +29,22 @@ func Auth(authService *auth.AuthService) gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func OptionalAuth(authService *auth.AuthService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		sessionCookie, cookieErr := c.Cookie(auth.SessionCookieName)
+		if cookieErr != nil || sessionCookie == "" {
+			c.Next()
+			return
+		}
+
+		token, err := authService.VerifySessionCookie(c.Request.Context(), sessionCookie)
+		if err != nil {
+			c.Next()
+			return
+		}
+
+		c.Set(UIDKey, token.UID)
+		c.Next()
+	}
+}

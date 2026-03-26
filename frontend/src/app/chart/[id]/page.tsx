@@ -16,7 +16,7 @@ export default async function ChartPage({ params }: { params: Promise<PageProps>
     let chart;
     try {
         const res = await ChartAPI.getChart(chartId);
-        chart = res.chart;
+        chart = res;
     } catch (err) {
         chart = null;
     }

@@ -3,7 +3,6 @@ package handler
 import (
 	"net/http"
 
-	"singxd/internal/middleware"
 	"singxd/internal/service/draft"
 	"singxd/internal/transport"
 	t "singxd/internal/types"
@@ -26,7 +25,8 @@ func NewDraftHandler(draftService *DraftService, chartService *ChartService) *Dr
 // Handlers
 
 func (a *DraftHandler) InitDraft(c *gin.Context) {
-	uuid, err := a.draftService.InitDraft(c.Request.Context())
+	uid := getUID(c)
+	uuid, err := a.draftService.InitDraft(c.Request.Context(), uid)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return
@@ -35,7 +35,7 @@ func (a *DraftHandler) InitDraft(c *gin.Context) {
 }
 
 func (a *DraftHandler) ListDrafts(c *gin.Context) {
-	uid := getUID(c)
+	uid, _ := getRequiredUID(c)
 	drafts, err := a.draftService.ListDrafts(c.Request.Context(), uid)
 	if err != nil {
 		transport.ServiceError(c, err)
@@ -45,7 +45,7 @@ func (a *DraftHandler) ListDrafts(c *gin.Context) {
 }
 
 func (a *DraftHandler) GetDraft(c *gin.Context) {
-	uid := getUID(c)
+	uid, _ := getRequiredUID(c)
 	uuid := c.Param("uuid")
 	draft, err := a.draftService.GetDraft(c.Request.Context(), uuid, uid)
 	if err != nil {
@@ -56,7 +56,7 @@ func (a *DraftHandler) GetDraft(c *gin.Context) {
 }
 
 func (a *DraftHandler) UpdateDraft(c *gin.Context) {
-	uid := getUID(c)
+	uid, _ := getRequiredUID(c)
 	uuid := c.Param("uuid")
 	type Request struct {
 		ChartBase t.ChartBase `json:"chartBase"`
@@ -75,7 +75,7 @@ func (a *DraftHandler) UpdateDraft(c *gin.Context) {
 }
 
 func (a *DraftHandler) DeleteDraft(c *gin.Context) {
-	uid := getUID(c)
+	uid, _ := getRequiredUID(c)
 	uuid := c.Param("uuid")
 	if err := a.draftService.DeleteDraft(c.Request.Context(), uuid, uid); err != nil {
 		transport.ServiceError(c, err)
@@ -100,13 +100,4 @@ func (a *DraftHandler) PublishDraft(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"chart": chart})
-}
-
-// ====================================================================================
-// Helpers
-
-func getUID(c *gin.Context) string {
-	uid, _ := c.Get(middleware.UIDKey)
-	s, _ := uid.(string)
-	return s
 }

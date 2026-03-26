@@ -1,29 +1,31 @@
 import { PublicChart, Timing } from './models';
+import { Serialized } from './transformers';
 
 export interface SeparateAudioResponse {
-    vocalsUrl: string;
-    instrumentalUrl: string;
+	vocalsUrl: string;
+	instrumentalUrl: string;
 }
 
 export interface GenerateTimingsResponse {
-    timings: Timing[];
+	timings: Timing[];
 }
 
 export interface UploadAudioResponse {
-    audioUrl: string;
+	audioUrl: string;
 }
 
 export interface UploadImageResponse {
-    imageUrl: string;
+	imageUrl: string;
 }
 
-export interface ChartResponse {
-    chart: PublicChart;
+export interface SerializedChartResponse {
+	chart: Serialized<PublicChart>;
 }
 
 export interface ListChartsResponse {
-    charts: PublicChart[];
-    total: number;
-    page: number;
-    limit: number;
+	charts: PublicChart[];
+	total: number;
+	page: number;
+	limit: number;
 }
+export type SerializedListChartsResponse = Omit<ListChartsResponse, "charts"> & {charts: Serialized<PublicChart>[];};
