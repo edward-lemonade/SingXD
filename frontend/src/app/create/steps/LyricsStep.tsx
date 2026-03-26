@@ -1,8 +1,8 @@
 'use client';
 
-import Card from '@/src/components/Card';
+import { Card } from '@/src/components/Card/Card';
 import { Line, Timing } from '../../../lib/types/models';
-import { AudioUrls } from '../CreatePageClient';
+import { AudioUrls } from '../useDraftForm';
 import { SetStateAction, useMemo, useState } from 'react';
 import ChartTimingEditor from '../components/ChartTimingEditor';
 
@@ -40,7 +40,7 @@ export default function LyricsStep({
     return (
         <section>
             <div className="space-y-6">
-                <Card className="p-6">
+                <Card>
                     <textarea
                         value={lyricsString}
                         onChange={e => setLyricsString(e.target.value)}
@@ -58,7 +58,7 @@ export default function LyricsStep({
                     )}
                 </Card>
 
-                <Card className="p-6 gap-6 flex flex-col">
+                <Card>
                     <ChartTimingEditor
                         key={audioUrl}
                         audioUrl={audioUrl}

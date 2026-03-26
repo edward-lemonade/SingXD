@@ -1,7 +1,7 @@
 'use client';
 
-import Card from '@/src/components/Card';
-import { AudioUrls } from '../CreatePageClient';
+import { Card } from '@/src/components/Card/Card';
+import { AudioUrls } from '../useDraftForm';
 
 interface AudioStepProps {
     audioUrls: AudioUrls;
@@ -27,7 +27,7 @@ export default function AudioStep({
     return (
         <section>
             <div className="space-y-6">
-                <Card className="p-6">
+                <Card>
                     <h3 className="text-xl font-semibold mb-4">
                         Upload Combined Audio (Optional - for AI Separation)
                     </h3>
@@ -59,7 +59,7 @@ export default function AudioStep({
                         </>
                     )}
                 </Card>
-                <Card className="p-6">
+                <Card>
                     <h3 className="text-xl font-semibold mb-4">Audio Stems</h3>
                     <div className="space-y-4">
                         <div>

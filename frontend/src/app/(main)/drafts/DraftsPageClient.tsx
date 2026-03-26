@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/src/lib/context/AuthContext';
@@ -8,6 +8,7 @@ import * as DraftAPI from '@/src/lib/api/DraftAPI';
 import * as ChartAPI from '@/src/lib/api/ChartAPI';
 import { DraftChart, PublicChart } from '@/src/lib/types/models';
 import { ChartCard } from '@/src/components/ChartCard/ChartCard';
+import { Card } from '@/src/components/Card/Card';
 
 function formatDate(date: Date) {
     return new Date(date).toLocaleDateString(undefined, {
@@ -56,94 +57,130 @@ export default function DraftsPageClient() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <div className="bg-purple-800 text-white px-6 py-4 shrink-0 flex items-center justify-between">
-                <h1 className="text-2xl font-bold">My Charts</h1>
-                <Link
-                    href="/create"
-                    className="text-sm px-4 py-1.5 rounded bg-white/15 hover:bg-white/25 transition-colors"
-                >
-                    + New Chart
-                </Link>
-            </div>
-
-            <div className="flex-1 p-6 max-w-6xl mx-auto w-full space-y-10">
-                {loading ? (
-                    <p className="text-gray-500">Loading…</p>
-                ) : error ? (
-                    <p className="text-red-600">{error}</p>
-                ) : (
-                    <>
-                        {/* Published charts */}
-                        <section>
-                            <h2 className="text-lg font-bold text-gray-800 mb-4">
-                                Published Charts
-                            </h2>
+        <div className="flex flex-col w-full h-screen py-6 gap-6">
+            {loading ? (
+                <p className="text-gray-500">Loading…</p>
+            ) : error ? (
+                <p className="text-red-600">{error}</p>
+            ) : (
+                <>
+                    {/* Published charts */}
+                    <div className="flex-1 basis-1/3 h-full">
+                        <Card>                            
+                            <h2 className="text-lg font-bold text-gray-800 mb-2">Published Charts</h2>
                             {charts.length === 0 ? (
                                 <p className="text-gray-500 text-sm">No published charts yet.</p>
                             ) : (
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                                    {charts.map(chart => (
-                                        <ChartCard key={chart.id} chart={chart} />
-                                    ))}
-                                </div>
-                            )}
-                        </section>
+                                <ScrollFade direction='x' className='pt-1 h-full'>
+                                
+                                    <div className="grid grid-rows-1 grid-flow-col h-full auto-cols-[calc(25%-12px)] gap-4 overflow-visible">
+                                        {charts.map(chart => (
+                                            <ChartCard key={chart.id} chart={chart} />
+                                        ))}
+                                    </div>
+                         
+                                </ScrollFade>
+                            )}              
+                        </Card>
+                    </div>
 
-                        {/* Drafts */}
-                        <section>
-                            <h2 className="text-lg font-bold text-gray-800 mb-4">Drafts</h2>
+                    {/* Drafts */}
+                    <div className="flex-1 basis-2/3 min-h-0 flex flex-col">
+                        <Card>
+                           <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-lg font-bold text-gray-800">Drafts</h2>
+                                <Link
+                                    href="/create"
+                                    className="text-xs px-3 py-1 border-2 border-green-500 text-green-600 font-semibold hover:bg-green-100 transition-colors cursor-pointer"
+                                >
+                                    + New Chart
+                                </Link>
+                            </div>
                             {drafts.length === 0 ? (
                                 <div className="flex flex-col items-start gap-3">
                                     <p className="text-gray-500 text-sm">No saved drafts yet.</p>
-                                    <Link
-                                        href="/create"
-                                        className="text-sm px-4 py-1.5 bg-purple-700 text-white font-semibold rounded hover:bg-purple-600 transition-colors"
-                                    >
-                                        Start a new chart
-                                    </Link>
                                 </div>
                             ) : (
-                                <ul className="space-y-2">
-                                    {drafts.map(draft => (
-                                        <li
-                                            key={draft.uuid}
-                                            className="bg-white border-2 border-black flex items-center justify-between px-4 py-3"
-                                        >
-                                            <div>
-                                                <p className="font-semibold text-black text-sm">
-                                                    {draft.properties.title || 'Untitled'}
-                                                </p>
-                                                <p className="text-xs text-gray-500 mt-0.5">
-                                                    {draft.properties.songTitle
-                                                        ? `${draft.properties.songTitle}${draft.properties.artist ? ` — ${draft.properties.artist}` : ''}`
-                                                        : 'No song info'}
-                                                    {' · '}Updated {formatDate(draft.updatedAt)}
-                                                </p>
-                                            </div>
-                                            <div className="flex items-center gap-2 shrink-0">
-                                                <Link
-                                                    href={`/create?draft=${draft.uuid}`}
-                                                    className="text-xs px-3 py-1 border-2 border-black font-semibold hover:bg-gray-100 transition-colors"
-                                                >
-                                                    Resume
-                                                </Link>
-                                                <button
-                                                    onClick={() => handleDelete(draft.uuid)}
-                                                    disabled={deletingId === draft.uuid}
-                                                    className="text-xs px-3 py-1 border-2 border-red-400 text-red-600 font-semibold hover:bg-red-50 transition-colors disabled:opacity-50"
-                                                >
-                                                    {deletingId === draft.uuid ? '…' : 'Delete'}
-                                                </button>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
+                                <ScrollFade direction="y">
+                                    <ul className="flex flex-col gap-2 w-full">
+                                        {drafts.map(draft => (
+                                            <li
+                                                key={draft.uuid}
+                                                className="bg-white border-2 border-black flex items-center justify-between px-4 py-3"
+                                            >
+                                                <div>
+                                                    <p className="font-semibold text-black text-sm">
+                                                        {draft.properties.title || 'Untitled'}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 mt-0.5">
+                                                        {draft.properties.songTitle
+                                                            ? `${draft.properties.songTitle}${draft.properties.artist ? ` — ${draft.properties.artist}` : ''}`
+                                                            : 'No song info'}
+                                                        {' · '}Updated {formatDate(draft.updatedAt)}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-2 shrink-0">
+                                                    <Link
+                                                        href={`/create?draft=${draft.uuid}`}
+                                                        className="text-xs px-3 py-1 border-2 border-black text-gray-400 font-semibold hover:bg-gray-100 transition-colors cursor-pointer"
+                                                    >
+                                                        Resume
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => handleDelete(draft.uuid)}
+                                                        disabled={deletingId === draft.uuid}
+                                                        className="text-xs px-3 py-1 border-2 border-red-400 text-red-600 font-semibold hover:bg-red-100 transition-colors cursor-pointer disabled:opacity-50"
+                                                    >
+                                                        {deletingId === draft.uuid ? '…' : 'Delete'}
+                                                    </button>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </ScrollFade>
                             )}
-                        </section>
-                    </>
-                )}
-            </div>
+                        </Card>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+}
+
+function ScrollFade({ children, direction = 'y', className }: { children: React.ReactNode; direction?: 'x' | 'y'; className?: string }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const [atStart, setAtStart] = useState(true);
+    const [atEnd, setAtEnd] = useState(false);
+
+    const update = () => {
+        const el = ref.current;
+        if (!el) return;
+        if (direction === 'y') {
+            setAtStart(el.scrollTop <= 0);
+            setAtEnd(el.scrollTop + el.clientHeight >= el.scrollHeight - 1);
+        } else {
+            setAtStart(el.scrollLeft <= 0);
+            setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 1);
+        }
+    };
+
+    useEffect(() => { update(); }, []);
+
+    const startFade = atStart ? 'black' : 'transparent';
+    const endFade = atEnd ? 'black' : 'transparent';
+
+    const mask = direction === 'y'
+        ? `linear-gradient(to bottom, ${startFade} 0%, black 8%, black 92%, ${endFade} 100%)`
+        : `linear-gradient(to right, ${startFade} 0%, black 8%, black 92%, ${endFade} 100%)`;
+
+    return (
+        <div
+            ref={ref}
+            onScroll={update}
+            className={`flex-1 min-h-0 ${direction === 'y' ? 'overflow-y-auto' : 'overflow-x-auto'} ${className ?? ''}`}
+            style={{ maskImage: mask, WebkitMaskImage: mask }}
+        >
+            {children}
         </div>
     );
 }

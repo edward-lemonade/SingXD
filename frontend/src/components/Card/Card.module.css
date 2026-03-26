@@ -1,0 +1,12 @@
+.card {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 2px solid var(--color-dark-base);
+    overflow: auto;
+    padding: 8px;
+}

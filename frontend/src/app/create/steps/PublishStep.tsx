@@ -1,6 +1,6 @@
 'use client';
 
-import Card from '@/src/components/Card';
+import { Card } from '@/src/components/Card/Card';
 import { DraftChart, ChartProperties } from '@/src/lib/types/models';
 import { SetStateAction } from 'react';
 
@@ -22,7 +22,7 @@ export default function PublishStep({
 }: PublishStepProps) {
     return (
         <section>
-            <Card className="p-6 space-y-4 flex flex-row">
+            <Card>
                 <div className="flex flex-col gap-4">
                     <div>
                         <label className="block mb-2">Chart Title</label>

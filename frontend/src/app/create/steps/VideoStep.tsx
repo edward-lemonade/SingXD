@@ -1,6 +1,6 @@
 'use client';
 
-import Card from '@/src/components/Card';
+import Card from '@mui/material/Card';
 import { ChartPreview } from '@/src/components/Chart';
 import { DraftChart, ChartProperties } from '@/src/lib/types/models';
 import { SetStateAction } from 'react';
