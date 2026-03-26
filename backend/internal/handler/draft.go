@@ -85,6 +85,7 @@ func (a *DraftHandler) DeleteDraft(c *gin.Context) {
 }
 
 func (a *DraftHandler) PublishDraft(c *gin.Context) {
+	uid, _ := getRequiredUID(c)
 	uuid := c.Param("uuid")
 	type Request struct {
 		ChartBase t.ChartBase `json:"chartBase"`
@@ -94,7 +95,7 @@ func (a *DraftHandler) PublishDraft(c *gin.Context) {
 		transport.BadRequest(c, "invalid request body")
 		return
 	}
-	chart, err := a.draftService.PublishDraft(c.Request.Context(), uuid, req.ChartBase, a.chartService)
+	chart, err := a.draftService.PublishDraft(c.Request.Context(), uuid, uid, req.ChartBase, a.chartService)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return

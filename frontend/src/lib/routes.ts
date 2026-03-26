@@ -4,7 +4,6 @@ const API_WS = process.env.NEXT_PUBLIC_API_WS_URL;
 export const ROUTE_CONFIG = {
     chart: {
         get: (chartId: number) => `${API}/chart/${chartId}`,
-        create: () => `${API}/chart`,
         list: (page: number, limit: number, search: string) => {
             const params = new URLSearchParams({
                 page: String(page),
@@ -13,6 +12,7 @@ export const ROUTE_CONFIG = {
             });
             return `${API}/charts?${params}`;
         },
+        mine: () => `${API}/charts/mine`,
     },
     draft: {
         // draft CRUD

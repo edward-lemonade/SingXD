@@ -108,11 +108,11 @@ func (s *DraftService) DeleteDraft(ctx context.Context, uuid, uid string) error 
 }
 
 type ChartCreator interface {
-	CreateChart(ctx context.Context, uuid string, draft t.ChartBase) (*t.PublicChart, error)
+	CreateChart(ctx context.Context, uuid string, uid string, draft t.ChartBase) (*t.PublicChart, error)
 }
 
-func (s *DraftService) PublishDraft(ctx context.Context, uuid string, draft t.ChartBase, chartSvc ChartCreator) (*t.PublicChart, error) {
-	created, err := chartSvc.CreateChart(ctx, uuid, draft)
+func (s *DraftService) PublishDraft(ctx context.Context, uuid string, uid string, draft t.ChartBase, chartSvc ChartCreator) (*t.PublicChart, error) {
+	created, err := chartSvc.CreateChart(ctx, uuid, uid, draft)
 	if err != nil {
 		return nil, err
 	}

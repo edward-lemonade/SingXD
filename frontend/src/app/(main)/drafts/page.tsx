@@ -1,5 +1,7 @@
+import { getSessionUser } from '@/src/lib/server/CookieService';
 import DraftsPageClient from './DraftsPageClient';
 
-export default function DraftsPage() {
+export default async function DraftsPage() {
+    const currentUser = await getSessionUser();
     return <DraftsPageClient />;
 }

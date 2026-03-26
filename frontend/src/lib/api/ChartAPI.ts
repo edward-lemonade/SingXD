@@ -19,3 +19,9 @@ export const listCharts = async (
     const response = await API.get<SerializedListChartsResponse>(url);
     return {...response.data, charts: parseCharts(response.data.charts)};
 };
+
+export const listMyCharts = async (): Promise<PublicChart[]> => {
+    const response = await API.get<{ charts: PublicChart[] }>(ROUTE_CONFIG.chart.mine());
+    return response.data.charts;
+};
+ 
