@@ -4,7 +4,6 @@ const API_WS = process.env.NEXT_PUBLIC_API_WS_URL;
 export const ROUTE_CONFIG = {
     chart: {
         get: (chartId: number) => `${API}/chart/${chartId}`,
-        create: () => `${API}/chart`,
         list: (page: number, limit: number, search: string) => {
             const params = new URLSearchParams({
                 page: String(page),
@@ -13,21 +12,22 @@ export const ROUTE_CONFIG = {
             });
             return `${API}/charts?${params}`;
         },
+        mine: () => `${API}/charts/mine`,
     },
     draft: {
-        // single-draft operations (resource: /drafts/:id)
-        init: () => `${API}/drafts/init`,
-        get: (id: string) => `${API}/drafts/${id}`,
-        update: (id: string) => `${API}/drafts/${id}`,
-        delete: (id: string) => `${API}/drafts/${id}`,
-        publish: (id: string) => `${API}/drafts/${id}/publish`,
-        list: () => `${API}/drafts`,
-        // draft processing operations (resource: /draft/*)
-        separateAudio: () => `${API}/draft/separate-audio`,
-        uploadInstrumental: () => `${API}/draft/upload-instrumental`,
-        uploadVocals: () => `${API}/draft/upload-vocals`,
-        uploadImage: () => `${API}/draft/upload-image`,
-        generateTimings: () => `${API}/draft/generate-timings`,
+        // draft CRUD
+        init: () => `${API}/draft`,
+        get: (uuid: string) => `${API}/draft/${uuid}`,
+        update: (uuid: string) => `${API}/draft/${uuid}`,
+        delete: (uuid: string) => `${API}/draft/${uuid}`,
+        publish: (uuid: string) => `${API}/draft/${uuid}/publish`,
+        list: () => `${API}/draft`,
+        // editor operations
+        separateAudio: (uuid: string) => `${API}/draft/${uuid}/separate-audio`,
+        uploadInstrumental: (uuid: string) => `${API}/draft/${uuid}/upload-instrumental`,
+        uploadVocals: (uuid: string) => `${API}/draft/${uuid}/upload-vocals`,
+        uploadImage: (uuid: string) => `${API}/draft/${uuid}/upload-image`,
+        generateTimings: (uuid: string) => `${API}/draft/${uuid}/generate-timings`,
     },
     game: {
         load: (chartId: number) => `${API}/game/${chartId}/load`,

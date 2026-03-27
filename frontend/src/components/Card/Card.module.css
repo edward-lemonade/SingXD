@@ -1,0 +1,21 @@
+.card {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 4px solid rgba(255,255,255,0.6);
+    overflow: auto;
+    padding: 8px;
+}
+
+.outer {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--color-dark-base);
+    overflow: auto;
+}

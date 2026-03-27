@@ -31,7 +31,7 @@ func AutoMigrate(db *gorm.DB) error {
 // ==============================================================================
 // Operations
 
-func save(ctx context.Context, db *gorm.DB, authorUID *string, chart t.ChartBase) (*t.PublicChart, error) {
+func save(ctx context.Context, db *gorm.DB, authorUID string, chart t.ChartBase) (*t.PublicChart, error) {
 	lines, timings, props, err := marshalChart(chart)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func save(ctx context.Context, db *gorm.DB, authorUID *string, chart t.ChartBase
 		Lines:      lines,
 		Timings:    timings,
 		Properties: props,
-		AuthorUID:  authorUID,
+		AuthorUID:  &authorUID,
 	}
 	if err := db.WithContext(ctx).Create(&record).Error; err != nil {
 		return nil, err
@@ -85,6 +85,14 @@ func list(ctx context.Context, db *gorm.DB, page, limit int, search string) ([]t
 	}
 
 	return charts, int(total), nil
+}
+
+func listByUID(ctx context.Context, db *gorm.DB, uid string) ([]ChartRecord, error) {
+	var records []ChartRecord
+	if err := db.WithContext(ctx).Where("author_uid = ?", uid).Order("created_at DESC").Find(&records).Error; err != nil {
+		return nil, err
+	}
+	return records, nil
 }
 
 // ==============================================================================

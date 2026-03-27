@@ -1,18 +1,13 @@
-import { ChartResponse, ListChartsResponse } from '../types/api';
-import { ChartBase, DraftChart } from '../types/models';
+import { SerializedChartResponse, ListChartsResponse, SerializedListChartsResponse } from '../types/api';
+import { ChartBase, DraftChart, PublicChart } from '../types/models';
 import { ROUTE_CONFIG } from '../routes';
 import { API } from '../axios';
+import { parseChart, parseCharts } from '../types/transformers';
 
-export const createChart = async (uuid: string, chartBase: ChartBase): Promise<ChartResponse> => {
-    const url = ROUTE_CONFIG.chart.create();
-    const response = await API.post<ChartResponse>(url, { uuid, chartBase });
-    return response.data;
-};
-
-export const getChart = async (id: number): Promise<ChartResponse> => {
+export const getChart = async (id: number): Promise<PublicChart> => {
     const url = ROUTE_CONFIG.chart.get(id);
-    const response = await API.get<ChartResponse>(url);
-    return response.data;
+    const response = await API.get<SerializedChartResponse>(url);
+    return parseChart(response.data.chart);
 };
 
 export const listCharts = async (
@@ -21,6 +16,13 @@ export const listCharts = async (
     search = ''
 ): Promise<ListChartsResponse> => {
     const url = ROUTE_CONFIG.chart.list(page, limit, search);
-    const response = await API.get<ListChartsResponse>(url);
-    return response.data;
+    const response = await API.get<SerializedListChartsResponse>(url);
+    return {...response.data, charts: parseCharts(response.data.charts)};
 };
+
+export const listMyCharts = async (): Promise<PublicChart[]> => {
+    const url = ROUTE_CONFIG.chart.mine();
+    const response = await API.get<{ charts: PublicChart[] }>(url);
+    return response.data.charts;
+};
+ 

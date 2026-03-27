@@ -2,53 +2,24 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ChartCard } from '@/src/components/ChartCard/ChartCard';
-import * as ChartAPI from '@/src/lib/api/ChartAPI';
 import { PublicChart } from '@/src/lib/types/models';
 import styles from './HomePageClient.module.css';
 
-const displayedCharts = [1, 2, 3];
+const DISPLAYED_CHARTS = [1, 2, 3];
 
-export default function HomePageClient() {
+interface HomePageClientProps {
+    initialSlides: (PublicChart | null)[];
+}
+
+export default function HomePageClient({ initialSlides }: HomePageClientProps) {
     const scrollerRef = useRef<HTMLDivElement>(null);
-    const [slides, setSlides] = useState<(PublicChart | null)[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [slides] = useState<(PublicChart | null)[]>(initialSlides);
     const [activeIndex, setActiveIndex] = useState(0);
     const sectionRefs = useRef<Array<HTMLElement | null>>([]);
 
-    useEffect(() => {
-        let cancelled = false;
-
-        async function load() {
-            setLoading(true);
-            setError(null);
-            try {
-                const results = await Promise.allSettled(
-                    displayedCharts.map(id => ChartAPI.getChart(id))
-                );
-                if (cancelled) return;
-                const next: (PublicChart | null)[] = results.map(r =>
-                    r.status === 'fulfilled' ? r.value.chart : null
-                );
-                if (next.every(c => c === null)) {
-                    setError('Could not load featured charts.');
-                }
-                setSlides(next);
-            } catch {
-                if (!cancelled) setError('Could not load featured charts.');
-            } finally {
-                if (!cancelled) setLoading(false);
-            }
-        }
-
-        void load();
-        return () => {
-            cancelled = true;
-        };
-    }, []);
+    const error = slides.every(c => c === null) ? 'Could not load featured charts.' : null;
 
     useEffect(() => {
-        // When the featured charts load, reset to the first slide.
         setActiveIndex(0);
         sectionRefs.current = [];
         const el = scrollerRef.current;
@@ -113,19 +84,10 @@ export default function HomePageClient() {
         const el = scrollerRef.current;
         const target = sectionRefs.current[idx];
         if (!el || !target) return;
-
         el.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
     };
 
     const validCount = slides.filter(Boolean).length;
-
-    if (loading) {
-        return (
-            <div className="fixed left-1/2 -translate-x-1/2 w-full flex-1 flex items-center justify-center min-h-[50vh]">
-                <p className="text-gray-600 font-medium">Loading…</p>
-            </div>
-        );
-    }
 
     if (error && validCount === 0) {
         return (
@@ -143,7 +105,7 @@ export default function HomePageClient() {
             >
                 {slides.map((chart, i) => (
                     <section
-                        key={displayedCharts[i] ?? i}
+                        key={DISPLAYED_CHARTS[i] ?? i}
                         ref={node => {
                             sectionRefs.current[i] = node;
                         }}
@@ -162,7 +124,6 @@ export default function HomePageClient() {
                 ))}
             </div>
 
-            {/* Navigation indicators */}
             <button
                 type="button"
                 onClick={() => goToIndex(prevIndex)}

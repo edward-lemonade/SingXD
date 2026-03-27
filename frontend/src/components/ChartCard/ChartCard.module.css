@@ -58,6 +58,9 @@
 }
 
 .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     background: var(--color-dark-base);
     border: 1px solid rgba(255, 255, 255, 0.15);
     overflow: hidden;
@@ -72,7 +75,9 @@
 
 /* ── Thumbnail ──────────────────────────────────────── */
 .thumbnail {
-    height: 160px;
+    flex: 1;
+    height: 100%;
+    min-height: 0;
     background-color: var(--color-dark-base);
     position: relative;
     overflow: hidden;

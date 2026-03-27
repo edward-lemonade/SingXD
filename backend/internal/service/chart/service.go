@@ -27,12 +27,12 @@ const ChartURLMinutes = 60
 // =========================================================
 // Operations
 
-func (s *ChartService) CreateChart(ctx context.Context, draftUUID string, chartBase t.ChartBase) (*t.PublicChart, error) {
+func (s *ChartService) CreateChart(ctx context.Context, draftUUID string, UID string, chartBase t.ChartBase) (*t.PublicChart, error) {
 	if s.db == nil {
 		return nil, ErrDbNotConfigured
 	}
 
-	chart, err := save(ctx, s.db, nil, chartBase)
+	chart, err := save(ctx, s.db, UID, chartBase)
 	if err != nil {
 		return nil, fmt.Errorf("saving chart: %w", err)
 	}
@@ -88,4 +88,32 @@ func (s *ChartService) ListCharts(ctx context.Context, page, limit int, search s
 	}
 
 	return charts, total, nil
+}
+
+func (s *ChartService) ListChartsByUID(ctx context.Context, uid string) ([]t.PublicChart, error) {
+	if s.db == nil {
+		return nil, ErrDbNotConfigured
+	}
+
+	records, err := listByUID(ctx, s.db, uid)
+	if err != nil {
+		return nil, err
+	}
+
+	charts := make([]t.PublicChart, 0, len(records))
+	for _, r := range records {
+		chart, err := r.toPublicChart()
+		if err != nil {
+			return nil, err
+		}
+		_, bgURL, err := getChartURLs(ctx, s.s3Client, chart.ID, ChartURLMinutes)
+		if err != nil {
+			log.Printf("warn: background url for chart %d: %v", chart.ID, err)
+		} else {
+			chart.Properties.BackgroundImageURL = bgURL
+		}
+		charts = append(charts, *chart)
+	}
+
+	return charts, nil
 }

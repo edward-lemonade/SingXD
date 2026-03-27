@@ -31,8 +31,10 @@ func AutoMigrate(db *gorm.DB) error {
 // ==============================================================================
 // Operations
 
-func initOne(ctx context.Context, db *gorm.DB) (DraftRecord, error) {
-	record := DraftRecord{}
+func initOne(ctx context.Context, db *gorm.DB, uid *string) (DraftRecord, error) {
+	record := DraftRecord{
+		AuthorUID: uid,
+	}
 	if err := db.WithContext(ctx).Create(&record).Error; err != nil {
 		return DraftRecord{}, err
 	}

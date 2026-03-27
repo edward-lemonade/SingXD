@@ -61,8 +61,8 @@ export interface DraftChartWithURLs extends DraftChart {
 export interface User {
     id: string;
     uid: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     lastVisited: string;
     username: string;
     description: string;

@@ -24,34 +24,6 @@ func NewChartHandler(service *ChartService) *ChartHandler {
 // ============================================================================================
 // Handlers
 
-func (a *ChartHandler) CreateChart(c *gin.Context) {
-	type Request struct {
-		DraftUUID string      `json:"draftUuid"`
-		ChartBase t.ChartBase `json:"chartBase"`
-	}
-
-	var request Request
-	if err := c.ShouldBindJSON(&request); err != nil {
-		transport.BadRequest(c, "invalid request body")
-		return
-	}
-	if request.DraftUUID == "" {
-		transport.BadRequest(c, "missing draftUuid")
-		return
-	}
-
-	chart, err := a.chartService.CreateChart(c.Request.Context(), request.DraftUUID, request.ChartBase)
-	if err != nil {
-		transport.ServiceError(c, err)
-		return
-	}
-
-	type Response struct {
-		Chart t.PublicChart `json:"chart"`
-	}
-	c.JSON(http.StatusOK, Response{Chart: *chart})
-}
-
 func (a *ChartHandler) GetChart(c *gin.Context) {
 	idStr := c.Param("id")
 	if idStr == "" {
@@ -113,4 +85,19 @@ func (a *ChartHandler) ListCharts(c *gin.Context) {
 		Page:   page,
 		Limit:  limit,
 	})
+}
+
+func (a *ChartHandler) ListMyCharts(c *gin.Context) {
+	uid := getRequiredUID(c)
+
+	charts, err := a.chartService.ListChartsByUID(c.Request.Context(), uid)
+	if err != nil {
+		transport.ServiceError(c, err)
+		return
+	}
+
+	type Response struct {
+		Charts []t.PublicChart `json:"charts"`
+	}
+	c.JSON(http.StatusOK, Response{Charts: charts})
 }
