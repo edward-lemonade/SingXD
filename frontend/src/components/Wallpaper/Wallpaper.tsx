@@ -1,17 +1,31 @@
 import styles from './Wallpaper.module.css';
 
-export type WallpaperColors = 'peach' | 'lavender';
-
-const wallpaperColorMap: Record<WallpaperColors, string> = {
+const wallpaperColorMap = {
     peach: styles.peach,
     lavender: styles.lavender,
-};
+} as const;
 
-export default function Wallpaper({ color }: { color: WallpaperColors }) {
+export type WallpaperColors = keyof typeof wallpaperColorMap;
+
+interface WallpaperProps {
+    color: WallpaperColors;
+    invert?: boolean;
+}
+
+export default function Wallpaper({ color, invert = false }: WallpaperProps) {
     return (
-        <div className={`${styles.container} ${wallpaperColorMap[color]}`}>
-            <div className={styles.overlayOutlines} />
-            <div className={styles.overlayFill} />
+        <div style={{
+            position: 'absolute',
+            height: '100vh',
+            width: '100vw',
+            zIndex: -1000,
+            overflow: 'hidden',
+            ...(invert && { filter: 'invert(1) hue-rotate(180deg)' }),
+        }}>
+            <div className={`${styles.wallpaper} ${wallpaperColorMap[color]}`}>
+                <div className={styles.overlayOutlines} />
+                <div className={styles.overlayFill} />
+            </div>
         </div>
     );
 }

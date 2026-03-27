@@ -1,0 +1,90 @@
+.button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 8px 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 120ms, color 120ms;
+}
+
+.button:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Default — glassmorphic */
+.default {
+    background: rgba(255, 255, 255, 0.5);
+    color: #000;
+    border: 4px solid rgba(255, 255, 255, 0.6);
+    outline: 2px solid var(--color-dark-base);
+}
+
+.default:hover {
+    background: rgba(255, 255, 255, 0.65);
+}
+
+.default:active {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+/* Success — green */
+.success {
+    background: rgba(187, 247, 208, 0.5);
+    color: #166534;
+    border: 4px solid rgba(187, 247, 208, 0.6);
+    outline: 2px solid #16a34a;
+}
+
+.success:hover {
+    background: rgba(187, 247, 208, 0.7);
+}
+
+.success:active {
+    background: rgba(187, 247, 208, 0.3);
+}
+
+/* Danger — red */
+.danger {
+    background: rgba(254, 202, 202, 0.5);
+    color: #991b1b;
+    border: 4px solid rgba(254, 202, 202, 0.6);
+    outline: 2px solid #dc2626;
+}
+
+.danger:hover {
+    background: rgba(254, 202, 202, 0.7);
+}
+
+.danger:active {
+    background: rgba(254, 202, 202, 0.3);
+}
+
+/* Dark variant */
+.dark {
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: 4px solid rgba(0, 0, 0, 0.6);
+    outline: 2px solid var(--color-dark-base);
+}
+
+.dark:hover {
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.dark:active {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+/* Borderless modifier */
+.borderless {
+    border: none;
+    outline: none;
+}

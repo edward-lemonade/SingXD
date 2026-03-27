@@ -8,6 +8,7 @@ import PublishStep from './steps/PublishStep';
 import { useAuth } from '@/src/lib/context/AuthContext';
 import { useDraftForm } from './useDraftForm';
 import { User } from '@/src/lib/types/models';
+import Wallpaper from '@/src/components/Wallpaper/Wallpaper';
 
 const steps = [
     { id: 1, name: 'Audio' },
@@ -35,6 +36,7 @@ export default function CreateClient({ currentUser, initialDraftUuid }: CreateCl
 
     return (
         <div className="flex flex-col h-screen">
+            <Wallpaper color="lavender" invert/>
             {!user && (
                 <div className="p-4 shrink-0 flex items-center justify-between bg-yellow-50 border-b border-yellow-200 px-6 py-2 text-sm text-yellow-800">
                     You&apos;re working as a guest. Publish before leaving or your progress will be

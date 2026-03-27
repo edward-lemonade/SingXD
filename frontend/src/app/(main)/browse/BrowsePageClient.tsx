@@ -7,6 +7,7 @@ import SearchBar from '@/src/components/SearchBar/SearchBar';
 import * as ChartAPI from '@/src/lib/api/ChartAPI';
 import { PublicChart } from '@/src/lib/types/models';
 import { Card } from '@/src/components/Card/Card';
+import { Button } from '@/src/components/Button/Button';
 
 const PAGE_SIZE = 12;
 
@@ -67,25 +68,23 @@ export default function BrowsePageClient({ initialData }: BrowsePageClientProps)
             </Card>
 
             <div className="flex items-center justify-center gap-4 mt-auto">
-                <button
+                <Button
                     onClick={() => setPage(p => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="border-2 border-black text-black bg-blend-color px-4 font-bold disabled:opacity-40 hover:bg-gray-100 transition-colors disabled:cursor-not-allowed"
                     aria-label="Previous page"
                 >
                     ←
-                </button>
+                </Button>
                 <span className="font-semibold text-black">
                     {page} / {totalPages}
                 </span>
-                <button
+                <Button
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
-                    className="border-2 border-black text-black bg-white px-4 font-bold disabled:opacity-40 hover:bg-gray-100 transition-colors disabled:cursor-not-allowed"
                     aria-label="Next page"
                 >
                     →
-                </button>
+                </Button>
             </div>
         </div>
     );

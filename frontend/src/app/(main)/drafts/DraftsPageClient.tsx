@@ -8,6 +8,7 @@ import * as DraftAPI from '@/src/lib/api/DraftAPI';
 import { DraftChart, PublicChart } from '@/src/lib/types/models';
 import { ChartCard } from '@/src/components/ChartCard/ChartCard';
 import { Card } from '@/src/components/Card/Card';
+import { Button } from '@/src/components/Button/Button';
 
 function formatDate(date: Date) {
     return new Date(date).toLocaleDateString(undefined, {
@@ -65,7 +66,7 @@ export default function DraftsPageClient({
                             {charts.length === 0 ? (
                                 <p className="text-gray-500 text-sm">No published charts yet.</p>
                             ) : (
-                                <ScrollFade direction='x' className='pt-1 h-full'>
+                                <ScrollFade direction='x' className='pt-1 pb-2 h-full'>
                                     <div className="grid grid-rows-1 grid-flow-col h-full auto-cols-[calc(25%-12px)] gap-4 overflow-visible">
                                         {charts.map(chart => (
                                             <ChartCard key={chart.id} chart={chart} />
@@ -81,11 +82,8 @@ export default function DraftsPageClient({
                         <Card>
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-lg font-bold text-gray-800">Drafts</h2>
-                                <Link
-                                    href="/create"
-                                    className="text-xs px-3 py-1 border-2 border-green-500 text-green-600 font-semibold hover:bg-green-100 transition-colors cursor-pointer"
-                                >
-                                    + New Chart
+                                <Link href="/create">
+                                    <Button variant="success">+ New Chart</Button>
                                 </Link>
                             </div>
                             {drafts.length === 0 ? (
@@ -98,7 +96,7 @@ export default function DraftsPageClient({
                                         {drafts.map(draft => (
                                             <li
                                                 key={draft.uuid}
-                                                className="bg-white border-2 border-black flex items-center justify-between px-4 py-3"
+                                                className="bg-white shadow border-2 border-gray-100 flex items-center justify-between px-4 py-3"
                                             >
                                                 <div>
                                                     <p className="font-semibold text-black text-sm">
@@ -112,19 +110,18 @@ export default function DraftsPageClient({
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-2 shrink-0">
-                                                    <Link
-                                                        href={`/create?draft=${draft.uuid}`}
-                                                        className="text-xs px-3 py-1 border-2 border-black text-gray-400 font-semibold hover:bg-gray-100 transition-colors cursor-pointer"
-                                                    >
-                                                        Resume
+                                                    <Link href={`/create?draft=${draft.uuid}`}>
+                                                        <Button variant="dark" borderless>Resume</Button>
                                                     </Link>
-                                                    <button
+                                                    <Button
+                                                        variant="danger"
                                                         onClick={() => handleDelete(draft.uuid)}
                                                         disabled={deletingId === draft.uuid}
-                                                        className="text-xs px-3 py-1 border-2 border-red-400 text-red-600 font-semibold hover:bg-red-100 transition-colors cursor-pointer disabled:opacity-50"
+                                                        borderless
+                                                        
                                                     >
                                                         {deletingId === draft.uuid ? '…' : 'Delete'}
-                                                    </button>
+                                                    </Button>
                                                 </div>
                                             </li>
                                         ))}
