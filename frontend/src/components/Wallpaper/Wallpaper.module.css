@@ -1,9 +1,9 @@
 /* Gradient themes */
 .peach {
-    background: linear-gradient(to bottom, #fecaca, #ffedd5);
+    background: linear-gradient(to bottom, var(--color-rose-accent), var(--color-peach-accent));
 }
 .lavender {
-    background: linear-gradient(to bottom, #e9d5ff, #cffafe);
+    background: linear-gradient(to bottom, var(--color-lavender-accent), var(--color-blue-accent));
 }
 
 .wrapper {

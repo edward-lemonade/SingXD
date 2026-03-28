@@ -61,8 +61,7 @@ export default function DraftsPageClient({
                 <>
                     {/* Published charts */}
                     <div className="flex-1 basis-1/3 h-full">
-                        <Card>
-                            <h2 className="text-lg font-bold text-gray-800 mb-2">Published Charts</h2>
+                        <Card label="Published Charts">
                             {charts.length === 0 ? (
                                 <p className="text-gray-500 text-sm">No published charts yet.</p>
                             ) : (
@@ -79,13 +78,7 @@ export default function DraftsPageClient({
 
                     {/* Drafts */}
                     <div className="flex-1 basis-2/3 min-h-0 flex flex-col">
-                        <Card>
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-bold text-gray-800">Drafts</h2>
-                                <Link href="/create">
-                                    <Button variant="success">+ New Chart</Button>
-                                </Link>
-                            </div>
+                        <Card label="Drafts">
                             {drafts.length === 0 ? (
                                 <div className="flex flex-col items-start gap-3">
                                     <p className="text-gray-500 text-sm">No saved drafts yet.</p>
@@ -128,6 +121,11 @@ export default function DraftsPageClient({
                                     </ul>
                                 </ScrollFade>
                             )}
+                            <div className="flex items-center justify-center mt-4">
+                                <Link href="/create">
+                                    <Button variant="success">+ New Chart</Button>
+                                </Link>
+                            </div>
                         </Card>
                     </div>
                 </>

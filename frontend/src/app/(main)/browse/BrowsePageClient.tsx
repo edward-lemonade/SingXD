@@ -72,6 +72,8 @@ export default function BrowsePageClient({ initialData }: BrowsePageClientProps)
                     onClick={() => setPage(p => Math.max(1, p - 1))}
                     disabled={page === 1}
                     aria-label="Previous page"
+                    borderless
+                    variant='dark'
                 >
                     ←
                 </Button>
@@ -82,6 +84,8 @@ export default function BrowsePageClient({ initialData }: BrowsePageClientProps)
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
                     aria-label="Next page"
+                    borderless
+                    variant='dark'
                 >
                     →
                 </Button>

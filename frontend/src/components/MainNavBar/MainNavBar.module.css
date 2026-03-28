@@ -40,8 +40,8 @@
     background: linear-gradient(
         to bottom,
         transparent 0%,
-        var(--color-accent-peach) 20%,
-        var(--color-accent-rose) 80%,
+        var(--color-lavender-accent) 20%,
+        var(--color-blue-accent) 80%,
         transparent 100%
     );
     pointer-events: none;
@@ -192,7 +192,7 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     text-decoration: none;
-    color: var(--color-accent-peach);
+    color: var(--color-peach-accent);
     opacity: 0.9;
     transition: 0.15s;
     padding: 2px 0;
@@ -205,5 +205,5 @@
 }
 
 .authLinkSecondary {
-    color: var(--color-accent-rose);
+    color: var(--color-rose-accent);
 }

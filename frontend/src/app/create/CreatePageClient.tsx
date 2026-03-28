@@ -5,133 +5,210 @@ import AudioStep from '@/src/app/create/steps/AudioStep';
 import LyricsStep from '@/src/app/create/steps/LyricsStep';
 import VideoStep from './steps/VideoStep';
 import PublishStep from './steps/PublishStep';
-import { useAuth } from '@/src/lib/context/AuthContext';
+import Sidebar from './components/Sidebar/Sidebar';
 import { useDraftForm } from './useDraftForm';
 import { User } from '@/src/lib/types/models';
 import Wallpaper from '@/src/components/Wallpaper/Wallpaper';
 
-const steps = [
-    { id: 1, name: 'Audio' },
-    { id: 2, name: 'Lyrics' },
-    { id: 3, name: 'Video' },
-    { id: 4, name: 'Publish' },
-] as const;
+export type StepId = 1 | 2 | 3 | 4;
+
+export interface Step {
+    id: StepId;
+    name: string;
+    description: string;
+}
 
 interface CreateClientProps {
     currentUser: User | null;
     initialDraftUuid?: string;
 }
 
-export default function CreateClient({ currentUser, initialDraftUuid }: CreateClientProps) {
-    const { user } = useAuth();
-    const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
+const steps: Step[] = [
+    { id: 1, name: 'Audio',   description: 'Upload stems' },
+    { id: 2, name: 'Lyrics',  description: 'Align timing' },
+    { id: 3, name: 'Video',   description: 'Style & art' },
+    { id: 4, name: 'Publish', description: 'Release it' },
+] as const;
 
-    const state = useDraftForm(currentUser, initialDraftUuid);
+export default function CreateClient({ currentUser: user, initialDraftUuid }: CreateClientProps) {
+    const [currentStep, setCurrentStep] = useState<StepId>(1);
+
+    const state = useDraftForm(user, initialDraftUuid);
 
     if (state.draftLoading) {
         return (
-            <div className="flex items-center justify-center h-screen text-gray-500">Loading…</div>
+            <div className="flex items-center justify-center h-screen" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-wide)', letterSpacing: '0.1em', fontSize: 13 }}>
+                LOADING…
+            </div>
         );
     }
 
+    const stepMissing: Record<StepId, string[]> = {
+        1: [
+            ...(!state.audioUrls.instrumental ? ['Instrumental track'] : []),
+            ...(!state.audioUrls.vocals       ? ['Vocals track']       : []),
+        ],
+        2: [],
+        3: [...(!state.chartProps.backgroundImageUrl ? ['Background image'] : [])],
+        4: [
+            ...(!state.chartProps.title     ? ['Chart title']  : []),
+            ...(!state.chartProps.artist    ? ['Song artist']  : []),
+            ...(!state.chartProps.songTitle ? ['Song title']   : []),
+        ],
+    };
+
     return (
-        <div className="flex flex-col h-screen">
-            <Wallpaper color="lavender" invert/>
-            {!user && (
-                <div className="p-4 shrink-0 flex items-center justify-between bg-yellow-50 border-b border-yellow-200 px-6 py-2 text-sm text-yellow-800">
-                    You&apos;re working as a guest. Publish before leaving or your progress will be
-                    lost.
-                    <div className="flex items-center gap-3">
-                        {!user && (
-                            <span className="text-sm text-yellow-300 bg-yellow-900/40 px-3 py-1 rounded">
-                                Sign in to save your progress
-                            </span>
-                        )}
-                        {user && (
+        <div className="flex h-screen overflow-hidden">
+            <Wallpaper color='lavender' invert/>
+
+            {/* sidebar */}
+            <Sidebar
+                steps={steps}
+                currentStep={currentStep}
+                stepMissing={stepMissing}
+                user={user}
+                saveDraftLoading={state.saveDraftLoading}
+                saveDraftSuccess={state.saveDraftSuccess}
+                saveDraftError={state.saveDraftError}
+                onStepClick={setCurrentStep}
+                onSaveDraft={state.handleSaveDraft}
+            />
+
+            {/* main content */}
+            <main className="flex-1 flex-row overflow-auto" style={{ display: 'flex', minHeight: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'stretch', gap: 20, flex: 1, minHeight: '100vh' }}>
+
+                    {/* vertical step label */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        width: 48,
+                        flexShrink: 0,
+                        paddingTop: 4,
+                        marginLeft: 80,
+                        alignSelf: 'stretch',
+                    }}>
+                        <span
+                            style={{
+                                writingMode: 'vertical-rl',
+                                transform: 'rotate(180deg)',
+                                fontFamily: 'var(--font-wide)',
+                                fontWeight: 900,
+                                fontStyle: 'italic',
+                                fontSize: 100,
+                                letterSpacing: '-0.02em',
+                                lineHeight: 1,
+                                userSelect: 'none',
+                                whiteSpace: 'nowrap',
+                                paddingTop: 100,
+                                paddingBottom: 100,
+                                background: 'linear-gradient(180deg, var(--color-blue-accent), var(--color-lavender-accent))',
+                                backgroundClip: 'text',
+                                WebkitBackgroundClip: 'text',
+                                color: 'transparent',
+                            }}
+                        >
+                            {steps[currentStep - 1].name}
+                        </span>
+                    </div>
+
+                    <div style={{ flex: 1, margin: '0 auto', padding: '40px 40px', display: 'flex', flexDirection: 'column' }}>
+
+                        {/* step content */}
+                        <div style={{ flex: 1 }}>
+                            {currentStep === 1 && (
+                                <AudioStep
+                                    audioUrls={state.audioUrls}
+                                    setAudioUrls={state.setAudioUrls}
+                                    separateLoading={state.separateAudioLoading}
+                                    instrumentalUploading={state.instrumentalUploading}
+                                    vocalsUploading={state.vocalsUploading}
+                                    handleSeparateAudio={state.handleSeparateAudio}
+                                    handleUploadInstrumental={state.handleUploadInstrumental}
+                                    handleUploadVocals={state.handleUploadVocals}
+                                />
+                            )}
+                            {currentStep === 2 && (
+                                <LyricsStep
+                                    lyricsString={state.lyricsString}
+                                    setLyricsString={state.setLyricsString}
+                                    lines={state.lines}
+                                    audioUrls={state.audioUrls}
+                                    timings={state.timings}
+                                    setTimings={state.setTimings}
+                                    loading={state.generateAlignmentLoading}
+                                    handleGenerateAlignment={state.handleGenerateAlignment}
+                                />
+                            )}
+                            {currentStep === 3 && (
+                                <VideoStep
+                                    chart={state.draftChart}
+                                    chartProps={state.chartProps}
+                                    setChartProps={state.setChartProps}
+                                    onBackgroundImageFileSelect={state.handleUploadBackgroundImage}
+                                    backgroundImageUploading={state.backgroundImageUploading}
+                                />
+                            )}
+                            {currentStep === 4 && (
+                                <PublishStep
+                                    chart={state.draftChart}
+                                    chartProps={state.chartProps}
+                                    setChartProps={state.setChartProps}
+                                    loading={state.publishLoading}
+                                    handlePublish={state.handlePublish}
+                                    publishError={state.publishError}
+                                />
+                            )}
+                        </div>
+
+                        {/* bottom nav */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '2px solid rgba(0,0,0,0.08)' }}>
                             <button
-                                onClick={state.handleSaveDraft}
-                                disabled={state.saveDraftLoading}
-                                className="text-sm px-4 py-1.5 rounded bg-white/15 hover:bg-white/25 transition-colors disabled:opacity-50"
+                                onClick={() => setCurrentStep(s => Math.max(1, s - 1) as StepId)}
+                                disabled={currentStep === 1}
+                                style={{
+                                    padding: '10px 24px',
+                                    fontFamily: 'var(--font-wide)',
+                                    fontWeight: 700,
+                                    fontSize: 12,
+                                    letterSpacing: '0.1em',
+                                    textTransform: 'uppercase',
+                                    background: 'transparent',
+                                    border: '2px solid rgba(0,0,0,0.2)',
+                                    color: 'rgba(0,0,0,0.5)',
+                                    cursor: 'pointer',
+                                    opacity: currentStep === 1 ? 0.3 : 1,
+                                    transition: 'all 0.15s ease',
+                                }}
                             >
-                                {state.saveDraftLoading
-                                    ? 'Saving…'
-                                    : state.saveDraftSuccess
-                                      ? '✓ Saved'
-                                      : 'Save Draft'}
+                                ← Back
                             </button>
-                        )}
-                        {state.saveDraftError && (
-                            <span className="text-xs text-red-300">{state.saveDraftError}</span>
-                        )}
+
+                            {currentStep < 4 && (
+                                <button
+                                    onClick={() => setCurrentStep(s => Math.min(4, s + 1) as StepId)}
+                                    style={{
+                                        padding: '10px 28px',
+                                        fontFamily: 'var(--font-wide)',
+                                        fontWeight: 700,
+                                        fontSize: 12,
+                                        letterSpacing: '0.1em',
+                                        textTransform: 'uppercase',
+                                        background: 'var(--color-dark-base)',
+                                        border: '2px solid var(--color-dark-base)',
+                                        color: '#fff',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.15s ease',
+                                    }}
+                                >
+                                    Next →
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
-            )}
-
-            <div className="flex flex-1 overflow-hidden">
-                <div className="w-40 bg-linear-to-b from-purple-900 to-blue-900 p-4 shrink-0">
-                    <nav className="space-y-2">
-                        {steps.map(step => (
-                            <button
-                                key={step.id}
-                                onClick={() => setCurrentStep(step.id)}
-                                className={`w-full text-left px-4 py-2 rounded-md ${
-                                    currentStep === step.id
-                                        ? 'bg-black text-white'
-                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                }`}
-                            >
-                                {step.id}. {step.name}
-                            </button>
-                        ))}
-                    </nav>
-                </div>
-
-                <div className="flex-1 overflow-auto p-8">
-                    {currentStep === 1 && (
-                        <AudioStep
-                            audioUrls={state.audioUrls}
-                            setAudioUrls={state.setAudioUrls}
-                            separateLoading={state.separateAudioLoading}
-                            instrumentalUploading={state.instrumentalUploading}
-                            vocalsUploading={state.vocalsUploading}
-                            handleSeparateAudio={state.handleSeparateAudio}
-                            handleUploadInstrumental={state.handleUploadInstrumental}
-                            handleUploadVocals={state.handleUploadVocals}
-                        />
-                    )}
-                    {currentStep === 2 && (
-                        <LyricsStep
-                            lyricsString={state.lyricsString}
-                            setLyricsString={state.setLyricsString}
-                            lines={state.lines}
-                            audioUrls={state.audioUrls}
-                            timings={state.timings}
-                            setTimings={state.setTimings}
-                            loading={state.generateAlignmentLoading}
-                            handleGenerateAlignment={state.handleGenerateAlignment}
-                        />
-                    )}
-                    {currentStep === 3 && (
-                        <VideoStep
-                            chart={state.draftChart}
-                            chartProps={state.chartProps}
-                            setChartProps={state.setChartProps}
-                            onBackgroundImageFileSelect={state.handleUploadBackgroundImage}
-                            backgroundImageUploading={state.backgroundImageUploading}
-                        />
-                    )}
-                    {currentStep === 4 && (
-                        <PublishStep
-                            chart={state.draftChart}
-                            chartProps={state.chartProps}
-                            setChartProps={state.setChartProps}
-                            loading={state.publishLoading}
-                            handlePublish={state.handlePublish}
-                            publishError={state.publishError}
-                        />
-                    )}
-                </div>
-            </div>
+            </main>
         </div>
     );
 }
