@@ -1,32 +1,23 @@
 'use client';
 
-import { useState } from 'react';
 import { User } from '@/src/lib/types/models';
-import { Step, StepId } from '../../CreatePageClient';
-import { StepNode } from './StepNode';
+import { Step, StepNode } from './StepNode';
 import { Button } from '@/src/components/Button/Button';
 import { Logo } from '@/src/components/Logo';
 import Link from 'next/link';
 
 export interface CreateSidebarProps {
     steps: Step[];
-    currentStep: StepId;
-    stepMissing: Record<StepId, string[]>;
+    currentStep: number;
+    stepMissing: Record<number, string[]>;
     user: User | null;
     hasUnsavedChanges: boolean;
     saveDraftLoading: boolean;
     saveDraftSuccess: boolean;
     saveDraftError: string | null;
-    onStepClick: (id: StepId) => void;
+    onStepClick: (id: number) => void;
     onSaveDraft: () => void;
 }
-
-const sidebarAccent: Record<StepId, string> = {
-    1: 'rgba(243, 187, 192, 0.08)',
-    2: 'rgba(161, 122, 204, 0.08)',
-    3: 'rgba(100, 180, 243, 0.08)',
-    4: 'rgba(243, 222, 187, 0.08)',
-};
 
 export default function Sidebar({
     steps,
@@ -40,7 +31,7 @@ export default function Sidebar({
     onStepClick,
     onSaveDraft,
 }: CreateSidebarProps) {
-    const getStatus = (id: StepId): 'done' | 'active' | 'upcoming' => {
+    const getStatus = (id: number): 'done' | 'active' | 'upcoming' => {
         if (id === currentStep) return 'active';
         if (id < currentStep) return 'done';
         return 'upcoming';
@@ -71,16 +62,6 @@ export default function Sidebar({
                 transition: 'background 0.4s ease',
             }}
         >
-            <div
-                style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: sidebarAccent[currentStep],
-                    transition: 'background 0.5s ease',
-                    pointerEvents: 'none',
-                }}
-            />
-
             <div style={{ marginBottom: 48, position: 'relative' }}>
                 <Link href="/">
                     <Logo fontSize={50} />
@@ -124,24 +105,25 @@ export default function Sidebar({
                     gap: 8,
                 }}
             >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                     <Button onClick={onSaveDraft} disabled={saveDraftLoading}>
                         {saveLabel}
+                        {hasUnsavedChanges && !saveDraftLoading && !saveDraftSuccess && (
+                            <span
+                                title="Unsaved changes"
+                                style={{
+                                    width: 8,
+                                    height: 8,
+                                    borderWidth: '1px',
+                                    borderColor: 'black',
+                                    borderRadius: '50%',
+                                    background: '#facc15',
+                                    flexShrink: 0,
+                                    boxShadow: '0 0 6px rgba(250,204,21,0.7)',
+                                }}
+                            />
+                        )}
                     </Button>
-
-                    {hasUnsavedChanges && !saveDraftLoading && !saveDraftSuccess && (
-                        <span
-                            title="Unsaved changes"
-                            style={{
-                                width: 8,
-                                height: 8,
-                                borderRadius: '50%',
-                                background: '#facc15',
-                                flexShrink: 0,
-                                boxShadow: '0 0 6px rgba(250,204,21,0.7)',
-                            }}
-                        />
-                    )}
                 </div>
 
                 {!user && (

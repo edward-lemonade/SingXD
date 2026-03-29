@@ -1,23 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import AudioStep from '@/src/app/create/steps/AudioStep';
 import LyricsStep from '@/src/app/create/steps/LyricsStep';
 import VideoStep from './steps/VideoStep';
 import PublishStep from './steps/PublishStep';
-import Sidebar from './components/Sidebar/Sidebar';
+import Sidebar from '../../components/DraftSidebar/Sidebar';
 import { useDraftForm } from './useDraftForm';
 import { User } from '@/src/lib/types/models';
 import Wallpaper from '@/src/components/Wallpaper/Wallpaper';
 import { Button } from '@/src/components/Button/Button';
+import { Step } from '@/src/components/DraftSidebar/StepNode';
 
 export type StepId = 1 | 2 | 3 | 4;
-
-export interface Step {
-    id: StepId;
-    name: string;
-    description: string;
-}
 
 interface CreateClientProps {
     currentUser: User | null;
@@ -71,7 +66,7 @@ export default function CreateClient({ currentUser: user, initialDraftUuid }: Cr
                 saveDraftLoading={state.saveDraftLoading}
                 saveDraftSuccess={state.saveDraftSuccess}
                 saveDraftError={state.saveDraftError}
-                onStepClick={setCurrentStep}
+                onStepClick={setCurrentStep as Dispatch<SetStateAction<number>>}
                 onSaveDraft={state.handleSaveDraft}
             />
 
