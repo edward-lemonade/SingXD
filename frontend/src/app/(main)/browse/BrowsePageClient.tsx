@@ -8,6 +8,8 @@ import * as ChartAPI from '@/src/lib/api/ChartAPI';
 import { PublicChart } from '@/src/lib/types/models';
 import { Card } from '@/src/components/Card/Card';
 import { Button } from '@/src/components/Button/Button';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const PAGE_SIZE = 12;
 
@@ -75,7 +77,7 @@ export default function BrowsePageClient({ initialData }: BrowsePageClientProps)
                     borderless
                     variant='dark'
                 >
-                    ←
+                    <ArrowBackIosNewIcon/>
                 </Button>
                 <span className="font-semibold text-black">
                     {page} / {totalPages}
@@ -87,7 +89,7 @@ export default function BrowsePageClient({ initialData }: BrowsePageClientProps)
                     borderless
                     variant='dark'
                 >
-                    →
+                    <ArrowForwardIosIcon/>
                 </Button>
             </div>
         </div>

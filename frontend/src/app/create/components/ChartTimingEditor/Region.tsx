@@ -108,7 +108,7 @@ export default function Region({
                     top: `${topPercent}%`,
                     left: 4,
                     fontWeight: selected ? 600 : 400,
-                    color: selected ? '#713f12' : 'inherit',
+                    color: selected ? '#713f12' : '#000000',
                 }}
             >
                 {text}

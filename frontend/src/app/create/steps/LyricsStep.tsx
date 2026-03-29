@@ -89,7 +89,7 @@ export default function LyricsStep({
 
             {/* Timing editor */}
             <Card label="Timing Editor">
-                <div style={{ padding: '24px 24px 20px' }}>
+                <div style={{ padding: '0px 24px 20px' }}>
                     <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 16 }}>
                         
                         {/* vocals toggle */}

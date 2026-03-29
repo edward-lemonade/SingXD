@@ -9,6 +9,7 @@ import Sidebar from './components/Sidebar/Sidebar';
 import { useDraftForm } from './useDraftForm';
 import { User } from '@/src/lib/types/models';
 import Wallpaper from '@/src/components/Wallpaper/Wallpaper';
+import { Button } from '@/src/components/Button/Button';
 
 export type StepId = 1 | 2 | 3 | 4;
 
@@ -164,47 +165,22 @@ export default function CreateClient({ currentUser: user, initialDraftUuid }: Cr
 
                         {/* bottom nav */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '2px solid rgba(0,0,0,0.08)' }}>
-                            <button
+                            <Button
                                 onClick={() => setCurrentStep(s => Math.max(1, s - 1) as StepId)}
                                 disabled={currentStep === 1}
-                                style={{
-                                    padding: '10px 24px',
-                                    fontFamily: 'var(--font-wide)',
-                                    fontWeight: 700,
-                                    fontSize: 12,
-                                    letterSpacing: '0.1em',
-                                    textTransform: 'uppercase',
-                                    background: 'transparent',
-                                    border: '2px solid rgba(0,0,0,0.2)',
-                                    color: 'rgba(0,0,0,0.5)',
-                                    cursor: 'pointer',
-                                    opacity: currentStep === 1 ? 0.3 : 1,
-                                    transition: 'all 0.15s ease',
-                                }}
+                                borderless
                             >
                                 ← Back
-                            </button>
+                            </Button>
+                        
 
-                            {currentStep < 4 && (
-                                <button
-                                    onClick={() => setCurrentStep(s => Math.min(4, s + 1) as StepId)}
-                                    style={{
-                                        padding: '10px 28px',
-                                        fontFamily: 'var(--font-wide)',
-                                        fontWeight: 700,
-                                        fontSize: 12,
-                                        letterSpacing: '0.1em',
-                                        textTransform: 'uppercase',
-                                        background: 'var(--color-dark-base)',
-                                        border: '2px solid var(--color-dark-base)',
-                                        color: '#fff',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.15s ease',
-                                    }}
-                                >
-                                    Next →
-                                </button>
-                            )}
+                            <Button
+                                onClick={() => setCurrentStep(s => Math.min(4, s + 1) as StepId)}
+                                disabled={currentStep === 4}
+                                borderless
+                            >
+                                Next →
+                            </Button>
                         </div>
                     </div>
                 </div>

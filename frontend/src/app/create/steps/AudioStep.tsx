@@ -51,17 +51,17 @@ export default function AudioStep({
 
                         {audioUrls.combined && (
                             <div style={{ flex: 1, minWidth: 200 }}>
-                                <p style={{ margin: '0 0 10px', fontSize: 11, color: 'rgba(0,0,0,0.4)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Preview</p>
+                                <p style={{ margin: '0 0 10px', fontSize: 11, color: 'rgba(0,0,0,0.4)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Combined Audio</p>
                                 <audio controls src={audioUrls.combined} style={{ width: '100%', marginBottom: 16 }} />
                                 <Button
                                     onClick={handleSeparateAudio}
                                     disabled={separateLoading}
-                                    className="text-black flex flex-col"
+                                    className="text-black flex flex-row"
                                     borderless
                                 >
                                     {separateLoading && (
                                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ animation: 'spin 1s linear infinite' }}>
-                                            <circle cx="6" cy="6" r="5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
+                                            <circle cx="6" cy="6" r="5" stroke="rgba(0,0,0,1)" strokeWidth="1.5" />
                                             <path d="M6 1a5 5 0 0 1 5 5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
                                             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                                         </svg>
@@ -77,9 +77,9 @@ export default function AudioStep({
             {/* Option B: manual upload */}
             <Card label="Option B — Manual upload" desc="Upload pre-separated stems directly. Both are required to publish.">
                 <div style={{ padding: '0px 24px 20px' }}>
-                    <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
-                        {/* instrumental */}
-                        <div>
+                    <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start' }}>
+                        
+                        <div style={{ display: 'flex', gap: 32, flexShrink: 0 }}>
                             <FileInputButton
                                 label="Instrumental"
                                 accept="audio/*"
@@ -88,13 +88,6 @@ export default function AudioStep({
                                 fileName={audioUrls.instrumental ? 'instrumental' : null}
                                 size={148}
                             />
-                            {audioUrls.instrumental && (
-                                <audio controls src={audioUrls.instrumental} style={{ width: 148, marginTop: 10, display: 'block' }} />
-                            )}
-                        </div>
-
-                        {/* vocals */}
-                        <div>
                             <FileInputButton
                                 label="Vocals"
                                 accept="audio/*"
@@ -103,10 +96,26 @@ export default function AudioStep({
                                 fileName={audioUrls.vocals ? 'vocals' : null}
                                 size={148}
                             />
-                            {audioUrls.vocals && (
-                                <audio controls src={audioUrls.vocals} style={{ width: 148, marginTop: 10, display: 'block' }} />
-                            )}
                         </div>
+
+                        {/* Right: players stacked vertically, constrained to button container height */}
+{(audioUrls.instrumental || audioUrls.vocals) && (
+    <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column', gap: 12, height: 148 }}>
+        {audioUrls.instrumental && (
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
+                <p style={{ margin: '0 0 4px', fontSize: 11, color: 'rgba(0,0,0,0.4)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Instrumental</p>
+                <audio controls src={audioUrls.instrumental} style={{ width: '100%' }} />
+            </div>
+        )}
+        {audioUrls.vocals && (
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
+                <p style={{ margin: '0 0 4px', fontSize: 11, color: 'rgba(0,0,0,0.4)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Vocals</p>
+                <audio controls src={audioUrls.vocals} style={{ width: '100%' }} />
+            </div>
+        )}
+    </div>
+)}
+
                     </div>
                 </div>
             </Card>
