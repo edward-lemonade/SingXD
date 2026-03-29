@@ -27,12 +27,7 @@ export default function AudioStep({
     handleUploadInstrumental,
     handleUploadVocals,
 }: AudioStepProps) {
-    const [combinedFile, setCombinedFile] = useState<File | null>(null);
-
-    const onCombinedFile = (file: File) => {
-        setCombinedFile(file);
-        setAudioUrls(prev => ({ ...prev, combined: URL.createObjectURL(file) }));
-    };
+    const onCombinedFile = (file: File) => {setAudioUrls(prev => ({ ...prev, combined: URL.createObjectURL(file) }));};
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -45,13 +40,13 @@ export default function AudioStep({
                             label="Combined Audio"
                             accept="audio/*"
                             onFile={onCombinedFile}
-                            fileName={combinedFile?.name ?? null}
+                            fileName={audioUrls.combined ? "combined" : null}
                             size={148}
                         />
 
                         {audioUrls.combined && (
                             <div style={{ flex: 1, minWidth: 200 }}>
-                                <p style={{ margin: '0 0 10px', fontSize: 11, color: 'rgba(0,0,0,0.4)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Combined Audio</p>
+                                <p style={{ margin: '0 0 10px', fontSize: 11, color: 'rgba(0,0,0,0.6)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Combined Audio</p>
                                 <audio controls src={audioUrls.combined} style={{ width: '100%', marginBottom: 16 }} />
                                 <Button
                                     onClick={handleSeparateAudio}
@@ -98,23 +93,22 @@ export default function AudioStep({
                             />
                         </div>
 
-                        {/* Right: players stacked vertically, constrained to button container height */}
-{(audioUrls.instrumental || audioUrls.vocals) && (
-    <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column', gap: 12, height: 148 }}>
-        {audioUrls.instrumental && (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
-                <p style={{ margin: '0 0 4px', fontSize: 11, color: 'rgba(0,0,0,0.4)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Instrumental</p>
-                <audio controls src={audioUrls.instrumental} style={{ width: '100%' }} />
-            </div>
-        )}
-        {audioUrls.vocals && (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
-                <p style={{ margin: '0 0 4px', fontSize: 11, color: 'rgba(0,0,0,0.4)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Vocals</p>
-                <audio controls src={audioUrls.vocals} style={{ width: '100%' }} />
-            </div>
-        )}
-    </div>
-)}
+                        {(audioUrls.instrumental || audioUrls.vocals) && (
+                            <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column', gap: 12, height: 148 }}>
+                                {audioUrls.instrumental && (
+                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
+                                        <p style={{ margin: '0 0 4px', fontSize: 11, color: 'rgba(0,0,0,0.6)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Instrumental</p>
+                                        <audio controls src={audioUrls.instrumental} style={{ width: '100%' }} />
+                                    </div>
+                                )}
+                                {audioUrls.vocals && (
+                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
+                                        <p style={{ margin: '0 0 4px', fontSize: 11, color: 'rgba(0,0,0,0.6)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Vocals</p>
+                                        <audio controls src={audioUrls.vocals} style={{ width: '100%' }} />
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                     </div>
                 </div>

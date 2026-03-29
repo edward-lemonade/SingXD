@@ -157,22 +157,15 @@ export function useDraftForm(currentUser: User|null, initialDraftUuid?: string):
 
     // cleanup
     useEffect(
-        () => () => {
-            if (audioUrls.combined) URL.revokeObjectURL(audioUrls.combined);
-        },
+        () => () => {if (audioUrls.combined) URL.revokeObjectURL(audioUrls.combined);},
         [audioUrls.combined]
     );
     useEffect(
-        () => () => {
-            if (audioUrls.instrumental?.startsWith('blob:'))
-                URL.revokeObjectURL(audioUrls.instrumental!);
-        },
+        () => () => {if (audioUrls.instrumental?.startsWith('blob:'))URL.revokeObjectURL(audioUrls.instrumental!);},
         [audioUrls.instrumental]
     );
     useEffect(
-        () => () => {
-            if (audioUrls.vocals) URL.revokeObjectURL(audioUrls.vocals!);
-        },
+        () => () => {if (audioUrls.vocals) URL.revokeObjectURL(audioUrls.vocals!);},
         [audioUrls.vocals]
     );
     useEffect(

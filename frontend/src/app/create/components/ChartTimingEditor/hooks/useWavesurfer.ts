@@ -246,11 +246,14 @@ export function useWaveSurfer({
     // ── Public API ────────────────────────────────────────────────────────────
     const togglePlayPause = () => {
         if (!wsRef.current) return;
+        if (!isReady) return;
         isPlaying ? wsRef.current.pause() : wsRef.current.play();
     };
 
     const seekTo = (time: number) => {
-        wsRef.current?.setTime(time);
+        if (!wsRef.current) return;
+        if (!isReady) return;
+        wsRef.current.setTime(time);
     };
 
     return { wsRef, isReady, isPlaying, waveformWidth, minPxPerSec, togglePlayPause, seekTo };

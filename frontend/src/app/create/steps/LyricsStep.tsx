@@ -3,7 +3,7 @@
 import { Card } from '@/src/components/Card/Card';
 import { Line, Timing } from '../../../lib/types/models';
 import { AudioUrls } from '../useDraftForm';
-import { SetStateAction, useMemo, useState } from 'react';
+import { SetStateAction, useEffect, useMemo, useState } from 'react';
 import ChartTimingEditor from '../components/ChartTimingEditor';
 import { Button } from '@/src/components/Button/Button';
 
@@ -29,8 +29,13 @@ export default function LyricsStep({
     handleGenerateAlignment,
 }: LyricsStepProps) {
     const [vocalsOnly, setVocalsOnly] = useState(false);
+        useEffect(() => {
+        if (audioUrls.vocals && audioUrls.combined) return; 
+        if (audioUrls.vocals) setVocalsOnly(true);
+        else setVocalsOnly(false);
+    }, [audioUrls.vocals, audioUrls.combined]);
     const audioUrl = vocalsOnly ? audioUrls.vocals : audioUrls.combined;
-
+    
     const flatWords = useMemo(
         () => lines.flatMap(line => line.words.map(w => w.text)),
         [lines]
@@ -95,7 +100,7 @@ export default function LyricsStep({
                         {/* vocals toggle */}
                         <button
                             onClick={() => setVocalsOnly(v => !v)}
-                            disabled={!audioUrls.vocals}
+                            disabled={!audioUrls.vocals || !audioUrls.combined}
                             style={{
                                 marginBottom: 12,
                                 padding: '5px 12px',
