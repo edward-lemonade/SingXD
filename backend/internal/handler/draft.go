@@ -95,6 +95,11 @@ func (a *DraftHandler) PublishDraft(c *gin.Context) {
 		transport.BadRequest(c, "invalid request body")
 		return
 	}
+	//_, err := a.draftService.UpdateDraft(c.Request.Context(), uuid, uid, req.ChartBase)
+	//if err != nil {
+	//	transport.ServiceError(c, err)
+	//	return
+	//}
 	chart, err := a.draftService.PublishDraft(c.Request.Context(), uuid, uid, req.ChartBase, a.chartService)
 	if err != nil {
 		transport.ServiceError(c, err)

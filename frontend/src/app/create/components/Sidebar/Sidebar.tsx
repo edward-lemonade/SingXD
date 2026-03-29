@@ -6,6 +6,7 @@ import { Step, StepId } from '../../CreatePageClient';
 import { StepNode, StepNodeProps } from './StepNode';
 import { Button } from '@/src/components/Button/Button';
 import { Logo } from '@/src/components/Logo';
+import Link from 'next/link';
 
 export interface CreateSidebarProps {
     steps: Step[];
@@ -73,7 +74,9 @@ export default function Sidebar({
 
             {/* logo */}
             <div style={{ marginBottom: 48, position: 'relative' }}>
-                <Logo fontSize={50}/>
+                <Link href="/">
+                    <Logo fontSize={50}/>
+                </Link>
                 <div
                     style={{
                         marginTop: 4,
