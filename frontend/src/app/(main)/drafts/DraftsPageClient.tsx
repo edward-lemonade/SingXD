@@ -9,6 +9,7 @@ import { DraftChart, PublicChart } from '@/src/lib/types/models';
 import { ChartCard } from '@/src/components/ChartCard/ChartCard';
 import { Card } from '@/src/components/Card/Card';
 import { Button } from '@/src/components/Button/Button';
+import { DRAFT_UUID_PENDING_KEY } from '@/src/app/create/useDraftForm';
 
 function formatDate(date: Date) {
     return new Date(date).toLocaleDateString(undefined, {
@@ -30,13 +31,19 @@ export default function DraftsPageClient({
 
     const [drafts, setDrafts] = useState<DraftChart[]>(initialDrafts);
     const [charts] = useState<PublicChart[]>(initialCharts);
-    const [error, setError] = useState<string | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
     useEffect(() => {
         if (authLoading) return;
         if (!user) {
             router.replace('/');
+            return;
+        }
+
+        const pendingUuid = localStorage.getItem(DRAFT_UUID_PENDING_KEY);
+        if (pendingUuid) {
+            localStorage.removeItem(DRAFT_UUID_PENDING_KEY);
+            router.replace(`/create?draft=${pendingUuid}`);
         }
     }, [user, authLoading, router]);
 
@@ -55,81 +62,74 @@ export default function DraftsPageClient({
 
     return (
         <div className="flex flex-col w-full h-screen py-6 gap-6">
-            {error ? (
-                <p className="text-red-600">{error}</p>
-            ) : (
-                <>
-                    {/* Published charts */}
-                    <div className="flex-1 basis-1/3 h-full">
-                        <Card label="Published Charts">
-                            {charts.length === 0 ? (
-                                <p className="text-gray-500 text-sm">No published charts yet.</p>
-                            ) : (
-                                <ScrollFade direction='x' className='pt-1 pb-2 h-full'>
-                                    <div className="grid grid-rows-1 grid-flow-col h-full auto-cols-[calc(25%-12px)] gap-4 overflow-visible">
-                                        {charts.map(chart => (
-                                            <ChartCard key={chart.id} chart={chart} />
-                                        ))}
-                                    </div>
-                                </ScrollFade>
-                            )}
-                        </Card>
-                    </div>
-
-                    {/* Drafts */}
-                    <div className="flex-1 basis-2/3 min-h-0 flex flex-col">
-                        <Card label="Drafts">
-                            {drafts.length === 0 ? (
-                                <div className="flex flex-col items-start gap-3">
-                                    <p className="text-gray-500 text-sm">No saved drafts yet.</p>
-                                </div>
-                            ) : (
-                                <ScrollFade direction="y">
-                                    <ul className="flex flex-col gap-2 w-full">
-                                        {drafts.map(draft => (
-                                            <li
-                                                key={draft.uuid}
-                                                className="bg-white shadow border-2 border-gray-100 flex items-center justify-between px-4 py-3"
-                                            >
-                                                <div>
-                                                    <p className="font-semibold text-black text-sm">
-                                                        {draft.properties.title || 'Untitled'}
-                                                    </p>
-                                                    <p className="text-xs text-gray-500 mt-0.5">
-                                                        {draft.properties.songTitle
-                                                            ? `${draft.properties.songTitle}${draft.properties.artist ? ` — ${draft.properties.artist}` : ''}`
-                                                            : 'No song info'}
-                                                        {' · '}Updated {formatDate(draft.updatedAt)}
-                                                    </p>
-                                                </div>
-                                                <div className="flex items-center gap-2 shrink-0">
-                                                    <Link href={`/create?draft=${draft.uuid}`}>
-                                                        <Button variant="dark" borderless>Resume</Button>
-                                                    </Link>
-                                                    <Button
-                                                        variant="danger"
-                                                        onClick={() => handleDelete(draft.uuid)}
-                                                        disabled={deletingId === draft.uuid}
-                                                        borderless
-                                                        
-                                                    >
-                                                        {deletingId === draft.uuid ? '…' : 'Delete'}
-                                                    </Button>
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </ScrollFade>
-                            )}
-                            <div className="flex items-center justify-center mt-4">
-                                <Link href="/create">
-                                    <Button variant="success">+ New Chart</Button>
-                                </Link>
+            {/* Published charts */}
+            <div className="flex-1 basis-1/3 h-full">
+                <Card label="Published Charts">
+                    {charts.length === 0 ? (
+                        <p className="text-gray-500 text-sm">No published charts yet.</p>
+                    ) : (
+                        <ScrollFade direction='x' className='pt-1 pb-2 h-full'>
+                            <div className="grid grid-rows-1 grid-flow-col h-full auto-cols-[calc(25%-12px)] gap-4 overflow-visible">
+                                {charts.map(chart => (
+                                    <ChartCard key={chart.id} chart={chart} />
+                                ))}
                             </div>
-                        </Card>
+                        </ScrollFade>
+                    )}
+                </Card>
+            </div>
+
+            {/* Drafts */}
+            <div className="flex-1 basis-2/3 min-h-0 flex flex-col">
+                <Card label="Drafts">
+                    {drafts.length === 0 ? (
+                        <div className="flex flex-col items-start gap-3">
+                            <p className="text-gray-500 text-sm">No saved drafts yet.</p>
+                        </div>
+                    ) : (
+                        <ScrollFade direction="y">
+                            <ul className="flex flex-col gap-2 w-full">
+                                {drafts.map(draft => (
+                                    <li
+                                        key={draft.uuid}
+                                        className="bg-white shadow border-2 border-gray-100 flex items-center justify-between px-4 py-3"
+                                    >
+                                        <div>
+                                            <p className="font-semibold text-black text-sm">
+                                                {draft.properties.title || 'Untitled'}
+                                            </p>
+                                            <p className="text-xs text-gray-500 mt-0.5">
+                                                {draft.properties.songTitle
+                                                    ? `${draft.properties.songTitle}${draft.properties.artist ? ` — ${draft.properties.artist}` : ''}`
+                                                    : 'No song info'}
+                                                {' · '}Updated {formatDate(draft.updatedAt)}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2 shrink-0">
+                                            <Link href={`/create?draft=${draft.uuid}`}>
+                                                <Button variant="dark" borderless>Resume</Button>
+                                            </Link>
+                                            <Button
+                                                variant="danger"
+                                                onClick={() => handleDelete(draft.uuid)}
+                                                disabled={deletingId === draft.uuid}
+                                                borderless
+                                            >
+                                                {deletingId === draft.uuid ? '…' : 'Delete'}
+                                            </Button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </ScrollFade>
+                    )}
+                    <div className="flex items-center justify-center mt-4">
+                        <Link href="/create">
+                            <Button variant="success">+ New Chart</Button>
+                        </Link>
                     </div>
-                </>
-            )}
+                </Card>
+            </div>
         </div>
     );
 }

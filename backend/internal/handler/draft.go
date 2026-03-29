@@ -47,7 +47,7 @@ func (a *DraftHandler) ListDrafts(c *gin.Context) {
 func (a *DraftHandler) GetDraft(c *gin.Context) {
 	uid := getRequiredUID(c)
 	uuid := c.Param("uuid")
-	draft, err := a.draftService.GetDraft(c.Request.Context(), uuid, uid)
+	draft, err := a.draftService.GetDraft(c.Request.Context(), uuid, &uid)
 	if err != nil {
 		transport.ServiceError(c, err)
 		return
@@ -56,7 +56,7 @@ func (a *DraftHandler) GetDraft(c *gin.Context) {
 }
 
 func (a *DraftHandler) UpdateDraft(c *gin.Context) {
-	uid := getRequiredUID(c)
+	uid := getUID(c)
 	uuid := c.Param("uuid")
 	type Request struct {
 		ChartBase t.ChartBase `json:"chartBase"`
@@ -95,6 +95,11 @@ func (a *DraftHandler) PublishDraft(c *gin.Context) {
 		transport.BadRequest(c, "invalid request body")
 		return
 	}
+	//_, err := a.draftService.UpdateDraft(c.Request.Context(), uuid, uid, req.ChartBase)
+	//if err != nil {
+	//	transport.ServiceError(c, err)
+	//	return
+	//}
 	chart, err := a.draftService.PublishDraft(c.Request.Context(), uuid, uid, req.ChartBase, a.chartService)
 	if err != nil {
 		transport.ServiceError(c, err)

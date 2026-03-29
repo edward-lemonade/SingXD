@@ -62,7 +62,7 @@ func (s *DraftService) ListDrafts(ctx context.Context, uid string) ([]t.DraftCha
 	return drafts, nil
 }
 
-func (s *DraftService) GetDraft(ctx context.Context, uuid, uid string) (*t.DraftChartWithURLs, error) {
+func (s *DraftService) GetDraft(ctx context.Context, uuid string, uid *string) (*t.DraftChartWithURLs, error) {
 	record, err := findByUUIDAndUID(ctx, s.db, uuid, uid)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrDraftNotFound, err)
@@ -85,7 +85,7 @@ func (s *DraftService) GetDraft(ctx context.Context, uuid, uid string) (*t.Draft
 	}, nil
 }
 
-func (s *DraftService) UpdateDraft(ctx context.Context, uuid, uid string, draft t.ChartBase) (*t.DraftChart, error) {
+func (s *DraftService) UpdateDraft(ctx context.Context, uuid string, uid *string, draft t.ChartBase) (*t.DraftChart, error) {
 	if _, err := findByUUIDAndUID(ctx, s.db, uuid, uid); err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrDraftNotFound, err)
 	}
@@ -101,7 +101,7 @@ func (s *DraftService) UpdateDraft(ctx context.Context, uuid, uid string, draft 
 }
 
 func (s *DraftService) DeleteDraft(ctx context.Context, uuid, uid string) error {
-	if _, err := findByUUIDAndUID(ctx, s.db, uuid, uid); err != nil {
+	if _, err := findByUUIDAndUID(ctx, s.db, uuid, &uid); err != nil {
 		return fmt.Errorf("%w: %w", ErrDraftNotFound, err)
 	}
 	return deleteByUUIDAndUID(ctx, s.db, uuid, uid)

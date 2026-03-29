@@ -60,14 +60,14 @@ export default function CreateClient({ currentUser: user, initialDraftUuid }: Cr
 
     return (
         <div className="flex h-screen overflow-hidden">
-            <Wallpaper color='lavender' invert/>
+            <Wallpaper color='lavender' invert />
 
-            {/* sidebar */}
             <Sidebar
                 steps={steps}
                 currentStep={currentStep}
                 stepMissing={stepMissing}
                 user={user}
+                hasUnsavedChanges={state.hasUnsavedChanges}
                 saveDraftLoading={state.saveDraftLoading}
                 saveDraftSuccess={state.saveDraftSuccess}
                 saveDraftError={state.saveDraftError}
@@ -75,11 +75,9 @@ export default function CreateClient({ currentUser: user, initialDraftUuid }: Cr
                 onSaveDraft={state.handleSaveDraft}
             />
 
-            {/* main content */}
             <main className="flex-1 flex-row overflow-auto" style={{ display: 'flex', minHeight: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'stretch', gap: 20, flex: 1, minHeight: '100vh' }}>
 
-                    {/* vertical step label */}
                     <div style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -116,7 +114,6 @@ export default function CreateClient({ currentUser: user, initialDraftUuid }: Cr
 
                     <div style={{ flex: 1, margin: '0 auto', padding: '40px 40px', display: 'flex', flexDirection: 'column' }}>
 
-                        {/* step content */}
                         <div style={{ flex: 1 }}>
                             {currentStep === 1 && (
                                 <AudioStep
@@ -163,7 +160,6 @@ export default function CreateClient({ currentUser: user, initialDraftUuid }: Cr
                             )}
                         </div>
 
-                        {/* bottom nav */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '2px solid rgba(0,0,0,0.08)' }}>
                             <Button
                                 onClick={() => setCurrentStep(s => Math.max(1, s - 1) as StepId)}
@@ -172,8 +168,6 @@ export default function CreateClient({ currentUser: user, initialDraftUuid }: Cr
                             >
                                 ← Back
                             </Button>
-                        
-
                             <Button
                                 onClick={() => setCurrentStep(s => Math.min(4, s + 1) as StepId)}
                                 disabled={currentStep === 4}

@@ -3,15 +3,17 @@
 import { useState } from 'react';
 import { User } from '@/src/lib/types/models';
 import { Step, StepId } from '../../CreatePageClient';
-import { StepNode, StepNodeProps } from './StepNode';
+import { StepNode } from './StepNode';
 import { Button } from '@/src/components/Button/Button';
 import { Logo } from '@/src/components/Logo';
+import Link from 'next/link';
 
 export interface CreateSidebarProps {
     steps: Step[];
     currentStep: StepId;
     stepMissing: Record<StepId, string[]>;
     user: User | null;
+    hasUnsavedChanges: boolean;
     saveDraftLoading: boolean;
     saveDraftSuccess: boolean;
     saveDraftError: string | null;
@@ -20,10 +22,10 @@ export interface CreateSidebarProps {
 }
 
 const sidebarAccent: Record<StepId, string> = {
-    1: 'rgba(243, 187, 192, 0.08)', // peach
-    2: 'rgba(161, 122, 204, 0.08)', // purple
-    3: 'rgba(100, 180, 243, 0.08)', // blue
-    4: 'rgba(243, 222, 187, 0.08)', // gold
+    1: 'rgba(243, 187, 192, 0.08)',
+    2: 'rgba(161, 122, 204, 0.08)',
+    3: 'rgba(100, 180, 243, 0.08)',
+    4: 'rgba(243, 222, 187, 0.08)',
 };
 
 export default function Sidebar({
@@ -31,6 +33,7 @@ export default function Sidebar({
     currentStep,
     stepMissing,
     user,
+    hasUnsavedChanges,
     saveDraftLoading,
     saveDraftSuccess,
     saveDraftError,
@@ -42,6 +45,14 @@ export default function Sidebar({
         if (id < currentStep) return 'done';
         return 'upcoming';
     };
+
+    const saveLabel = saveDraftLoading
+        ? 'Saving…'
+        : saveDraftSuccess
+          ? '✓ Saved'
+          : user
+            ? 'Save Draft'
+            : 'Save (Login)';
 
     return (
         <aside
@@ -60,7 +71,6 @@ export default function Sidebar({
                 transition: 'background 0.4s ease',
             }}
         >
-            {/* accent glow */}
             <div
                 style={{
                     position: 'absolute',
@@ -71,9 +81,10 @@ export default function Sidebar({
                 }}
             />
 
-            {/* logo */}
             <div style={{ marginBottom: 48, position: 'relative' }}>
-                <Logo fontSize={50}/>
+                <Link href="/">
+                    <Logo fontSize={50} />
+                </Link>
                 <div
                     style={{
                         marginTop: 4,
@@ -89,7 +100,6 @@ export default function Sidebar({
                 </div>
             </div>
 
-            {/* step nodes */}
             <nav style={{ flex: 1, position: 'relative' }}>
                 {steps.map((step, i) => (
                     <StepNode
@@ -104,24 +114,44 @@ export default function Sidebar({
                 ))}
             </nav>
 
-            {/* bottom meta */}
-            <div style={{ display:'flex', position: 'relative', justifyContent: 'center', borderTop: '1px solid rgba(255,255,255,0.5)', paddingTop: 16 }}>
-                {!user ? (
-                    <p style={{ margin: 0, fontSize: 11, color: 'rgba(255,255,255,1)', lineHeight: 1.5 }}>
-                        Working as guest. Publish before leaving, or login to save.
+            <div
+                style={{
+                    position: 'relative',
+                    borderTop: '1px solid rgba(255,255,255,0.5)',
+                    paddingTop: 16,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 8,
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Button onClick={onSaveDraft} disabled={saveDraftLoading}>
+                        {saveLabel}
+                    </Button>
+
+                    {hasUnsavedChanges && !saveDraftLoading && !saveDraftSuccess && (
+                        <span
+                            title="Unsaved changes"
+                            style={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: '50%',
+                                background: '#facc15',
+                                flexShrink: 0,
+                                boxShadow: '0 0 6px rgba(250,204,21,0.7)',
+                            }}
+                        />
+                    )}
+                </div>
+
+                {!user && (
+                    <p style={{ margin: 0, fontSize: 12, color: 'rgba(0,0,0,0.7)', lineHeight: 1.5 }}>
+                        You'll be redirected to login.
                     </p>
-                ) : (
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                        <Button
-                            onClick={onSaveDraft}
-                            disabled={saveDraftLoading}
-                        >
-                            {saveDraftLoading ? 'Saving…' : saveDraftSuccess ? '✓ Saved' : 'Save Draft'}
-                        </Button>
-                    </div>
                 )}
+
                 {saveDraftError && (
-                    <p style={{ margin: '6px 0 0', fontSize: 10, color: '#ff6b6b' }}>
+                    <p style={{ margin: 0, fontSize: 10, color: '#ff6b6b' }}>
                         {saveDraftError}
                     </p>
                 )}

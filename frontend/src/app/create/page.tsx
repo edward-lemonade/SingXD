@@ -4,7 +4,7 @@ import { COOKIE } from '@/src/lib/types/enums';
 import * as UserAPI from '@/src/lib/api/UserAPI';
 
 interface PageProps {
-    searchParams: Promise<{ uuid?: string }>;
+    searchParams: Promise<{ draft?: string }>;
 }
 
 export default async function CreatePage({ searchParams }: PageProps) {
@@ -12,6 +12,6 @@ export default async function CreatePage({ searchParams }: PageProps) {
     const token = await cookieStore.get(COOKIE.TOKEN);
     const user = await (token ? UserAPI.getCurrentUser() : null);
 
-    const { uuid } = await searchParams;
-    return <CreateClient currentUser={user} initialDraftUuid={uuid} />;
+    const { draft } = await searchParams;
+    return <CreateClient currentUser={user} initialDraftUuid={draft} />;
 }
