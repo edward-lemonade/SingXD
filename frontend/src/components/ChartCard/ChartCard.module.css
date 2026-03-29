@@ -62,9 +62,10 @@
     display: flex;
     flex-direction: column;
     background: var(--color-dark-base);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.15);
     overflow: hidden;
     transition: 100ms;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .link:hover .card {
@@ -81,7 +82,7 @@
     background-color: var(--color-dark-base);
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .overlay {
@@ -191,7 +192,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.5);
     gap: 8px;
 }
 

@@ -2,6 +2,9 @@
 
 import { Card } from '@/src/components/Card/Card';
 import { AudioUrls } from '../useDraftForm';
+import FileInputButton from '@/src/components/FileInputButton/FileInputButton';
+import { useState } from 'react';
+import { Button } from '@/src/components/Button/Button';
 
 interface AudioStepProps {
     audioUrls: AudioUrls;
@@ -24,83 +27,92 @@ export default function AudioStep({
     handleUploadInstrumental,
     handleUploadVocals,
 }: AudioStepProps) {
+    const onCombinedFile = (file: File) => {setAudioUrls(prev => ({ ...prev, combined: URL.createObjectURL(file) }));};
+
     return (
-        <section>
-            <div className="space-y-6">
-                <Card>
-                    <h3 className="text-xl font-semibold mb-4">
-                        Upload Combined Audio (Optional - for AI Separation)
-                    </h3>
-                    <input
-                        type="file"
-                        accept="audio/*"
-                        onChange={e => {
-                            const file = e.target.files?.[0];
-                            if (file)
-                                setAudioUrls(prev => ({
-                                    ...prev,
-                                    combined: URL.createObjectURL(file),
-                                }));
-                        }}
-                        className="mb-4"
-                    />
-                    {audioUrls.combined && (
-                        <>
-                            <div className="mt-2">
-                                <audio controls src={audioUrls.combined} className="mt-1" />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+            {/* Option A: AI separation */}
+            <Card label="Option A — AI separation" desc="Upload a combined audio file and we'll automatically split it into vocals and instrumental.">
+                <div style={{ padding: '0px 24px 20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24, flexWrap: 'wrap' }}>
+                        <FileInputButton
+                            label="Combined Audio"
+                            accept="audio/*"
+                            onFile={onCombinedFile}
+                            fileName={audioUrls.combined ? "combined" : null}
+                            size={148}
+                        />
+
+                        {audioUrls.combined && (
+                            <div style={{ flex: 1, minWidth: 200 }}>
+                                <p style={{ margin: '0 0 10px', fontSize: 11, color: 'rgba(0,0,0,0.6)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Combined Audio</p>
+                                <audio controls src={audioUrls.combined} style={{ width: '100%', marginBottom: 16 }} />
+                                <Button
+                                    onClick={handleSeparateAudio}
+                                    disabled={separateLoading}
+                                    className="text-black flex flex-row"
+                                    borderless
+                                >
+                                    {separateLoading && (
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ animation: 'spin 1s linear infinite' }}>
+                                            <circle cx="6" cy="6" r="5" stroke="rgba(0,0,0,1)" strokeWidth="1.5" />
+                                            <path d="M6 1a5 5 0 0 1 5 5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" />
+                                            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                                        </svg>
+                                    )}
+                                    {separateLoading ? 'Separating…' : 'Separate Stems'}
+                                </Button>
                             </div>
-                            <button
-                                onClick={handleSeparateAudio}
-                                disabled={separateLoading}
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
-                            >
-                                {separateLoading ? 'Separating...' : 'Separate into Stems'}
-                            </button>
-                        </>
-                    )}
-                </Card>
-                <Card>
-                    <h3 className="text-xl font-semibold mb-4">Audio Stems</h3>
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block mb-2">Instrumental</label>
-                            <input
-                                type="file"
-                                accept="audio/*"
-                                disabled={instrumentalUploading}
-                                onChange={e => {
-                                    const file = e.target.files?.[0];
-                                    if (file) handleUploadInstrumental(file);
-                                }}
-                            />
-                            {instrumentalUploading && (
-                                <p className="text-sm text-gray-500 mt-1">Uploading…</p>
-                            )}
-                            {audioUrls.instrumental && (
-                                <audio controls src={audioUrls.instrumental} className="mt-2" />
-                            )}
-                        </div>
-                        <div>
-                            <label className="block mb-2">Vocals</label>
-                            <input
-                                type="file"
-                                accept="audio/*"
-                                disabled={vocalsUploading}
-                                onChange={e => {
-                                    const file = e.target.files?.[0];
-                                    if (file) handleUploadVocals(file);
-                                }}
-                            />
-                            {vocalsUploading && (
-                                <p className="text-sm text-gray-500 mt-1">Uploading…</p>
-                            )}
-                            {audioUrls.vocals && (
-                                <audio controls src={audioUrls.vocals} className="mt-2" />
-                            )}
-                        </div>
+                        )}
                     </div>
-                </Card>
-            </div>
-        </section>
+                </div>
+            </Card>
+
+            {/* Option B: manual upload */}
+            <Card label="Option B — Manual upload" desc="Upload pre-separated stems directly. Both are required to publish.">
+                <div style={{ padding: '0px 24px 20px' }}>
+                    <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start' }}>
+                        
+                        <div style={{ display: 'flex', gap: 32, flexShrink: 0 }}>
+                            <FileInputButton
+                                label="Instrumental"
+                                accept="audio/*"
+                                onFile={handleUploadInstrumental}
+                                loading={instrumentalUploading}
+                                fileName={audioUrls.instrumental ? 'instrumental' : null}
+                                size={148}
+                            />
+                            <FileInputButton
+                                label="Vocals"
+                                accept="audio/*"
+                                onFile={handleUploadVocals}
+                                loading={vocalsUploading}
+                                fileName={audioUrls.vocals ? 'vocals' : null}
+                                size={148}
+                            />
+                        </div>
+
+                        {(audioUrls.instrumental || audioUrls.vocals) && (
+                            <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column', gap: 12, height: 148 }}>
+                                {audioUrls.instrumental && (
+                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
+                                        <p style={{ margin: '0 0 4px', fontSize: 11, color: 'rgba(0,0,0,0.6)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Instrumental</p>
+                                        <audio controls src={audioUrls.instrumental} style={{ width: '100%' }} />
+                                    </div>
+                                )}
+                                {audioUrls.vocals && (
+                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', overflow: 'hidden' }}>
+                                        <p style={{ margin: '0 0 4px', fontSize: 11, color: 'rgba(0,0,0,0.6)', fontFamily: 'var(--font-wide)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Vocals</p>
+                                        <audio controls src={audioUrls.vocals} style={{ width: '100%' }} />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                    </div>
+                </div>
+            </Card>
+        </div>
     );
 }

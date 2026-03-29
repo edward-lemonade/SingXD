@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/src/lib/context/AuthContext';
 import type { User } from '@/src/lib/types/models';
-import styles from './NavBar.module.css';
+import styles from './MainNavBar.module.css';
 import { Logo } from '../Logo';
 import { logout as logoutFromAuthAPI } from '@/src/lib/api/AuthAPI';
 import { useState, useEffect } from 'react';
@@ -14,7 +14,7 @@ function isActive(href: string, pathname: string) {
     return pathname.startsWith(href);
 }
 
-export default function NavBar({ user }: { user: User | null }) {
+export default function MainNavBar({ user }: { user: User | null }) {
     const pathname = usePathname();
     const isAuthed = Boolean(user);
     const { loggingOut } = useAuth();
@@ -36,7 +36,7 @@ export default function NavBar({ user }: { user: User | null }) {
             <div className={styles.accent} />
 
             <nav className={styles.nav}>
-                <Logo />
+                <Logo fontSize={100}/>
 
                 <div className={styles.links}>
                     {NAV_ITEMS.map(({ label, href }) => {

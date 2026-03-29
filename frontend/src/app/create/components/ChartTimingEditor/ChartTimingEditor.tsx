@@ -1,5 +1,4 @@
 import { SetStateAction, useEffect, useRef } from 'react';
-import Card from '@/src/components/Card';
 import { Timing } from '@/src/lib/types/models';
 import Region, { DragMode } from './Region';
 import { useWaveSurfer } from './hooks/useWavesurfer';
@@ -141,7 +140,7 @@ function ChartTimingEditor({
                     <div className="flex flex-col gap-2 justify-center grow">
                         <button
                             onClick={togglePlayPause}
-                            className="w-12 h-12 rounded-full bg-green-400 hover:bg-green-500 flex items-center justify-center transition-colors"
+                            className="w-12 h-12 rounded-full bg-green-400 hover:bg-green-500 flex items-center justify-center transition-colors shadow-lg cursor-pointer"
                             aria-label={isPlaying ? 'Pause' : 'Play'}
                         >
                             {!isPlaying ? <PlayArrowIcon /> : <PauseIcon />}
@@ -152,7 +151,7 @@ function ChartTimingEditor({
 
             {/* Content */}
             <div
-                className="flex flex-col grow"
+                className="flex flex-col grow border-black border-2"
                 tabIndex={0}
                 onKeyDown={e => {
                     if (e.code === 'Space') {

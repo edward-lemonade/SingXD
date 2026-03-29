@@ -17,8 +17,15 @@
     --color-light-base: #8e8eaa;
     --color-light-highlight: #afafcf;
 
-    --color-accent-rose: #f3bbc0;
-    --color-accent-peach: #f3debb;
+    --color-blue-accent: #cffafe;
+    --color-lavender-accent: #e9d5ff;
+    --color-rose-accent: #fecaca;
+    --color-peach-accent: #ffedd5;
+    
+    --color-blue-glass: color-mix(in srgb, var(--color-blue-accent) 50%, transparent);
+    --color-lavender-glass: color-mix(in srgb, var(--color-lavender-accent) 50%, transparent);
+    --color-rose-glass: color-mix(in srgb, var(--color-rose-accent) 50%, transparent);
+    --color-peach-glass: color-mix(in srgb, var(--color-peach-accent) 50%, transparent);
 }
 
 @theme inline {

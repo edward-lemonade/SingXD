@@ -2,7 +2,7 @@
     display: flex;
     gap: 0;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 2px solid var(--color-dark-base);
     background: var(--color-dark-base);
     transition: 200ms;
 }
@@ -55,27 +55,27 @@
     border-right: 1px solid rgba(255, 255, 255, 0.3);
 }
 .inputWrapper:focus-within .bracketTL {
-    transform: translate(-3px, -3px);
-    border-color: rgba(255, 255, 255, 0.9);
+    transform: translate(-1px, -1px);
+    border-color: rgba(255, 255, 255, 0.45);
 }
 .inputWrapper:focus-within .bracketTR {
-    transform: translate(3px, -3px);
-    border-color: rgba(255, 255, 255, 0.9);
+    transform: translate(1px, -1px);
+    border-color: rgba(255, 255, 255, 0.45);
 }
 .inputWrapper:focus-within .bracketBL {
-    transform: translate(-3px, 3px);
-    border-color: rgba(255, 255, 255, 0.9);
+    transform: translate(-1px, 1px);
+    border-color: rgba(255, 255, 255, 0.45);
 }
 .inputWrapper:focus-within .bracketBR {
-    transform: translate(3px, 3px);
-    border-color: rgba(255, 255, 255, 0.9);
+    transform: translate(1px, 1px);
+    border-color: rgba(255, 255, 255, 0.45);
 }
 
 /* ── Input ──────────────────────────────────────────── */
 .input {
     flex: 1;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.5);
     padding: 11px 16px;
     font-family: var(--font-wide);
     font-size: 0.9rem;
@@ -97,7 +97,7 @@
     gap: 7px;
     background: rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     padding: 11px 18px;
     font-family: var(--font-thin);
     font-size: 0.9rem;

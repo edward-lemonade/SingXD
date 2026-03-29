@@ -1,4 +1,4 @@
-import NavBar from '@/src/components/NavBar/NavBar';
+import MainNavBar from '@/src/components/MainNavBar/MainNavBar';
 import Wallpaper from '@/src/components/Wallpaper/Wallpaper';
 import * as UserAPI from '@/src/lib/api/UserAPI';
 import { COOKIE } from '@/src/lib/types/enums';
@@ -12,7 +12,7 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
     return (
         <div className="relative flex flex-row min-h-screen">
             <Wallpaper color="lavender" />
-            <NavBar user={user} />
+            <MainNavBar user={user} />
             <div className="flex flex-1 min-h-screen px-8">{children}</div>
         </div>
     );

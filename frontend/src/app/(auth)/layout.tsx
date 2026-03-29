@@ -18,7 +18,7 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
             <Wallpaper color="peach"/>
             <div className={styles.logoWrap}>
                 <Link href="/">
-                    <Logo />
+                    <Logo fontSize={50}/>
                 </Link>
             </div>
             {children}

@@ -13,7 +13,6 @@
     top: 24px;
     left: 40px;
     opacity: 0.9;
-    transform: scale(0.35);
     transform-origin: top left;
     line-height: 1;
 }
@@ -168,7 +167,7 @@
 }
 
 .link {
-    color: var(--color-accent-rose);
+    color: var(--color-rose-accent);
     transition: 150ms;
     opacity: 0.9;
 }
