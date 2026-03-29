@@ -15,8 +15,6 @@ import {
 import { useAuth } from '@/src/lib/context/AuthContext';
 import * as DraftAPI from '@/src/lib/api/DraftAPI';
 
-export const DRAFT_UUID_PENDING_KEY = 'draft_uuid_pending_save';
-
 export interface AudioUrls {
     combined: string | null;
     instrumental: string | null;
@@ -111,12 +109,7 @@ export function useDraftForm(currentUser: User | null, initialDraftUuid?: string
         updatedAt: new Date(),
     };
     const [doClaim, setDoClaim] = useState(false);
-
-    const hasUnsavedChanges = useMemo(
-        () => savedChartBase.current !== JSON.stringify(chartBase),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [lyricsString, timings, chartProps]
-    );
+    const hasUnsavedChanges = (savedChartBase.current !== JSON.stringify(chartBase)) // maybe good to memoize in the future
 
     // ======================================================================
     // Lifecycle
@@ -322,7 +315,7 @@ export function useDraftForm(currentUser: User | null, initialDraftUuid?: string
         } finally {
             setSaveDraftLoading(false);
             if (!user && !error) {
-                localStorage.setItem(DRAFT_UUID_PENDING_KEY, uuid.current);
+                localStorage.setItem(DraftAPI.DRAFT_UUID_PENDING_KEY, uuid.current);
                 router.push('/login');
                 return;
             }

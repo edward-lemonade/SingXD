@@ -78,13 +78,18 @@ func (s *ChartService) ListCharts(ctx context.Context, page, limit int, search s
 		return nil, 0, err
 	}
 
-	for i := range charts {
-		_, bgURL, err := getChartURLs(ctx, s.s3Client, charts[i].ID, ChartURLMinutes)
-		if err != nil {
-			log.Printf("warn: background url for chart %d: %v", charts[i].ID, err)
-			continue
+	ids := make([]uint, len(charts))
+	for i, c := range charts {
+		ids[i] = c.ID
+	}
+
+	thumbnails, err := getChartThumbnails(ctx, s.s3Client, ids, ChartURLMinutes)
+	if err != nil {
+		log.Printf("warn: batch thumbnails for list: %v", err)
+	} else {
+		for i := range charts {
+			charts[i].Properties.BackgroundImageURL = thumbnails[charts[i].ID]
 		}
-		charts[i].Properties.BackgroundImageURL = bgURL
 	}
 
 	return charts, total, nil
@@ -102,17 +107,25 @@ func (s *ChartService) ListChartsByUID(ctx context.Context, uid string) ([]t.Pub
 
 	charts := make([]t.PublicChart, 0, len(records))
 	for _, r := range records {
-		chart, err := r.toPublicChart()
+		c, err := r.toPublicChart()
 		if err != nil {
 			return nil, err
 		}
-		_, bgURL, err := getChartURLs(ctx, s.s3Client, chart.ID, ChartURLMinutes)
-		if err != nil {
-			log.Printf("warn: background url for chart %d: %v", chart.ID, err)
-		} else {
-			chart.Properties.BackgroundImageURL = bgURL
+		charts = append(charts, *c)
+	}
+
+	ids := make([]uint, len(charts))
+	for i, c := range charts {
+		ids[i] = c.ID
+	}
+
+	thumbnails, err := getChartThumbnails(ctx, s.s3Client, ids, ChartURLMinutes)
+	if err != nil {
+		log.Printf("warn: batch thumbnails for uid=%s: %v", uid, err)
+	} else {
+		for i := range charts {
+			charts[i].Properties.BackgroundImageURL = thumbnails[charts[i].ID]
 		}
-		charts = append(charts, *chart)
 	}
 
 	return charts, nil

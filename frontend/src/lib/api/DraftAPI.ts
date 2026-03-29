@@ -9,6 +9,8 @@ import { ROUTE_CONFIG } from '../routes';
 import { API } from '../axios';
 import { parseChart, parseCharts, Serialized } from '../types/transformers';
 
+export const DRAFT_UUID_PENDING_KEY = 'draft_uuid_pending_save';
+
 // CRUD
 
 export const initDraft = async (): Promise<string> => {

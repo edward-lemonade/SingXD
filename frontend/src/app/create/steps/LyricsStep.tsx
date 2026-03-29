@@ -4,7 +4,7 @@ import { Card } from '@/src/components/Card/Card';
 import { Line, Timing } from '../../../lib/types/models';
 import { AudioUrls } from '../useDraftForm';
 import { SetStateAction, useEffect, useMemo, useState } from 'react';
-import ChartTimingEditor from '../components/ChartTimingEditor';
+import ChartTimingEditor from '../../../components/ChartTimingEditor';
 import { Button } from '@/src/components/Button/Button';
 
 interface LyricsStepProps {

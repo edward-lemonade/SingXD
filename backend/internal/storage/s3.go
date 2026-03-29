@@ -88,6 +88,25 @@ func (sc *S3Client) GetPresignedURL(ctx context.Context, key string, expiryMinut
 	return result.URL, nil
 }
 
+func (sc *S3Client) GetPresignedURLs(ctx context.Context, keys []string, expiryMinutes uint) map[string]string {
+	presigner := s3.NewPresignClient(sc.client)
+	expiry := time.Duration(expiryMinutes) * time.Minute
+	result := make(map[string]string, len(keys))
+	for _, key := range keys {
+		r, err := presigner.PresignGetObject(ctx, &s3.GetObjectInput{
+			Bucket: aws.String(sc.bucket),
+			Key:    aws.String(key),
+		}, func(opts *s3.PresignOptions) {
+			opts.Expires = expiry
+		})
+		if err != nil {
+			continue
+		}
+		result[key] = r.URL
+	}
+	return result
+}
+
 func (sc *S3Client) ListFiles(ctx context.Context, prefix string) ([]string, error) {
 	result, err := sc.client.ListObjectsV2(ctx, &s3.ListObjectsV2Input{
 		Bucket: aws.String(sc.bucket),

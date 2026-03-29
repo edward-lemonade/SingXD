@@ -9,7 +9,7 @@ import { DraftChart, PublicChart } from '@/src/lib/types/models';
 import { ChartCard } from '@/src/components/ChartCard/ChartCard';
 import { Card } from '@/src/components/Card/Card';
 import { Button } from '@/src/components/Button/Button';
-import { DRAFT_UUID_PENDING_KEY } from '@/src/app/create/useDraftForm';
+import { DRAFT_UUID_PENDING_KEY } from '@/src/lib/api/DraftAPI';
 
 function formatDate(date: Date) {
     return new Date(date).toLocaleDateString(undefined, {

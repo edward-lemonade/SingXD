@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Step } from "../../CreatePageClient";
+
+export interface Step {
+    id: number;
+    name: string;
+    description: string;
+}
 
 export interface StepNodeProps {
     step: Step;
