@@ -41,18 +41,19 @@ func initOne(ctx context.Context, db *gorm.DB, uid *string) (DraftRecord, error)
 	return record, nil
 }
 
-func updateByUUIDAndUID(ctx context.Context, db *gorm.DB, uuid, uid string, draft t.ChartBase) (DraftRecord, error) {
+func updateByUUIDAndUID(ctx context.Context, db *gorm.DB, uuid string, uid *string, draft t.ChartBase) (DraftRecord, error) {
 	lines, timings, props, err := marshalDraft(draft)
 	if err != nil {
 		return DraftRecord{}, err
 	}
 	var record DraftRecord
-	if err := db.WithContext(ctx).Where("uuid = ? AND author_uid = ?", uuid, uid).First(&record).Error; err != nil {
+	if err := db.WithContext(ctx).Where("uuid = ? AND (author_uid = ? OR author_uid IS NULL)", uuid, uid).First(&record).Error; err != nil {
 		return DraftRecord{}, err
 	}
 	record.Lines = lines
 	record.Timings = timings
 	record.Properties = props
+	record.AuthorUID = uid
 	if err := db.WithContext(ctx).Save(&record).Error; err != nil {
 		return DraftRecord{}, err
 	}
@@ -67,9 +68,11 @@ func listByUID(ctx context.Context, db *gorm.DB, uid string) ([]DraftRecord, err
 	return records, nil
 }
 
-func findByUUIDAndUID(ctx context.Context, db *gorm.DB, uuid, uid string) (*DraftRecord, error) {
+func findByUUIDAndUID(ctx context.Context, db *gorm.DB, uuid string, uid *string) (*DraftRecord, error) {
 	var record DraftRecord
-	if err := db.WithContext(ctx).Where("uuid = ? AND author_uid = ?", uuid, uid).First(&record).Error; err != nil {
+	if err := db.WithContext(ctx).
+		Where("uuid = ? AND (author_uid = ? OR author_uid IS NULL)", uuid, uid).
+		First(&record).Error; err != nil {
 		return nil, err
 	}
 	return &record, nil

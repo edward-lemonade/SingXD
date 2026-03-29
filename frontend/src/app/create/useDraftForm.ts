@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
     ChartBase,
@@ -15,7 +15,7 @@ import {
 import { useAuth } from '@/src/lib/context/AuthContext';
 import * as DraftAPI from '@/src/lib/api/DraftAPI';
 
-const DRAFT_UUID_KEY = 'draft_uuid';
+export const DRAFT_UUID_PENDING_KEY = 'draft_uuid_pending_save';
 
 export interface AudioUrls {
     combined: string | null;
@@ -54,7 +54,8 @@ export interface DraftFormState {
     chartBase: ChartBase;
     draftChart: DraftChart;
 
-    // loading / error
+    // status
+    hasUnsavedChanges: boolean;
     draftLoading: boolean;
     separateAudioLoading: boolean;
     instrumentalUploading: boolean;
@@ -83,11 +84,12 @@ export interface DraftFormState {
     handlePublish: () => Promise<void>;
 }
 
-export function useDraftForm(currentUser: User|null, initialDraftUuid?: string): DraftFormState {
+export function useDraftForm(currentUser: User | null, initialDraftUuid?: string): DraftFormState {
     const { user } = useAuth();
     const router = useRouter();
 
     const uuid = useRef<string | null>(initialDraftUuid ?? null);
+    const savedChartBase = useRef<string>('');
 
     const [draftLoading, setDraftLoading] = useState(true);
     const [lyricsString, setLyricsString] = useState('');
@@ -98,6 +100,7 @@ export function useDraftForm(currentUser: User|null, initialDraftUuid?: string):
         instrumental: null,
         vocals: null,
     });
+
     const lines = parseLines(lyricsString);
     const chartBase: ChartBase = { lines, timings, properties: chartProps };
     const draftChart: DraftChart = {
@@ -107,21 +110,27 @@ export function useDraftForm(currentUser: User|null, initialDraftUuid?: string):
         createdAt: new Date(),
         updatedAt: new Date(),
     };
+    const [doClaim, setDoClaim] = useState(false);
+
+    const hasUnsavedChanges = useMemo(
+        () => savedChartBase.current !== JSON.stringify(chartBase),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [lyricsString, timings, chartProps]
+    );
 
     // ======================================================================
     // Lifecycle
 
-    // initialize
     useEffect(() => {
-        if (!uuid.current && !currentUser) {
-            uuid.current = sessionStorage.getItem(DRAFT_UUID_KEY);
-        }
-
         const initDraft = async () => {
             try {
                 const createdUuid = await DraftAPI.initDraft();
                 uuid.current = createdUuid;
-                sessionStorage.setItem(DRAFT_UUID_KEY, createdUuid);
+                savedChartBase.current = JSON.stringify({
+                    lines: [],
+                    timings: [],
+                    properties: DEFAULT_CHART_PROPERTIES,
+                });
             } catch (err) {
                 console.error('Failed to init draft', err);
             } finally {
@@ -143,10 +152,17 @@ export function useDraftForm(currentUser: User|null, initialDraftUuid?: string):
                         vocals: draft.vocalsUrl ?? null,
                         instrumental: draft.instrumentalUrl ?? null,
                     }));
+                    savedChartBase.current = JSON.stringify({
+                        lines: draft.lines,
+                        timings: draft.timings,
+                        properties: draft.properties,
+                    });
+
+                    setDoClaim(true);
                 })
-                .catch(() => {
-                    sessionStorage.removeItem(DRAFT_UUID_KEY);
+                .catch((err) => {
                     uuid.current = null;
+                    console.error("Failed to claim unsaved draft: ", err)
                     initDraft();
                 })
                 .finally(() => setDraftLoading(false));
@@ -155,17 +171,16 @@ export function useDraftForm(currentUser: User|null, initialDraftUuid?: string):
         }
     }, []);
 
-    // cleanup
     useEffect(
-        () => () => {if (audioUrls.combined) URL.revokeObjectURL(audioUrls.combined);},
+        () => () => { if (audioUrls.combined) URL.revokeObjectURL(audioUrls.combined); },
         [audioUrls.combined]
     );
     useEffect(
-        () => () => {if (audioUrls.instrumental?.startsWith('blob:'))URL.revokeObjectURL(audioUrls.instrumental!);},
+        () => () => { if (audioUrls.instrumental?.startsWith('blob:')) URL.revokeObjectURL(audioUrls.instrumental!); },
         [audioUrls.instrumental]
     );
     useEffect(
-        () => () => {if (audioUrls.vocals) URL.revokeObjectURL(audioUrls.vocals!);},
+        () => () => { if (audioUrls.vocals) URL.revokeObjectURL(audioUrls.vocals!); },
         [audioUrls.vocals]
     );
     useEffect(
@@ -176,7 +191,6 @@ export function useDraftForm(currentUser: User|null, initialDraftUuid?: string):
         [chartProps.backgroundImageUrl]
     );
 
-    // derive duration
     useEffect(() => {
         const derive = async () => {
             if (!audioUrls.instrumental) {
@@ -285,13 +299,17 @@ export function useDraftForm(currentUser: User|null, initialDraftUuid?: string):
     const [saveDraftLoading, setSaveDraftLoading] = useState(false);
     const [saveDraftError, setSaveDraftError] = useState<string | null>(null);
     const [saveDraftSuccess, setSaveDraftSuccess] = useState(false);
+
     const handleSaveDraft = async () => {
-        if (!user || !uuid.current) return;
+        if (!uuid.current) return;
+
         setSaveDraftLoading(true);
         setSaveDraftError(null);
         setSaveDraftSuccess(false);
+        let error = null
         try {
             await DraftAPI.updateDraft(uuid.current, chartBase);
+            savedChartBase.current = JSON.stringify(chartBase);
             setSaveDraftSuccess(true);
             setTimeout(() => setSaveDraftSuccess(false), 2500);
         } catch (err) {
@@ -300,20 +318,34 @@ export function useDraftForm(currentUser: User|null, initialDraftUuid?: string):
                     ? err.response.data.error
                     : 'Failed to save draft'
             );
+            error = err;
         } finally {
             setSaveDraftLoading(false);
+            if (!user && !error) {
+                localStorage.setItem(DRAFT_UUID_PENDING_KEY, uuid.current);
+                router.push('/login');
+                return;
+            }
         }
     };
+    useEffect(() => {
+        if (doClaim) {
+            handleSaveDraft();
+            setDoClaim(false);
+        }
+    }, [doClaim])
 
     const [publishLoading, setPublishLoading] = useState(false);
     const [publishError, setPublishError] = useState<string | null>(null);
+
     const handlePublish = async () => {
         if (!uuid.current) return;
         setPublishLoading(true);
         setPublishError(null);
         try {
+            if (user) await DraftAPI.updateDraft(uuid.current, chartBase);
             const res = await DraftAPI.publishDraft(uuid.current, chartBase);
-            sessionStorage.removeItem(DRAFT_UUID_KEY);
+            savedChartBase.current = JSON.stringify(chartBase);
             router.push(`/chart/${res.id}`);
         } catch (err) {
             setPublishError(
@@ -337,6 +369,7 @@ export function useDraftForm(currentUser: User|null, initialDraftUuid?: string):
         chartBase,
         draftChart,
 
+        hasUnsavedChanges,
         draftLoading,
         separateAudioLoading,
         instrumentalUploading,
