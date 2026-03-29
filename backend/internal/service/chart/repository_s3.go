@@ -100,3 +100,50 @@ func getChartURLs(ctx context.Context, s3Client *S3Client, id uint, expiryMinute
 
 	return toPtr(instrumentalPrefix), toPtr(backgroundPrefix), nil
 }
+
+func getChartThumbnails(ctx context.Context, s3Client *S3Client, ids []uint, expiryMinutes uint) (map[uint]*string, error) {
+	type result struct {
+		id  uint
+		key string
+		err error
+	}
+
+	ch := make(chan result, len(ids))
+	for _, id := range ids {
+		go func(id uint) {
+			files, err := s3Client.ListFiles(ctx, dirPrefix(id))
+			if err != nil {
+				ch <- result{id: id, err: err}
+				return
+			}
+			ch <- result{id: id, key: storage.FindByPrefix(files, backgroundPrefix)}
+		}(id)
+	}
+
+	bgKeys := make(map[uint]string, len(ids))
+	for range ids {
+		r := <-ch
+		if r.err != nil {
+			return nil, fmt.Errorf("listing files for id=%d: %w", r.id, r.err)
+		}
+		if r.key != "" {
+			bgKeys[r.id] = r.key
+		}
+	}
+
+	keys := make([]string, 0, len(bgKeys))
+	for _, k := range bgKeys {
+		keys = append(keys, k)
+	}
+
+	urls := s3Client.GetPresignedURLs(ctx, keys, expiryMinutes)
+
+	out := make(map[uint]*string, len(bgKeys))
+	for id, k := range bgKeys {
+		if url, ok := urls[k]; ok {
+			u := url
+			out[id] = &u
+		}
+	}
+	return out, nil
+}
