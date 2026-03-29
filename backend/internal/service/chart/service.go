@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"gorm.io/gorm"
 
@@ -74,9 +73,7 @@ func (s *ChartService) ListCharts(ctx context.Context, page, limit int, search s
 		return nil, 0, ErrDbNotConfigured
 	}
 
-	t0 := time.Now()
 	charts, total, err := list(ctx, s.db, page, limit, search)
-	log.Printf("[ListCharts] db query: %v", time.Since(t0))
 	if err != nil {
 		return nil, 0, err
 	}
@@ -86,9 +83,7 @@ func (s *ChartService) ListCharts(ctx context.Context, page, limit int, search s
 		ids[i] = c.ID
 	}
 
-	t1 := time.Now()
 	thumbnails, err := getChartThumbnails(ctx, s.s3Client, ids, ChartURLMinutes)
-	log.Printf("[ListCharts] thumbnails: %v", time.Since(t1))
 	if err != nil {
 		log.Printf("warn: batch thumbnails for list: %v", err)
 	} else {

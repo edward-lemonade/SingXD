@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 import { ChartCard } from '@/src/components/ChartCard/ChartCard';
 import SearchBar from '@/src/components/SearchBar/SearchBar';
 import * as ChartAPI from '@/src/lib/api/ChartAPI';
-import { PublicChart } from '@/src/lib/types/models';
 import { Card } from '@/src/components/Card/Card';
 import { Button } from '@/src/components/Button/Button';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
@@ -13,23 +12,13 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const PAGE_SIZE = 12;
 
-interface BrowsePageClientProps {
-    initialData: {
-        charts: PublicChart[];
-        total: number;
-    };
-}
-
-export default function BrowsePageClient({ initialData }: BrowsePageClientProps) {
+export default function BrowsePageClient() {
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
-    const initialDataUpdatedAt = useRef(Date.now());
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ['charts', page, PAGE_SIZE, search],
         queryFn: () => ChartAPI.listCharts(page, PAGE_SIZE, search),
-        initialData: page === 1 && search === '' ? initialData : undefined,
-        initialDataUpdatedAt: initialDataUpdatedAt.current,
     });
 
     const charts = data?.charts ?? [];
