@@ -14,6 +14,7 @@ if __name__ == "__main__":
     demucs.separate.main([
         "--two-stems", "vocals",
         "-o", str(output_dir),
+        "-d", "mps", # apple silicon (3x speedup)
         str(input_file)
     ])
 

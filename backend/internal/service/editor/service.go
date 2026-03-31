@@ -1,9 +1,11 @@
 package editor
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"mime/multipart"
 	"os"
 	"os/exec"
@@ -27,12 +29,12 @@ func NewEditorService(s3Client *S3Client) *EditorService {
 const TempExpiryMinutes = 60 * 24
 const TempURLMinutes = 60 * 24
 
-const PythonScriptsDir = "./internal/service/draft/scripts"
+const PythonScriptsDir = "./internal/service/editor/scripts"
 const (
 	SeparatorScript = "separator.py"
 	AlignScript     = "align.py"
 )
-const PythonVenv = "./internal/service/draft/scripts/.venv/bin/python"
+const PythonVenv = "./internal/service/editor/scripts/.venv/bin/python"
 
 // =========================================================
 // Jobs
@@ -58,11 +60,22 @@ func (s *EditorService) SeparateAudio(ctx context.Context, draftUUID string, fil
 		return "", "", err
 	}
 
+	verbose := false
+	var buf bytes.Buffer
 	cmd := exec.Command(venvPython, scriptPath, inputPath, tempDir)
-	cmd.Env = os.Environ()
-	output, err := cmd.CombinedOutput()
+	cmd.Env = append(os.Environ(), "PYTHONUNBUFFERED=1")
+
+	if verbose {
+		cmd.Stdout = io.MultiWriter(os.Stdout, &buf)
+		cmd.Stderr = io.MultiWriter(os.Stderr, &buf)
+	} else {
+		cmd.Stdout = &buf
+		cmd.Stderr = &buf
+	}
+
+	err = cmd.Run()
 	if err != nil {
-		return "", "", fmt.Errorf("%w: %s: %w", ErrSeparationFailed, string(output), err)
+		return "", "", fmt.Errorf("%w: %s: %w", ErrSeparationFailed, buf.String(), err)
 	}
 
 	vocalsPath := filepath.Join(tempDir, "vocals.wav")
@@ -103,6 +116,73 @@ func (s *EditorService) SeparateAudio(ctx context.Context, draftUUID string, fil
 
 	return vocalsURL, instrumentalURL, nil
 }
+
+func (s *EditorService) GenerateTimings(ctx context.Context, draftUUID string, lyrics string) ([]t.Timing, error) {
+	if draftUUID == "" {
+		return nil, ErrMissingUUID
+	}
+
+	tempDir := fmt.Sprintf("/tmp/alignment_%d", time.Now().Unix())
+	if err := os.MkdirAll(tempDir, 0755); err != nil {
+		return nil, fmt.Errorf("creating temp dir: %w", err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	vocalsData, err := downloadFile(ctx, s.s3Client, draftUUID, vocalsPrefix)
+	if err != nil {
+		return nil, fmt.Errorf("downloading vocals uuid=%s: %w", draftUUID, err)
+	}
+
+	vocalsPath := filepath.Join(tempDir, "vocals.wav")
+	if err := os.WriteFile(vocalsPath, vocalsData, 0644); err != nil {
+		return nil, fmt.Errorf("saving vocals: %w", err)
+	}
+
+	var lines []t.Line
+	if err := json.Unmarshal([]byte(lyrics), &lines); err != nil {
+		return nil, fmt.Errorf("%w: %w", ErrParsingLyrics, err)
+	}
+
+	var allWords []string
+	for _, line := range lines {
+		for _, word := range line.Words {
+			allWords = append(allWords, word.Text)
+		}
+	}
+
+	lyricsPath := filepath.Join(tempDir, "lyrics.txt")
+	if err := os.WriteFile(lyricsPath, []byte(strings.Join(allWords, "\n")), 0644); err != nil {
+		return nil, fmt.Errorf("saving lyrics: %w", err)
+	}
+
+	venvPython, alignScript, err := resolvePythonEnv(AlignScript)
+	if err != nil {
+		return nil, err
+	}
+
+	outputJSON := filepath.Join(tempDir, "timings.json")
+	cmd := exec.Command(venvPython, alignScript, vocalsPath, lyricsPath, outputJSON)
+	cmd.Env = os.Environ()
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return nil, fmt.Errorf("%w: %s: %w", ErrAlignmentFailed, string(output), err)
+	}
+
+	jsonData, err := os.ReadFile(outputJSON)
+	if err != nil {
+		return nil, fmt.Errorf("reading timings output: %w", err)
+	}
+
+	var timings []t.Timing
+	if err := json.Unmarshal(jsonData, &timings); err != nil {
+		return nil, fmt.Errorf("parsing timings: %w", err)
+	}
+
+	return timings, nil
+}
+
+// =========================================================
+// Uploads
 
 func (s *EditorService) UploadInstrumental(ctx context.Context, draftUUID string, file *multipart.FileHeader) (string, error) {
 	if draftUUID == "" {
@@ -177,70 +257,6 @@ func (s *EditorService) UploadImage(ctx context.Context, draftUUID string, file 
 	}
 
 	return getURL(ctx, s.s3Client, draftUUID, backgroundPrefix, TempURLMinutes)
-}
-
-func (s *EditorService) GenerateTimings(ctx context.Context, draftUUID string, lyrics string) ([]t.Timing, error) {
-	if draftUUID == "" {
-		return nil, ErrMissingUUID
-	}
-
-	tempDir := fmt.Sprintf("/tmp/alignment_%d", time.Now().Unix())
-	if err := os.MkdirAll(tempDir, 0755); err != nil {
-		return nil, fmt.Errorf("creating temp dir: %w", err)
-	}
-	defer os.RemoveAll(tempDir)
-
-	vocalsData, err := downloadFile(ctx, s.s3Client, draftUUID, vocalsPrefix)
-	if err != nil {
-		return nil, fmt.Errorf("downloading vocals uuid=%s: %w", draftUUID, err)
-	}
-
-	vocalsPath := filepath.Join(tempDir, "vocals.wav")
-	if err := os.WriteFile(vocalsPath, vocalsData, 0644); err != nil {
-		return nil, fmt.Errorf("saving vocals: %w", err)
-	}
-
-	var lines []t.Line
-	if err := json.Unmarshal([]byte(lyrics), &lines); err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrParsingLyrics, err)
-	}
-
-	var allWords []string
-	for _, line := range lines {
-		for _, word := range line.Words {
-			allWords = append(allWords, word.Text)
-		}
-	}
-
-	lyricsPath := filepath.Join(tempDir, "lyrics.txt")
-	if err := os.WriteFile(lyricsPath, []byte(strings.Join(allWords, "\n")), 0644); err != nil {
-		return nil, fmt.Errorf("saving lyrics: %w", err)
-	}
-
-	venvPython, alignScript, err := resolvePythonEnv(AlignScript)
-	if err != nil {
-		return nil, err
-	}
-
-	outputJSON := filepath.Join(tempDir, "timings.json")
-	cmd := exec.Command(venvPython, alignScript, vocalsPath, lyricsPath, outputJSON)
-	cmd.Env = os.Environ()
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return nil, fmt.Errorf("%w: %s: %w", ErrAlignmentFailed, string(output), err)
-	}
-
-	jsonData, err := os.ReadFile(outputJSON)
-	if err != nil {
-		return nil, fmt.Errorf("reading timings output: %w", err)
-	}
-
-	var timings []t.Timing
-	if err := json.Unmarshal(jsonData, &timings); err != nil {
-		return nil, fmt.Errorf("parsing timings: %w", err)
-	}
-
-	return timings, nil
 }
 
 // =========================================================
