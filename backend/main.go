@@ -28,18 +28,14 @@ func main() {
 	}
 	ctx := context.Background()
 
-	// Initialize S3 client
 	s3Client := setupS3(ctx)
-
-	// Initialize Postgres client
-	gormDB := setupGorm()
-
-	// Initialize Firebase and AuthService
+	gormDbClient := setupGorm()
+	redisClient := setupRedis()
 	authService := setupAuth(ctx)
 
-	userService := user.NewUserService(s3Client, gormDB)
-	chartService := chart.NewChartService(s3Client, gormDB)
-	draftService := draft.NewDraftService(s3Client, gormDB)
+	userService := user.NewUserService(s3Client, gormDbClient)
+	chartService := chart.NewChartService(s3Client, gormDbClient, redisClient)
+	draftService := draft.NewDraftService(s3Client, gormDbClient)
 	editorService := editor.NewEditorService(s3Client)
 	gameService := game.NewGameService(44100, 0.2)
 
@@ -53,7 +49,7 @@ func main() {
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"}, // frontend URL
+		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -62,7 +58,6 @@ func main() {
 	}))
 
 	SetupRoutes(router, handlers, authService)
-
 	router.Run(":8080")
 }
 
@@ -87,8 +82,15 @@ func setupGorm() *gorm.DB {
 	if err != nil {
 		log.Fatalf("Failed to create Postgres connection: %v", err)
 	}
-
 	return gormDB
+}
+
+func setupRedis() *storage.RedisClient {
+	addr := os.Getenv("REDIS_ADDR")
+	if addr == "" {
+		addr = "localhost:6379"
+	}
+	return storage.NewRedisClient(addr)
 }
 
 func setupAuth(ctx context.Context) *auth.AuthService {
