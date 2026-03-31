@@ -1,9 +1,11 @@
 package editor
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"mime/multipart"
 	"os"
 	"os/exec"
@@ -58,11 +60,22 @@ func (s *EditorService) SeparateAudio(ctx context.Context, draftUUID string, fil
 		return "", "", err
 	}
 
+	verbose := false
+	var buf bytes.Buffer
 	cmd := exec.Command(venvPython, scriptPath, inputPath, tempDir)
-	cmd.Env = os.Environ()
-	output, err := cmd.CombinedOutput()
+	cmd.Env = append(os.Environ(), "PYTHONUNBUFFERED=1")
+
+	if verbose {
+		cmd.Stdout = io.MultiWriter(os.Stdout, &buf)
+		cmd.Stderr = io.MultiWriter(os.Stderr, &buf)
+	} else {
+		cmd.Stdout = &buf
+		cmd.Stderr = &buf
+	}
+
+	err = cmd.Run()
 	if err != nil {
-		return "", "", fmt.Errorf("%w: %s: %w", ErrSeparationFailed, string(output), err)
+		return "", "", fmt.Errorf("%w: %s: %w", ErrSeparationFailed, buf.String(), err)
 	}
 
 	vocalsPath := filepath.Join(tempDir, "vocals.wav")
