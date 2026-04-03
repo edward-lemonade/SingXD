@@ -213,7 +213,7 @@ export function useDraftForm(currentUser: User | null, initialDraftUuid?: string
     const [backgroundImageUploading, setBackgroundImageUploading] = useState(false);
 
     const handleUploadInstrumental = async (file: File) => {
-        if (!uuid.current) return;
+        if (!uuid.current || instrumentalUploading) return;
         setInstrumentalUploading(true);
         try {
             const url = await DraftAPI.uploadInstrumental(uuid.current, file);
@@ -226,7 +226,7 @@ export function useDraftForm(currentUser: User | null, initialDraftUuid?: string
     };
 
     const handleUploadVocals = async (file: File) => {
-        if (!uuid.current) return;
+        if (!uuid.current || vocalsUploading) return;
         setVocalsUploading(true);
         try {
             const url = await DraftAPI.uploadVocals(uuid.current, file);
@@ -239,7 +239,7 @@ export function useDraftForm(currentUser: User | null, initialDraftUuid?: string
     };
 
     const handleUploadBackgroundImage = async (file: File) => {
-        if (!uuid.current) return;
+        if (!uuid.current || backgroundImageUploading) return;
         setBackgroundImageUploading(true);
         try {
             const url = await DraftAPI.uploadImage(uuid.current, file);
@@ -256,7 +256,7 @@ export function useDraftForm(currentUser: User | null, initialDraftUuid?: string
 
     const [separateAudioLoading, setSeparateAudioLoading] = useState(false);
     const handleSeparateAudio = async () => {
-        if (!audioUrls.combined || !uuid.current) return;
+        if (!audioUrls.combined || !uuid.current || separateAudioLoading) return;
         setSeparateAudioLoading(true);
         try {
             const blob = await fetch(audioUrls.combined).then(r => r.blob());
@@ -275,7 +275,7 @@ export function useDraftForm(currentUser: User | null, initialDraftUuid?: string
 
     const [generateAlignmentLoading, setGenerateAlignmentLoading] = useState(false);
     const handleGenerateAlignment = async () => {
-        if (!uuid.current || !lines.length) return;
+        if (!uuid.current || !lines.length || generateAlignmentLoading) return;
         setGenerateAlignmentLoading(true);
         try {
             setTimings(await DraftAPI.generateTimings(uuid.current, lines));
@@ -294,8 +294,7 @@ export function useDraftForm(currentUser: User | null, initialDraftUuid?: string
     const [saveDraftSuccess, setSaveDraftSuccess] = useState(false);
 
     const handleSaveDraft = async () => {
-        if (!uuid.current) return;
-
+        if (!uuid.current || saveDraftLoading) return;
         setSaveDraftLoading(true);
         setSaveDraftError(null);
         setSaveDraftSuccess(false);
@@ -332,7 +331,7 @@ export function useDraftForm(currentUser: User | null, initialDraftUuid?: string
     const [publishError, setPublishError] = useState<string | null>(null);
 
     const handlePublish = async () => {
-        if (!uuid.current) return;
+        if (!uuid.current || publishLoading) return;
         setPublishLoading(true);
         setPublishError(null);
         try {

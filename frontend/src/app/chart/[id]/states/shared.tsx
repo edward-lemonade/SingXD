@@ -1,5 +1,7 @@
 import { ChartPreview } from '@/src/components/Chart';
 import { PublicChart } from '@/src/lib/types/models';
+import { Logo } from '@/src/components/Logo';
+import Link from 'next/link';
 
 export function IntroPane({
     chart,
@@ -12,6 +14,10 @@ export function IntroPane({
 }) {
     return (
         <div className="flex flex-col items-center gap-6 text-center">
+            <Link href="/">
+                <Logo fontSize={50}/>
+            </Link>
+            
             <h1 className="text-4xl font-bold text-white drop-shadow-lg">
                 {chart.properties.title ?? 'Chart'}
             </h1>
