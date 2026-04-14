@@ -53,6 +53,14 @@ func (g *GameHandler) getOrLoadVocals(id uint) ([]byte, error) {
 	return data, nil
 }
 
+func (g *GameHandler) getOrLoadInstrumentals(id uint) ([]byte, error) {
+	data, err := g.chartService.FindInstrumentalsFileByID(context.Background(), id)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 // ====================================================================================
 // Wire types
 

@@ -35,21 +35,18 @@ const (
 	MinVocalHz = 70
 	MaxVocalHz = 2500
 
-	MaxSemitoneDiff = 3 // maximum cent diff before 0 score (4 semitones)
+	MaxSemitoneDiff = 3 // maximum semitone diff before 0 score
 )
 
 type GameSession struct {
-	Reference     []float64
-	ChunksScores  []ChunkScore
-	OffsetSamples int
-	Elapsed       float64
+	Reference    []float64
+	ChunksScores []ChunkScore
+	Elapsed      float64
 }
 
 func (s *GameService) NewSession(reference []byte) *GameSession {
-	decodedReference := decodePCM16(reference)
 	return &GameSession{
-		Reference:    decodedReference,
-		ChunksScores: nil,
+		Reference: decodePCM16(reference),
 	}
 }
 
@@ -58,16 +55,14 @@ func (s *GameService) NewSession(reference []byte) *GameSession {
 
 func (s *GameService) ProcessChunk(sess *GameSession, chunk []byte) ChunkScore {
 	elapsed := sess.Elapsed
-	reference := sess.Reference
-	offsetSamples := sess.OffsetSamples
-	windowSize := len(chunk) / 2
+	samplesInChunk := len(chunk) / 2 // PCM16 mono: 2 bytes per sample
 
-	// get pitches
 	chunkPCM16 := decodePCM16(chunk)
 	detectedHz := DetectHz(chunkPCM16, s.sampleRate, s.threshold)
-	refHz := DetectReferenceHz(reference, offsetSamples, windowSize, s.sampleRate, s.threshold)
 
-	// compute score by comparing pitches
+	offsetSamples := int(elapsed * float64(s.sampleRate))
+	refHz := DetectReferenceHz(sess.Reference, offsetSamples, samplesInChunk, s.sampleRate, s.threshold)
+
 	score := computeScore(detectedHz, refHz)
 	chunkScore := ChunkScore{
 		Timestamp:         elapsed,
@@ -78,10 +73,8 @@ func (s *GameService) ProcessChunk(sess *GameSession, chunk []byte) ChunkScore {
 		Score:             score,
 	}
 
-	// update session data
 	sess.ChunksScores = append(sess.ChunksScores, chunkScore)
-	sess.OffsetSamples += samplesElapsed(chunk)
-	sess.Elapsed += float64(samplesElapsed(chunk)) / float64(DefaultSampleRate)
+	sess.Elapsed += float64(samplesInChunk) / float64(s.sampleRate)
 	return chunkScore
 }
 
@@ -103,31 +96,62 @@ func (s *GameService) Summarise(sess *GameSession) GameSummary {
 // ====================================================================================
 // Helpers
 
-func samplesElapsed(chunk []byte) int {
-	return len(chunk) / 2
-}
-
-func computeScore(detected, reference float64) float64 { // score in [0, 1]
-	detectedSemitone := hzToSemitone(detected)
-	referenceSemitone := hzToSemitone(reference)
-	semitoneDiff := math.Abs(detectedSemitone - referenceSemitone)
-	if semitoneDiff >= MaxSemitoneDiff {
+func computeScore(detected, reference float64) float64 {
+	diff := math.Abs(hzToSemitone(detected) - hzToSemitone(reference))
+	if diff >= MaxSemitoneDiff {
 		return 0
 	}
-	return 1 - semitoneDiff/MaxSemitoneDiff
+	return 1 - diff/MaxSemitoneDiff
 }
 
+// decodePCM16 decodes a PCM16 WAV (mono or stereo) to a mono []float64.
+// Stereo frames are mixed down to mono by averaging the two channels.
 func decodePCM16(data []byte) []float64 {
-	if len(data) > 44 && string(data[:4]) == "RIFF" {
-		data = data[44:]
+	var numChannels int
+	data, numChannels = stripWAVHeader(data)
+	if numChannels < 1 {
+		numChannels = 1
 	}
-	n := len(data) / 2
-	out := make([]float64, n)
-	for i := 0; i < n; i++ {
-		v := int16(binary.LittleEndian.Uint16(data[i*2 : i*2+2]))
-		out[i] = float64(v) / 32768.0
+
+	frameCount := len(data) / (2 * numChannels)
+	out := make([]float64, frameCount)
+	for i := 0; i < frameCount; i++ {
+		var sum float64
+		for ch := 0; ch < numChannels; ch++ {
+			v := int16(binary.LittleEndian.Uint16(data[(i*numChannels+ch)*2 : (i*numChannels+ch)*2+2]))
+			sum += float64(v) / 32768.0
+		}
+		out[i] = sum / float64(numChannels)
 	}
 	return out
+}
+
+// stripWAVHeader finds the data chunk and returns the audio bytes and channel count.
+// Falls back to mono if no RIFF header is present.
+func stripWAVHeader(data []byte) ([]byte, int) {
+	if len(data) < 12 || string(data[:4]) != "RIFF" {
+		return data, 1
+	}
+
+	numChannels := 1
+	// channels field is at byte 22 in a standard fmt chunk
+	if len(data) > 23 {
+		numChannels = int(binary.LittleEndian.Uint16(data[22:24]))
+	}
+
+	for i := 12; i < len(data)-8; i++ {
+		if string(data[i:i+4]) == "data" {
+			dataSize := int(binary.LittleEndian.Uint32(data[i+4 : i+8]))
+			start := i + 8
+			end := start + dataSize
+			if end > len(data) {
+				end = len(data)
+			}
+			return data[start:end], numChannels
+		}
+	}
+
+	return data[44:], numChannels
 }
 
 func hzToSemitone(hz float64) float64 {

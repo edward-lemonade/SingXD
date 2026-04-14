@@ -91,6 +91,14 @@ func (s *ChartService) FindVocalsFileByID(ctx context.Context, id uint) ([]byte,
 	return data, nil
 }
 
+func (s *ChartService) FindInstrumentalsFileByID(ctx context.Context, id uint) ([]byte, error) {
+	data, err := getInstrumentalsFile(ctx, s.s3Client, id)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 func (s *ChartService) ListCharts(ctx context.Context, page, limit int, search string) ([]t.PublicChart, int, error) {
 	if s.db == nil {
 		return nil, 0, ErrDbNotConfigured
