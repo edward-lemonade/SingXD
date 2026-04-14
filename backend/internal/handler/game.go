@@ -119,7 +119,6 @@ func (g *GameHandler) GameSocket(c *gin.Context) {
 		transport.ServiceError(c, err)
 		return
 	}
-	session := g.gameService.NewSession(vocalsData)
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -128,7 +127,13 @@ func (g *GameHandler) GameSocket(c *gin.Context) {
 	}
 	defer conn.Close()
 
+	// session is created on first binary message so we know the chunk size
+	var session *game.GameSession
+
 	writeSummary := func() {
+		if session == nil {
+			return
+		}
 		summary := g.gameService.Summarise(session)
 		out := make([]game.ChunkScore, len(summary.ChunkScores))
 		for i, c := range summary.ChunkScores {
@@ -178,6 +183,11 @@ func (g *GameHandler) GameSocket(c *gin.Context) {
 			continue
 		}
 
+		if session == nil {
+			samplesInChunk := len(data) / 2
+			session = g.gameService.NewSession(vocalsData, samplesInChunk)
+		}
+
 		chunk := g.gameService.ProcessChunk(session, data)
 		if err := conn.WriteJSON(wsScoreMsg{
 			Type:              "score",
@@ -191,5 +201,9 @@ func (g *GameHandler) GameSocket(c *gin.Context) {
 			log.Printf("[GameSocket] failed to write score message for chart %d: %v", id, err)
 			break
 		}
+	}
+
+	if session != nil {
+		g.gameService.CloseSession(session)
 	}
 }

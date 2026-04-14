@@ -42,12 +42,21 @@ type GameSession struct {
 	Reference    []float64
 	ChunksScores []ChunkScore
 	Elapsed      float64
+	detectorUser *PitchDetector
+	detectorRef  *PitchDetector
 }
 
-func (s *GameService) NewSession(reference []byte) *GameSession {
+func (s *GameService) NewSession(reference []byte, chunkSize int) *GameSession {
 	return &GameSession{
-		Reference: decodePCM16(reference),
+		Reference:    decodePCM16(reference),
+		detectorUser: NewPitchDetector(chunkSize, s.sampleRate),
+		detectorRef:  NewPitchDetector(chunkSize, s.sampleRate),
 	}
+}
+
+func (s *GameService) CloseSession(sess *GameSession) {
+	sess.detectorUser.Close()
+	sess.detectorRef.Close()
 }
 
 // ====================================================================================
@@ -58,10 +67,24 @@ func (s *GameService) ProcessChunk(sess *GameSession, chunk []byte) ChunkScore {
 	samplesInChunk := len(chunk) / 2 // PCM16 mono: 2 bytes per sample
 
 	chunkPCM16 := decodePCM16(chunk)
-	detectedHz := DetectHz(chunkPCM16, s.sampleRate, s.threshold)
+
+	detectedHz := 0.0
+	if rms(chunkPCM16) >= 0.01 {
+		hz := sess.detectorUser.Detect(chunkPCM16)
+		if hz >= MinVocalHz && hz <= MaxVocalHz {
+			detectedHz = hz
+		}
+	}
 
 	offsetSamples := int(elapsed * float64(s.sampleRate))
-	refHz := DetectReferenceHz(sess.Reference, offsetSamples, samplesInChunk, s.sampleRate, s.threshold)
+	refHz := 0.0
+	refSlice := refWindow(sess.Reference, offsetSamples, samplesInChunk)
+	if len(refSlice) > 0 && rms(refSlice) >= 0.01 {
+		hz := sess.detectorRef.Detect(refSlice)
+		if hz >= MinVocalHz && hz <= MaxVocalHz {
+			refHz = hz
+		}
+	}
 
 	score := computeScore(detectedHz, refHz)
 	chunkScore := ChunkScore{
@@ -95,6 +118,17 @@ func (s *GameService) Summarise(sess *GameSession) GameSummary {
 
 // ====================================================================================
 // Helpers
+
+func refWindow(reference []float64, offset, size int) []float64 {
+	if offset >= len(reference) {
+		return nil
+	}
+	end := offset + size
+	if end > len(reference) {
+		end = len(reference)
+	}
+	return reference[offset:end]
+}
 
 func computeScore(detected, reference float64) float64 {
 	diff := math.Abs(hzToSemitone(detected) - hzToSemitone(reference))
@@ -134,7 +168,6 @@ func stripWAVHeader(data []byte) ([]byte, int) {
 	}
 
 	numChannels := 1
-	// channels field is at byte 22 in a standard fmt chunk
 	if len(data) > 23 {
 		numChannels = int(binary.LittleEndian.Uint16(data[22:24]))
 	}

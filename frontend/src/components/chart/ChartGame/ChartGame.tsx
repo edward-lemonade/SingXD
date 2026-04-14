@@ -169,7 +169,7 @@ export default function ChartGame({
                     Math.round(msg.detectedSemitone)
                 );
 
-                const debugPitch = false;
+                const debugPitch = true;
                 if (debugPitch) {
                     if (!debugAudioCtxRef.current) {
                         debugAudioCtxRef.current = new AudioContext();
