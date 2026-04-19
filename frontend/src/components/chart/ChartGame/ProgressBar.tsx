@@ -14,6 +14,7 @@ export const GAME_PROGRESS_BAR_HEIGHT_PX = 48;
 
 export default function GameProgressBar({ currentTime, duration }: GameProgressBarProps) {
     const progress = duration > 0 ? Math.min(currentTime / duration, 1) : 0;
+    console.log(progress)
 
     return (
         <div

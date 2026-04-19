@@ -163,14 +163,15 @@ export default function ChartGame({
             if (msg.type === 'score') {
                 const opacity = Math.min(1, 2 - 2 * msg.score);
                 setVignetteOpacity(opacity);
-                console.log(
-                    msg.timestamp,
-                    Math.round(msg.referenceSemitone),
-                    Math.round(msg.detectedSemitone)
-                );
 
-                const debugPitch = true;
+                const debugPitch = false;
                 if (debugPitch) {
+                    console.log(
+                        msg.timestamp,
+                        Math.round(msg.referenceSemitone),
+                        Math.round(msg.detectedSemitone)
+                    );
+                    
                     if (!debugAudioCtxRef.current) {
                         debugAudioCtxRef.current = new AudioContext();
                     }

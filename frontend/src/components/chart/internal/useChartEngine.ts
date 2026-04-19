@@ -91,7 +91,7 @@ export function useChartEngine(
     useEffect(() => {
         if (!game || !audioRef.current) return;
         const audio = audioRef.current;
-        audio.volume = 0.05;
+        //audio.volume = 0.05;
         const p = audio.play();
         if (p) {
             p.then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
