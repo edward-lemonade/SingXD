@@ -13,6 +13,7 @@ export const ROUTE_CONFIG = {
             return `${API}/charts?${params}`;
         },
         mine: () => `${API}/charts/mine`,
+        leaderboard: (chartId: number) => `${API}/chart/${chartId}/scores`,
     },
     draft: {
         // draft CRUD
@@ -35,6 +36,10 @@ export const ROUTE_CONFIG = {
     },
     user: {
         me: () => `${API}/auth/me`,
+    },
+    score: {
+        me: () => `${API}/scores/me`,
+        meForChart: (chartId: number) => `${API}/scores/me/chart/${chartId}`,
     },
     auth: {
         session: () => `${API}/auth/session`,

@@ -14,6 +14,7 @@ type Handlers struct {
 	Editor *handler.EditorHandler
 	Chart  *handler.ChartHandler
 	Game   *handler.GameHandler
+	Score  *handler.ScoreHandler
 }
 
 func SetupRoutes(router *gin.Engine, c Handlers, authService *auth.AuthService) {
@@ -25,6 +26,7 @@ func SetupRoutes(router *gin.Engine, c Handlers, authService *auth.AuthService) 
 		api.GET("/chart/:id", c.Chart.GetChart)
 		api.GET("/charts", c.Chart.ListCharts)
 		api.GET("/charts/mine", auth, c.Chart.ListMyCharts)
+		api.GET("/chart/:id/leaderboard", c.Score.GetTopScoresForChart)
 
 		api.GET("/game/:id/load", c.Game.PreloadVocals)
 		api.GET("/game/:id/run", c.Game.GameSocket)
@@ -42,5 +44,8 @@ func SetupRoutes(router *gin.Engine, c Handlers, authService *auth.AuthService) 
 		api.POST("/draft/:uuid/upload-vocals", c.Editor.UploadVocals)
 		api.POST("/draft/:uuid/upload-image", c.Editor.UploadImage)
 		api.POST("/draft/:uuid/generate-timings", c.Editor.GenerateTimings)
+
+		api.GET("/scores/me", auth, c.Score.GetMyScores)
+		api.GET("/scores/me/chart/:id", auth, c.Score.GetMyScoresForChart)
 	}
 }

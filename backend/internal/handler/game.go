@@ -24,14 +24,16 @@ var upgrader = websocket.Upgrader{
 type GameHandler struct {
 	gameService  *GameService
 	chartService *ChartService
+	scoreService *ScoreService
 	vocalsCache  map[uint][]byte
 	vocalsMu     sync.RWMutex
 }
 
-func NewGameHandler(gameService *GameService, chartService *ChartService) *GameHandler {
+func NewGameHandler(gameService *GameService, chartService *ChartService, scoreService *ScoreService) *GameHandler {
 	return &GameHandler{
 		gameService:  gameService,
 		chartService: chartService,
+		scoreService: scoreService,
 		vocalsCache:  make(map[uint][]byte),
 	}
 }

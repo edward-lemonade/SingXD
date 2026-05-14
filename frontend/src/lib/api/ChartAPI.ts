@@ -1,5 +1,5 @@
 import { SerializedChartResponse, ListChartsResponse, SerializedListChartsResponse } from '../types/api';
-import { ChartBase, DraftChart, PublicChart } from '../types/models';
+import { ChartBase, DraftChart, PublicChart, Score } from '../types/models';
 import { ROUTE_CONFIG } from '../routes';
 import { API } from '../axios';
 import { parseChart, parseCharts } from '../types/transformers';
@@ -24,5 +24,11 @@ export const listMyCharts = async (): Promise<PublicChart[]> => {
     const url = ROUTE_CONFIG.chart.mine();
     const response = await API.get<{ charts: PublicChart[] }>(url);
     return response.data.charts;
+};
+
+export const getChartLeaderboard = async (id: number): Promise<Score[]> => {
+    const url = ROUTE_CONFIG.chart.leaderboard(id);
+    const response = await API.get<{ scores: Score[] }>(url);
+    return response.data.scores;
 };
  
