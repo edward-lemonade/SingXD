@@ -7,10 +7,12 @@ export function IntroPane({
     chart,
     isFinished,
     onPlay,
+    onViewLeaderboard,
 }: {
     chart: PublicChart;
     isFinished: boolean;
     onPlay: () => void;
+    onViewLeaderboard: () => void;
 }) {
     return (
         <div className="flex flex-col items-center gap-6 text-center">
@@ -43,6 +45,13 @@ export function IntroPane({
                     }}
                 />
                 {isFinished ? 'Play Again' : 'Play'}
+            </button>
+
+            <button
+                onClick={onViewLeaderboard}
+                className="px-6 py-2 rounded-full text-sm font-semibold bg-white/20 hover:bg-white/30 text-white transition-colors backdrop-blur-sm border border-white/30 shadow-lg"
+            >
+                🏆 View Leaderboard
             </button>
         </div>
     );

@@ -13,7 +13,7 @@ export const ROUTE_CONFIG = {
             return `${API}/charts?${params}`;
         },
         mine: () => `${API}/charts/mine`,
-        leaderboard: (chartId: number) => `${API}/chart/${chartId}/scores`,
+        leaderboard: (chartId: number) => `${API}/chart/${chartId}/leaderboard`,
     },
     draft: {
         // draft CRUD

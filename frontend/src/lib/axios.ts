@@ -10,10 +10,12 @@ API.interceptors.request.use(async config => {
     if (typeof window !== 'undefined') {
         //console.log("CLIENT")
         const token = await getIdToken();
+        console.log(token);
         if (token) config.headers.Authorization = `Bearer ${token}`; // client
     } else {
         //console.log("SERVER")
         const token = await getCookie(COOKIE.TOKEN);
+        console.log(token);
         if (token) config.headers.Authorization = `Bearer ${token}`; // server
     }
     return config;
