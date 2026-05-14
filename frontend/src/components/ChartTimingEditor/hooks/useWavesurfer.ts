@@ -42,7 +42,7 @@ export function useWaveSurfer({
 
     // ── Create ────────────────────────────────────────────────────────────────
     useEffect(() => {
-        if (!wsContainerRef.current || !timelineContainerRef.current) return;
+        if (!wsContainerRef.current || !timelineContainerRef.current || !audioUrl) return;
 
         const timelinePlugin = Timeline.create({
             container: timelineContainerRef.current,
@@ -68,18 +68,7 @@ export function useWaveSurfer({
         wsScrollContainerRef.current = ws.getWrapper().parentElement;
         setIsCreated(true);
 
-        return () => {
-            ws.unAll();
-            ws.destroy();
-        };
-    }, []);
-
-    // ── Load audio ────────────────────────────────────────────────────────────
-    useEffect(() => {
-        if (!isCreated || !audioUrl) return;
-        const ws = wsRef.current!;
         ws.load(audioUrl);
-
         ws.on('ready', () => {
             setIsReady(true);
             // Hide WaveSurfer's internal scrollbar — we drive scrolling ourselves
@@ -100,10 +89,17 @@ export function useWaveSurfer({
         ws.on('finish', () => setIsPlaying(false));
 
         return () => {
-            ws.unAll();
-            setIsReady(false);
+            if (ws.getDuration() == 0) {
+                ws.on('ready', () => {
+                    ws.unAll();
+                    ws.destroy();
+                })
+            } else {
+                ws.unAll();
+                ws.destroy();
+            }
         };
-    }, [isCreated, audioUrl]);
+    }, []);
 
     // ── Sync scroll positions ─────────────────────────────────────────────────
     useEffect(() => {

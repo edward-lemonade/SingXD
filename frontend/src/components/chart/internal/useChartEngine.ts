@@ -89,12 +89,15 @@ export function useChartEngine(
 
     // Auto-play (game mode).
     useEffect(() => {
-        if (!game) return;
+        if (!game || !audioRef.current) return;
         const audio = audioRef.current;
-        if (!audio) return;
+        //audio.volume = 0.05;
         const p = audio.play();
-        if (p) p.then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
-        else setIsPlaying(true);
+        if (p) {
+            p.then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+        } else {
+            setIsPlaying(true);
+        }
     }, [game]);
 
     // rAF loop — keeps currentTime in sync without relying solely on onTimeUpdate.

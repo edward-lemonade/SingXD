@@ -1,17 +1,25 @@
 import { ChartPreview } from '@/src/components/Chart';
 import { PublicChart } from '@/src/lib/types/models';
+import { Logo } from '@/src/components/Logo';
+import Link from 'next/link';
 
 export function IntroPane({
     chart,
     isFinished,
     onPlay,
+    onViewLeaderboard,
 }: {
     chart: PublicChart;
     isFinished: boolean;
     onPlay: () => void;
+    onViewLeaderboard: () => void;
 }) {
     return (
         <div className="flex flex-col items-center gap-6 text-center">
+            <Link href="/">
+                <Logo fontSize={50}/>
+            </Link>
+            
             <h1 className="text-4xl font-bold text-white drop-shadow-lg">
                 {chart.properties.title ?? 'Chart'}
             </h1>
@@ -37,6 +45,13 @@ export function IntroPane({
                     }}
                 />
                 {isFinished ? 'Play Again' : 'Play'}
+            </button>
+
+            <button
+                onClick={onViewLeaderboard}
+                className="px-6 py-2 rounded-full text-sm font-semibold bg-white/20 hover:bg-white/30 text-white transition-colors backdrop-blur-sm border border-white/30 shadow-lg"
+            >
+                🏆 View Leaderboard
             </button>
         </div>
     );

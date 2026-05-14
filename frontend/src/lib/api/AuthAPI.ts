@@ -12,7 +12,28 @@ import { redirect } from 'next/navigation';
 import { deleteCookie, setCookie } from '../actions/cookies';
 import { COOKIE } from '../types/enums';
 
-export const getIdToken = () => auth.currentUser?.getIdToken() ?? Promise.resolve(null);
+let authInitializationPromise: Promise<User | null> | null = null;
+
+const waitForAuthInitialization = async (): Promise<User | null> => {
+    if (auth.currentUser) return auth.currentUser;
+    if (authInitializationPromise) return authInitializationPromise;
+
+    authInitializationPromise = new Promise(resolve => {
+        const unsubscribe = onAuthStateChanged(auth, user => {
+            unsubscribe();
+            authInitializationPromise = null;
+            resolve(user);
+        });
+    });
+
+    return authInitializationPromise;
+};
+
+export const getIdToken = async () => {
+    const user = auth.currentUser ?? (await waitForAuthInitialization());
+    if (!user) return null;
+    return user.getIdToken(true); // force refresh to handle expired tokens
+};
 
 export const loginWithEmail = async (email: string, password: string) => {
     const credential = await signInWithEmailAndPassword(auth, email, password);
@@ -47,7 +68,7 @@ export const logout = async () => {
     dispatchAuthEvent(LOGOUT_START_EVENT);
     try {
         await signOut(auth);
-        await deleteCookie(COOKIE.TOKEN)
+        await deleteCookie(COOKIE.TOKEN);
     } catch (err) {
         console.error('Failed to clear session cookie', err);
     } finally {

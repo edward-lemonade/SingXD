@@ -1,6 +1,7 @@
 import { WsSummaryMsg } from '@/src/lib/api/GameAPI';
 import { PublicChart } from '@/src/lib/types/models';
-import { IntroPane } from './shared';
+import { IntroPane } from '../components/IntroPane';
+import { UserScoresPane } from '../components/UserScoresPane';
 
 function formatPercent(x: number) {
     if (!Number.isFinite(x)) return '—';
@@ -22,7 +23,7 @@ function SummaryPane({ summary }: { summary: WsSummaryMsg | null }) {
     const max = chunkCount > 0 ? sorted[sorted.length - 1] : null;
 
     return (
-        <div className="w-full h-full rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-6 text-white shadow-2xl">
+        <div className="w-full rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-6 text-white shadow-2xl">
             <h2 className="text-2xl font-bold drop-shadow">Summary</h2>
             <div className="mt-4 grid grid-cols-1 gap-4">
                 <div className="rounded-xl bg-black/25 border border-white/10 p-4">
@@ -49,21 +50,28 @@ function SummaryPane({ summary }: { summary: WsSummaryMsg | null }) {
 
 export default function FinishedState({
     chart,
+    chartId,
     summary,
     onPlay,
+    onViewLeaderboard,
 }: {
     chart: PublicChart;
+    chartId: number;
     summary: WsSummaryMsg | null;
     onPlay: () => void;
+    onViewLeaderboard: () => void;
 }) {
     return (
         <div className="relative z-10 w-full flex flex-col md:flex-row items-stretch gap-6 md:gap-0">
             <div className="flex-1 flex items-center justify-center p-6">
-                <IntroPane chart={chart} isFinished={true} onPlay={onPlay} />
+                <IntroPane chart={chart} isFinished={true} onPlay={onPlay} onViewLeaderboard={onViewLeaderboard} />
             </div>
-            <div className="flex-1 flex items-center justify-center p-6">
+            <div className="flex-1 flex flex-col items-center justify-center gap-4 p-6">
                 <div className="w-full max-w-xl">
                     <SummaryPane summary={summary} />
+                </div>
+                <div className="w-full max-w-xl">
+                    <UserScoresPane chartId={chartId} />
                 </div>
             </div>
         </div>

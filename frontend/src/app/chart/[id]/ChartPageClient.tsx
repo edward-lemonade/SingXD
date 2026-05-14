@@ -6,11 +6,13 @@ import { PublicChart } from '@/src/lib/types/models';
 import InitialState from './states/InitialState';
 import PlayingState from './states/PlayingState';
 import FinishedState from './states/FinishedState';
+import LeaderboardState from './states/LeaderboardState';
 
 enum GameState {
     INITIAL,
     PLAYING,
     FINISHED,
+    LEADERBOARD,
 }
 
 interface ChartPageClientProps {
@@ -42,6 +44,14 @@ export default function ChartPageClient({ chart, chartId }: ChartPageClientProps
         setGameState(GameState.PLAYING);
     };
 
+    const onViewLeaderboard = () => {
+        setGameState(GameState.LEADERBOARD);
+    };
+
+    const onBackFromLeaderboard = () => {
+        setGameState(GameState.INITIAL);
+    };
+
     return (
         <div
             className="min-h-screen flex flex-col items-center justify-center gap-6"
@@ -54,7 +64,7 @@ export default function ChartPageClient({ chart, chartId }: ChartPageClientProps
             }}
         >
             <div className="absolute inset-0 bg-black/60" />
-            {gameState === GameState.INITIAL && <InitialState chart={chart} onPlay={onPlay} />}
+            {gameState === GameState.INITIAL && <InitialState chart={chart} chartId={chartId} onPlay={onPlay} onViewLeaderboard={onViewLeaderboard} />}
             {gameState === GameState.PLAYING && (
                 <PlayingState
                     chart={chart}
@@ -70,7 +80,10 @@ export default function ChartPageClient({ chart, chartId }: ChartPageClientProps
                 />
             )}
             {gameState === GameState.FINISHED && (
-                <FinishedState chart={chart} summary={lastSummary} onPlay={onPlay} />
+                <FinishedState chart={chart} chartId={chartId} summary={lastSummary} onPlay={onPlay} onViewLeaderboard={onViewLeaderboard} />
+            )}
+            {gameState === GameState.LEADERBOARD && (
+                <LeaderboardState chart={chart} chartId={chartId} onBack={onBackFromLeaderboard} />
             )}
         </div>
     );

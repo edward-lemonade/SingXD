@@ -71,6 +71,7 @@ export default function ChartGame({
     const mediaStreamRef = useRef<MediaStream | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
     const workletNodeRef = useRef<AudioWorkletNode | null>(null);
+    const debugAudioCtxRef = useRef<AudioContext | null>(null);
 
     const finishCallbackRef = useRef<() => void>(null!);
 
@@ -112,6 +113,9 @@ export default function ChartGame({
 
         mediaStreamRef.current?.getAudioTracks().forEach(t => t.stop());
         mediaStreamRef.current = null;
+
+        debugAudioCtxRef.current?.close();
+        debugAudioCtxRef.current = null;
     }, []);
 
     const quit = useCallback(() => {
@@ -159,7 +163,31 @@ export default function ChartGame({
             if (msg.type === 'score') {
                 const opacity = Math.min(1, 2 - 2 * msg.score);
                 setVignetteOpacity(opacity);
-                console.log(msg.referenceSemitone, msg.detectedSemitone);
+
+                const debugPitch = false;
+                if (debugPitch) {
+                    console.log(
+                        msg.timestamp,
+                        Math.round(msg.referenceSemitone),
+                        Math.round(msg.detectedSemitone)
+                    );
+                    
+                    if (!debugAudioCtxRef.current) {
+                        debugAudioCtxRef.current = new AudioContext();
+                    }
+                    const ctx = debugAudioCtxRef.current;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+
+                    osc.frequency.value = msg.reference;
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+
+                    osc.connect(gain).connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.2);
+                }
+
                 return;
             }
 

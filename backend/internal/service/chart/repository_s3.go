@@ -80,6 +80,22 @@ func getVocalsFile(ctx context.Context, s3Client *S3Client, id uint) ([]byte, er
 	return data, nil
 }
 
+func getInstrumentalsFile(ctx context.Context, s3Client *S3Client, id uint) ([]byte, error) {
+	files, err := s3Client.ListFiles(ctx, dirPrefix(id))
+	if err != nil {
+		return nil, fmt.Errorf("listing files for id=%d: %w", id, err)
+	}
+	k := storage.FindByPrefix(files, instrumentalPrefix)
+	if k == "" {
+		return nil, ErrNoInstrumentalFile
+	}
+	data, err := s3Client.DownloadFile(ctx, k)
+	if err != nil {
+		return nil, fmt.Errorf("downloading instrumentals id=%d: %w", id, err)
+	}
+	return data, nil
+}
+
 func getChartURLs(ctx context.Context, s3Client *S3Client, id uint, expiryMinutes uint) (audio, background *string, err error) {
 	files, err := s3Client.ListFiles(ctx, dirPrefix(id))
 	if err != nil {

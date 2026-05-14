@@ -67,3 +67,11 @@ export interface User {
     username: string;
     description: string;
 }
+
+export interface Score {
+    id: string;
+    uid: string;
+    chartId: number;
+    createdAt: string;
+    score: number;
+}
