@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"singxd/internal/transport"
+	"singxd/internal/apperror"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +23,7 @@ func getUID(c *gin.Context) *string {
 func getRequiredUID(c *gin.Context) string {
 	uid := getUID(c)
 	if uid == nil {
-		transport.Unauthorized(c)
+		apperror.Unauthorized(c)
 		return ""
 	}
 	return *uid

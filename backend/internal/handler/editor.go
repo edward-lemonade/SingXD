@@ -1,15 +1,19 @@
 package handler
 
 import (
+	"errors"
+	"log"
 	"net/http"
-	"singxd/internal/service/editor"
-	"singxd/internal/transport"
+
+	"singxd/internal/apperror"
+	editorpkg "singxd/internal/domain/editor"
 	t "singxd/internal/types"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/codes"
 )
 
-type EditorService = editor.EditorService
+type EditorService = editorpkg.EditorService
 
 type EditorHandler struct {
 	editorService *EditorService
@@ -26,12 +30,18 @@ func (a *EditorHandler) SeparateAudio(c *gin.Context) {
 	UUID := c.Param("uuid")
 	file, err := c.FormFile("audio")
 	if err != nil {
-		transport.BadRequest(c, "no audio file provided")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "no audio file provided"})
 		return
 	}
 	vocalsURL, instrumentalURL, err := a.editorService.SeparateAudio(c.Request.Context(), UUID, file)
 	if err != nil {
-		transport.ServiceError(c, err)
+		// preserve known sentinel mappings and only wrap unexpected errors
+		if errors.Is(err, editorpkg.ErrSeparationFailed) || errors.Is(err, editorpkg.ErrPythonInterpreterNotFound) {
+			apperror.ServiceError(c, err)
+			return
+		}
+		wrapped := apperror.Wrap(err, "editor.separation_failed", "Failed to process audio", http.StatusInternalServerError, codes.Internal)
+		apperror.ServiceError(c, wrapped)
 		return
 	}
 	type Response struct {
@@ -48,12 +58,12 @@ func (a *EditorHandler) UploadInstrumental(c *gin.Context) {
 	UUID := c.Param("uuid")
 	file, err := c.FormFile("instrumental")
 	if err != nil {
-		transport.BadRequest(c, "no audio file provided")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "no audio file provided"})
 		return
 	}
 	audioURL, err := a.editorService.UploadInstrumental(c.Request.Context(), UUID, file)
 	if err != nil {
-		transport.ServiceError(c, err)
+		apperror.ServiceError(c, err)
 		return
 	}
 	type Response struct {
@@ -66,12 +76,12 @@ func (a *EditorHandler) UploadVocals(c *gin.Context) {
 	UUID := c.Param("uuid")
 	file, err := c.FormFile("vocals")
 	if err != nil {
-		transport.BadRequest(c, "no audio file provided")
+		apperror.BadRequest(c, "no audio file provided")
 		return
 	}
 	audioURL, err := a.editorService.UploadVocals(c.Request.Context(), UUID, file)
 	if err != nil {
-		transport.ServiceError(c, err)
+		apperror.ServiceError(c, err)
 		return
 	}
 	type Response struct {
@@ -84,12 +94,14 @@ func (a *EditorHandler) UploadImage(c *gin.Context) {
 	UUID := c.Param("uuid")
 	file, err := c.FormFile("image")
 	if err != nil {
-		transport.BadRequest(c, "no image file provided")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "no image file provided"})
 		return
 	}
 	imageURL, err := a.editorService.UploadImage(c.Request.Context(), UUID, file)
 	if err != nil {
-		transport.ServiceError(c, err)
+		log.Printf("[Service Error]: %v", err)
+		status, msg := apperror.ToHTTP(err)
+		c.JSON(status, gin.H{"error": msg})
 		return
 	}
 	type Response struct {
@@ -102,16 +114,16 @@ func (a *EditorHandler) GenerateTimings(c *gin.Context) {
 	UUID := c.Param("uuid")
 	lyrics := c.PostForm("lyrics")
 	if UUID == "" {
-		transport.BadRequest(c, "missing uuid")
+		apperror.BadRequest(c, "missing uuid")
 		return
 	}
 	if lyrics == "" {
-		transport.BadRequest(c, "missing lyrics")
+		apperror.BadRequest(c, "missing lyrics")
 		return
 	}
 	timings, err := a.editorService.GenerateTimings(c.Request.Context(), UUID, lyrics)
 	if err != nil {
-		transport.ServiceError(c, err)
+		apperror.ServiceError(c, err)
 		return
 	}
 	type Response struct {

@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"singxd/internal/service/user"
+	"singxd/internal/domain/user"
 
 	"github.com/gin-gonic/gin"
 )

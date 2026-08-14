@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"singxd/internal/service/score"
-	"singxd/internal/transport"
+	"singxd/internal/apperror"
+	"singxd/internal/domain/score"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,7 +31,7 @@ func (h *ScoreHandler) GetMyScores(c *gin.Context) {
 
 	scores, err := h.scoreService.GetByUID(c.Request.Context(), uid)
 	if err != nil {
-		transport.ServiceError(c, err)
+		apperror.ServiceError(c, err)
 		return
 	}
 
@@ -47,13 +47,13 @@ func (h *ScoreHandler) GetMyScoresForChart(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
-		transport.BadRequest(c, "invalid chart id")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid chart id"})
 		return
 	}
 
 	scores, err := h.scoreService.GetByUIDAndChartID(c.Request.Context(), uid, uint(id))
 	if err != nil {
-		transport.ServiceError(c, err)
+		apperror.ServiceError(c, err)
 		return
 	}
 
@@ -64,13 +64,13 @@ func (h *ScoreHandler) GetTopScoresForChart(c *gin.Context) { // eventually make
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
-		transport.BadRequest(c, "invalid chart id")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid chart id"})
 		return
 	}
 
 	scores, err := h.scoreService.GetBestByChartID(c.Request.Context(), uint(id), 10)
 	if err != nil {
-		transport.ServiceError(c, err)
+		apperror.ServiceError(c, err)
 		return
 	}
 

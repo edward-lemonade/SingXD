@@ -2,9 +2,10 @@
 package middleware
 
 import (
-	"singxd/internal/service/auth"
-	"singxd/internal/transport"
 	"strings"
+
+	"singxd/internal/apperror"
+	"singxd/internal/domain/auth"
 
 	firebaseauth "firebase.google.com/go/v4/auth"
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ func Auth(authService *auth.AuthService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token, err := extractAndVerify(c, authService)
 		if err != nil {
-			transport.ServiceError(c, auth.ErrMissingToken)
+			apperror.ServiceError(c, auth.ErrMissingToken)
 			c.Abort()
 			return
 		}

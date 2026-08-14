@@ -1,17 +1,20 @@
 package handler
 
 import (
+	"errors"
+	"log"
 	"net/http"
 	"strconv"
 
-	"singxd/internal/service/chart"
-	"singxd/internal/transport"
+	"singxd/internal/apperror"
+	chartpkg "singxd/internal/domain/chart"
 	t "singxd/internal/types"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc/codes"
 )
 
-type ChartService = chart.ChartService
+type ChartService = chartpkg.ChartService
 
 type ChartHandler struct {
 	chartService *ChartService
@@ -27,19 +30,25 @@ func NewChartHandler(service *ChartService) *ChartHandler {
 func (a *ChartHandler) GetChart(c *gin.Context) {
 	idStr := c.Param("id")
 	if idStr == "" {
-		transport.BadRequest(c, "missing id")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing id"})
 		return
 	}
 
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
-		transport.BadRequest(c, "invalid id")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 		return
 	}
 
 	chart, err := a.chartService.FindChartByID(c.Request.Context(), uint(id))
 	if err != nil {
-		transport.ServiceError(c, err)
+		// Preserve sentinel mappings (e.g. not found); only wrap unexpected errors
+		if errors.Is(err, chartpkg.ErrChartNotFound) {
+			apperror.ServiceError(c, err)
+			return
+		}
+		wrapped := apperror.Wrap(err, "chart.fetch_failed", "Failed to fetch chart", http.StatusInternalServerError, codes.Internal)
+		apperror.ServiceError(c, wrapped)
 		return
 	}
 
@@ -69,7 +78,9 @@ func (a *ChartHandler) ListCharts(c *gin.Context) {
 
 	charts, total, err := a.chartService.ListCharts(c.Request.Context(), page, limit, search)
 	if err != nil {
-		transport.ServiceError(c, err)
+		log.Printf("[Service Error]: %v", err)
+		status, msg := apperror.ToHTTP(err)
+		c.JSON(status, gin.H{"error": msg})
 		return
 	}
 
@@ -92,7 +103,9 @@ func (a *ChartHandler) ListMyCharts(c *gin.Context) {
 
 	charts, err := a.chartService.ListChartsByUID(c.Request.Context(), uid)
 	if err != nil {
-		transport.ServiceError(c, err)
+		log.Printf("[Service Error]: %v", err)
+		status, msg := apperror.ToHTTP(err)
+		c.JSON(status, gin.H{"error": msg})
 		return
 	}
 

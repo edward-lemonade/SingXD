@@ -10,14 +10,14 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 
+	"singxd/internal/domain/auth"
+	"singxd/internal/domain/chart"
+	"singxd/internal/domain/draft"
+	"singxd/internal/domain/editor"
+	"singxd/internal/domain/score"
+	"singxd/internal/domain/user"
+	"singxd/internal/grpcclient"
 	"singxd/internal/handler"
-	"singxd/internal/service/auth"
-	"singxd/internal/service/chart"
-	"singxd/internal/service/draft"
-	"singxd/internal/service/editor"
-	"singxd/internal/service/game"
-	"singxd/internal/service/score"
-	"singxd/internal/service/user"
 	"singxd/internal/storage"
 
 	"github.com/gin-gonic/gin"
@@ -38,15 +38,17 @@ func main() {
 	chartService := chart.NewChartService(s3Client, gormDbClient, redisClient)
 	draftService := draft.NewDraftService(s3Client, gormDbClient)
 	editorService := editor.NewEditorService(s3Client)
-	gameService := game.NewGameService(44100, 0.2)
 	scoreService := score.NewScoreService(gormDbClient)
+
+	// create gRPC game client for session allocation
+	gameClient := grpcclient.New(os.Getenv("GAME_SERVICE_ADDR"))
 
 	handlers := Handlers{
 		User:   handler.NewUserHandler(userService),
 		Chart:  handler.NewChartHandler(chartService),
 		Draft:  handler.NewDraftHandler(draftService, chartService),
 		Editor: handler.NewEditorHandler(editorService),
-		Game:   handler.NewGameHandler(gameService, chartService, scoreService),
+		Game:   handler.NewGameHandler(chartService, scoreService),
 		Score:  handler.NewScoreHandler(scoreService),
 	}
 
@@ -60,7 +62,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	SetupRoutes(router, handlers, authService)
+	SetupRoutes(router, handlers, authService, gameClient)
 	router.Run(":8080")
 }
 
