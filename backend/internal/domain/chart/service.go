@@ -11,7 +11,6 @@ import (
 	"gorm.io/gorm"
 
 	"singxd/internal/storage"
-	t "singxd/internal/types"
 )
 
 type ChartService struct {
@@ -37,7 +36,7 @@ func vocalsCacheKey(id uint) string {
 // =========================================================
 // Operations
 
-func (s *ChartService) CreateChart(ctx context.Context, draftUUID string, UID string, chartBase t.ChartBase) (*t.PublicChart, error) {
+func (s *ChartService) CreateChart(ctx context.Context, draftUUID string, UID string, chartBase ChartBase) (*PublicChart, error) {
 	if s.db == nil {
 		return nil, ErrDbNotConfigured
 	}
@@ -51,7 +50,7 @@ func (s *ChartService) CreateChart(ctx context.Context, draftUUID string, UID st
 	return chart, nil
 }
 
-func (s *ChartService) FindChartByID(ctx context.Context, id uint) (*t.PublicChart, error) {
+func (s *ChartService) FindChartByID(ctx context.Context, id uint) (*PublicChart, error) {
 	if s.db == nil {
 		return nil, ErrDbNotConfigured
 	}
@@ -99,7 +98,7 @@ func (s *ChartService) FindInstrumentalsFileByID(ctx context.Context, id uint) (
 	return data, nil
 }
 
-func (s *ChartService) ListCharts(ctx context.Context, page, limit int, search string) ([]t.PublicChart, int, error) {
+func (s *ChartService) ListCharts(ctx context.Context, page, limit int, search string) ([]PublicChart, int, error) {
 	if s.db == nil {
 		return nil, 0, ErrDbNotConfigured
 	}
@@ -122,7 +121,7 @@ func (s *ChartService) ListCharts(ctx context.Context, page, limit int, search s
 	return charts, total, nil
 }
 
-func (s *ChartService) ListChartsByUID(ctx context.Context, uid string) ([]t.PublicChart, error) {
+func (s *ChartService) ListChartsByUID(ctx context.Context, uid string) ([]PublicChart, error) {
 	if s.db == nil {
 		return nil, ErrDbNotConfigured
 	}
@@ -130,7 +129,7 @@ func (s *ChartService) ListChartsByUID(ctx context.Context, uid string) ([]t.Pub
 	if err != nil {
 		return nil, err
 	}
-	charts := make([]t.PublicChart, 0, len(records))
+	charts := make([]PublicChart, 0, len(records))
 	for _, r := range records {
 		c, err := r.toPublicChart()
 		if err != nil {

@@ -10,8 +10,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	chartpkg "singxd/internal/domain/chart"
 	"singxd/internal/storage"
-	t "singxd/internal/types"
 	"strings"
 	"time"
 )
@@ -117,7 +117,7 @@ func (s *EditorService) SeparateAudio(ctx context.Context, draftUUID string, fil
 	return vocalsURL, instrumentalURL, nil
 }
 
-func (s *EditorService) GenerateTimings(ctx context.Context, draftUUID string, lyrics string) ([]t.Timing, error) {
+func (s *EditorService) GenerateTimings(ctx context.Context, draftUUID string, lyrics string) ([]chartpkg.Timing, error) {
 	if draftUUID == "" {
 		return nil, ErrMissingUUID
 	}
@@ -138,7 +138,7 @@ func (s *EditorService) GenerateTimings(ctx context.Context, draftUUID string, l
 		return nil, fmt.Errorf("saving vocals: %w", err)
 	}
 
-	var lines []t.Line
+	var lines []chartpkg.Line
 	if err := json.Unmarshal([]byte(lyrics), &lines); err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrParsingLyrics, err)
 	}
@@ -173,7 +173,7 @@ func (s *EditorService) GenerateTimings(ctx context.Context, draftUUID string, l
 		return nil, fmt.Errorf("reading timings output: %w", err)
 	}
 
-	var timings []t.Timing
+	var timings []chartpkg.Timing
 	if err := json.Unmarshal(jsonData, &timings); err != nil {
 		return nil, fmt.Errorf("parsing timings: %w", err)
 	}

@@ -4,8 +4,6 @@ import (
 	"context"
 	"log"
 
-	"singxd/internal/types"
-
 	"gorm.io/gorm"
 )
 
@@ -23,7 +21,7 @@ func NewScoreService(db *gorm.DB) *ScoreService {
 // =========================================================
 // Operations
 
-func (s *ScoreService) Save(ctx context.Context, uid string, cid uint, score float32) (*types.Score, error) {
+func (s *ScoreService) Save(ctx context.Context, uid string, cid uint, score float32) (*Score, error) {
 	record, err := Save(ctx, s.db, uid, cid, score)
 	if err != nil {
 		return nil, err
@@ -31,7 +29,7 @@ func (s *ScoreService) Save(ctx context.Context, uid string, cid uint, score flo
 	return recordToScore(record), nil
 }
 
-func (s *ScoreService) GetByChartID(ctx context.Context, cid uint) ([]types.Score, error) {
+func (s *ScoreService) GetByChartID(ctx context.Context, cid uint) ([]Score, error) {
 	records, err := GetByChartID(ctx, s.db, cid)
 	if err != nil {
 		return nil, err
@@ -39,7 +37,7 @@ func (s *ScoreService) GetByChartID(ctx context.Context, cid uint) ([]types.Scor
 	return recordsToScores(records), nil
 }
 
-func (s *ScoreService) GetByUID(ctx context.Context, uid string) ([]types.Score, error) {
+func (s *ScoreService) GetByUID(ctx context.Context, uid string) ([]Score, error) {
 	records, err := GetByUID(ctx, s.db, uid)
 	if err != nil {
 		return nil, err
@@ -47,7 +45,7 @@ func (s *ScoreService) GetByUID(ctx context.Context, uid string) ([]types.Score,
 	return recordsToScores(records), nil
 }
 
-func (s *ScoreService) GetByUIDAndChartID(ctx context.Context, uid string, cid uint) ([]types.Score, error) {
+func (s *ScoreService) GetByUIDAndChartID(ctx context.Context, uid string, cid uint) ([]Score, error) {
 	records, err := GetByUIDAndChartID(ctx, s.db, uid, cid)
 	if err != nil {
 		return nil, err
@@ -55,7 +53,7 @@ func (s *ScoreService) GetByUIDAndChartID(ctx context.Context, uid string, cid u
 	return recordsToScores(records), nil
 }
 
-func (s *ScoreService) GetBestByChartID(ctx context.Context, cid uint, limit int) ([]types.Score, error) {
+func (s *ScoreService) GetBestByChartID(ctx context.Context, cid uint, limit int) ([]Score, error) {
 	records, err := GetBestByChartID(ctx, s.db, cid, limit)
 	if err != nil {
 		return nil, err
@@ -70,8 +68,8 @@ func (s *ScoreService) DeleteByID(ctx context.Context, id string) error {
 // =========================================================
 // Helpers
 
-func recordToScore(r *ScoreRecord) *types.Score {
-	return &types.Score{
+func recordToScore(r *ScoreRecord) *Score {
+	return &Score{
 		ID:        r.ID,
 		UID:       r.UID,
 		ChartID:   r.CID,
@@ -80,8 +78,8 @@ func recordToScore(r *ScoreRecord) *types.Score {
 	}
 }
 
-func recordsToScores(records []ScoreRecord) []types.Score {
-	scores := make([]types.Score, len(records))
+func recordsToScores(records []ScoreRecord) []Score {
+	scores := make([]Score, len(records))
 	for i, r := range records {
 		scores[i] = *recordToScore(&r)
 	}

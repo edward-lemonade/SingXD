@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"singxd/internal/apperror"
+	chartpkg "singxd/internal/domain/chart"
 	draftpkg "singxd/internal/domain/draft"
-	t "singxd/internal/types"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
@@ -66,7 +66,7 @@ func (a *DraftHandler) UpdateDraft(c *gin.Context) {
 	uid := getUID(c)
 	uuid := c.Param("uuid")
 	type Request struct {
-		ChartBase t.ChartBase `json:"chartBase"`
+		ChartBase chartpkg.ChartBase `json:"chartBase"`
 	}
 	var req Request
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -101,7 +101,7 @@ func (a *DraftHandler) PublishDraft(c *gin.Context) {
 	uid := getRequiredUID(c)
 	uuid := c.Param("uuid")
 	type Request struct {
-		ChartBase t.ChartBase `json:"chartBase"`
+		ChartBase chartpkg.ChartBase `json:"chartBase"`
 	}
 	var req Request
 	if err := c.ShouldBindJSON(&req); err != nil {

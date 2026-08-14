@@ -7,7 +7,7 @@ import (
 
 	"gorm.io/gorm"
 
-	t "singxd/internal/types"
+	chartpkg "singxd/internal/domain/chart"
 )
 
 type DraftService struct {
@@ -46,12 +46,12 @@ func (s *DraftService) InitDraft(ctx context.Context, uid *string) (string, erro
 	return record.UUID, nil
 }
 
-func (s *DraftService) ListDrafts(ctx context.Context, uid string) ([]t.DraftChart, error) {
+func (s *DraftService) ListDrafts(ctx context.Context, uid string) ([]chartpkg.DraftChart, error) {
 	records, err := listByUID(ctx, s.db, uid)
 	if err != nil {
 		return nil, err
 	}
-	drafts := make([]t.DraftChart, 0, len(records))
+	drafts := make([]chartpkg.DraftChart, 0, len(records))
 	for _, r := range records {
 		d, err := r.toDraftChart()
 		if err != nil {
@@ -62,7 +62,7 @@ func (s *DraftService) ListDrafts(ctx context.Context, uid string) ([]t.DraftCha
 	return drafts, nil
 }
 
-func (s *DraftService) GetDraft(ctx context.Context, uuid string, uid *string) (*t.DraftChartWithURLs, error) {
+func (s *DraftService) GetDraft(ctx context.Context, uuid string, uid *string) (*chartpkg.DraftChartWithURLs, error) {
 	record, err := findByUUIDAndUID(ctx, s.db, uuid, uid)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrDraftNotFound, err)
@@ -77,7 +77,7 @@ func (s *DraftService) GetDraft(ctx context.Context, uuid string, uid *string) (
 		return nil, err
 	}
 
-	return &t.DraftChartWithURLs{
+	return &chartpkg.DraftChartWithURLs{
 		DraftChart:         d,
 		InstrumentalURL:    instURL,
 		VocalsURL:          vocalsURL,
@@ -85,7 +85,7 @@ func (s *DraftService) GetDraft(ctx context.Context, uuid string, uid *string) (
 	}, nil
 }
 
-func (s *DraftService) UpdateDraft(ctx context.Context, uuid string, uid *string, draft t.ChartBase) (*t.DraftChart, error) {
+func (s *DraftService) UpdateDraft(ctx context.Context, uuid string, uid *string, draft chartpkg.ChartBase) (*chartpkg.DraftChart, error) {
 	if _, err := findByUUIDAndUID(ctx, s.db, uuid, uid); err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrDraftNotFound, err)
 	}
@@ -108,10 +108,10 @@ func (s *DraftService) DeleteDraft(ctx context.Context, uuid, uid string) error 
 }
 
 type ChartCreator interface {
-	CreateChart(ctx context.Context, uuid string, uid string, draft t.ChartBase) (*t.PublicChart, error)
+	CreateChart(ctx context.Context, uuid string, uid string, draft chartpkg.ChartBase) (*chartpkg.PublicChart, error)
 }
 
-func (s *DraftService) PublishDraft(ctx context.Context, uuid string, uid string, draft t.ChartBase, chartSvc ChartCreator) (*t.PublicChart, error) {
+func (s *DraftService) PublishDraft(ctx context.Context, uuid string, uid string, draft chartpkg.ChartBase, chartSvc ChartCreator) (*chartpkg.PublicChart, error) {
 	created, err := chartSvc.CreateChart(ctx, uuid, uid, draft)
 	if err != nil {
 		return nil, err

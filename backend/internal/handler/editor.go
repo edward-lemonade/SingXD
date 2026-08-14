@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"singxd/internal/apperror"
+	chartpkg "singxd/internal/domain/chart"
 	editorpkg "singxd/internal/domain/editor"
-	t "singxd/internal/types"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
@@ -127,7 +127,7 @@ func (a *EditorHandler) GenerateTimings(c *gin.Context) {
 		return
 	}
 	type Response struct {
-		Timings []t.Timing `json:"timings"`
+		Timings []chartpkg.Timing `json:"timings"`
 	}
 	c.JSON(http.StatusOK, Response{Timings: timings})
 }

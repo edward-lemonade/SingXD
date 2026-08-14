@@ -3,7 +3,6 @@ package chart
 import (
 	"context"
 	"encoding/json"
-	t "singxd/internal/types"
 	"time"
 
 	"gorm.io/datatypes"
@@ -31,7 +30,7 @@ func AutoMigrate(db *gorm.DB) error {
 // ==============================================================================
 // Operations
 
-func save(ctx context.Context, db *gorm.DB, authorUID string, chart t.ChartBase) (*t.PublicChart, error) {
+func save(ctx context.Context, db *gorm.DB, authorUID string, chart ChartBase) (*PublicChart, error) {
 	lines, timings, props, err := marshalChart(chart)
 	if err != nil {
 		return nil, err
@@ -48,7 +47,7 @@ func save(ctx context.Context, db *gorm.DB, authorUID string, chart t.ChartBase)
 	return record.toPublicChart()
 }
 
-func findByID(ctx context.Context, db *gorm.DB, id uint) (*t.PublicChart, error) {
+func findByID(ctx context.Context, db *gorm.DB, id uint) (*PublicChart, error) {
 	var record ChartRecord
 	if err := db.WithContext(ctx).First(&record, id).Error; err != nil {
 		return nil, err
@@ -56,7 +55,7 @@ func findByID(ctx context.Context, db *gorm.DB, id uint) (*t.PublicChart, error)
 	return record.toPublicChart()
 }
 
-func list(ctx context.Context, db *gorm.DB, page, limit int, search string) ([]t.PublicChart, int, error) {
+func list(ctx context.Context, db *gorm.DB, page, limit int, search string) ([]PublicChart, int, error) {
 	var records []ChartRecord
 	var total int64
 
@@ -75,7 +74,7 @@ func list(ctx context.Context, db *gorm.DB, page, limit int, search string) ([]t
 		return nil, 0, err
 	}
 
-	charts := make([]t.PublicChart, 0, len(records))
+	charts := make([]PublicChart, 0, len(records))
 	for _, r := range records {
 		chart, err := r.toPublicChart()
 		if err != nil {
@@ -98,8 +97,8 @@ func listByUID(ctx context.Context, db *gorm.DB, uid string) ([]ChartRecord, err
 // ==============================================================================
 // Helpers
 
-func (r *ChartRecord) toPublicChart() (*t.PublicChart, error) {
-	chart := &t.PublicChart{
+func (r *ChartRecord) toPublicChart() (*PublicChart, error) {
+	chart := &PublicChart{
 		ID:        r.ID,
 		CreatedAt: r.CreatedAt,
 		UpdatedAt: r.UpdatedAt,
@@ -117,7 +116,7 @@ func (r *ChartRecord) toPublicChart() (*t.PublicChart, error) {
 	return chart, nil
 }
 
-func marshalChart(chart t.ChartBase) (lines, timings, props datatypes.JSON, err error) {
+func marshalChart(chart ChartBase) (lines, timings, props datatypes.JSON, err error) {
 	if lines, err = json.Marshal(chart.Lines); err != nil {
 		return
 	}

@@ -8,7 +8,6 @@ import (
 
 	"singxd/internal/apperror"
 	chartpkg "singxd/internal/domain/chart"
-	t "singxd/internal/types"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
@@ -53,7 +52,7 @@ func (a *ChartHandler) GetChart(c *gin.Context) {
 	}
 
 	type Response struct {
-		Chart t.PublicChart `json:"chart"`
+		Chart chartpkg.PublicChart `json:"chart"`
 	}
 
 	c.JSON(http.StatusOK, Response{
@@ -85,10 +84,10 @@ func (a *ChartHandler) ListCharts(c *gin.Context) {
 	}
 
 	type Response struct {
-		Charts []t.PublicChart `json:"charts"`
-		Total  int             `json:"total"`
-		Page   int             `json:"page"`
-		Limit  int             `json:"limit"`
+		Charts []chartpkg.PublicChart `json:"charts"`
+		Total  int                    `json:"total"`
+		Page   int                    `json:"page"`
+		Limit  int                    `json:"limit"`
 	}
 	c.JSON(http.StatusOK, Response{
 		Charts: charts,
@@ -110,7 +109,7 @@ func (a *ChartHandler) ListMyCharts(c *gin.Context) {
 	}
 
 	type Response struct {
-		Charts []t.PublicChart `json:"charts"`
+		Charts []chartpkg.PublicChart `json:"charts"`
 	}
 	c.JSON(http.StatusOK, Response{Charts: charts})
 }

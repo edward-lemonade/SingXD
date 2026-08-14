@@ -3,11 +3,12 @@ package draft
 import (
 	"context"
 	"encoding/json"
-	t "singxd/internal/types"
 	"time"
 
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
+
+	chartpkg "singxd/internal/domain/chart"
 )
 
 func (DraftRecord) TableName() string {
@@ -41,7 +42,7 @@ func initOne(ctx context.Context, db *gorm.DB, uid *string) (DraftRecord, error)
 	return record, nil
 }
 
-func updateByUUIDAndUID(ctx context.Context, db *gorm.DB, uuid string, uid *string, draft t.ChartBase) (DraftRecord, error) {
+func updateByUUIDAndUID(ctx context.Context, db *gorm.DB, uuid string, uid *string, draft chartpkg.ChartBase) (DraftRecord, error) {
 	lines, timings, props, err := marshalDraft(draft)
 	if err != nil {
 		return DraftRecord{}, err
@@ -89,7 +90,7 @@ func deleteByUUID(ctx context.Context, db *gorm.DB, uuid string) error {
 // ==============================================================================
 // Helpers
 
-func marshalDraft(draft t.ChartBase) (lines, timings, props datatypes.JSON, err error) {
+func marshalDraft(draft chartpkg.ChartBase) (lines, timings, props datatypes.JSON, err error) {
 	if lines, err = json.Marshal(draft.Lines); err != nil {
 		return
 	}
@@ -100,7 +101,7 @@ func marshalDraft(draft t.ChartBase) (lines, timings, props datatypes.JSON, err 
 	return
 }
 
-func unmarshalDraft(lines, timings, props datatypes.JSON, dst *t.ChartBase) error {
+func unmarshalDraft(lines, timings, props datatypes.JSON, dst *chartpkg.ChartBase) error {
 	if err := json.Unmarshal(lines, &dst.Lines); err != nil {
 		return err
 	}
@@ -110,15 +111,15 @@ func unmarshalDraft(lines, timings, props datatypes.JSON, dst *t.ChartBase) erro
 	return json.Unmarshal(props, &dst.Properties)
 }
 
-func (r *DraftRecord) toDraftChart() (t.DraftChart, error) {
-	var d t.DraftChart
+func (r *DraftRecord) toDraftChart() (chartpkg.DraftChart, error) {
+	var d chartpkg.DraftChart
 	d.UUID = r.UUID
 	d.AuthorUID = r.AuthorUID
 	d.CreatedAt = r.CreatedAt
 	d.UpdatedAt = r.UpdatedAt
 
 	if err := unmarshalDraft(r.Lines, r.Timings, r.Properties, &d.ChartBase); err != nil {
-		return t.DraftChart{}, err
+		return chartpkg.DraftChart{}, err
 	}
 	return d, nil
 }
