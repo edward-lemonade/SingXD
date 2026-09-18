@@ -6,7 +6,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	gamepb "singxd/proto/gamepb"
+	gamepb "singxd/grpc/gamepb"
 )
 
 type GameClient struct {

@@ -333,7 +333,7 @@ const file_proto_game_proto_rawDesc = "" +
 	"\rCreateSession\x12!.singxd.game.CreateSessionRequest\x1a\".singxd.game.CreateSessionResponse\x12D\n" +
 	"\rPreloadVocals\x12\x1b.singxd.game.PreloadRequest\x1a\x16.google.protobuf.Empty\x12H\n" +
 	"\fCloseSession\x12 .singxd.game.CloseSessionRequest\x1a\x16.google.protobuf.Empty\x12J\n" +
-	"\x13StreamSessionEvents\x12\x19.singxd.game.SessionEvent\x1a\x16.google.protobuf.Empty(\x01B\x15Z\x13singxd/proto/gamepbb\x06proto3"
+	"\x13StreamSessionEvents\x12\x19.singxd.game.SessionEvent\x1a\x16.google.protobuf.Empty(\x01B\x14Z\x12singxd/grpc/gamepbb\x06proto3"
 
 var (
 	file_proto_game_proto_rawDescOnce sync.Once

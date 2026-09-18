@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/websocket"
 	"google.golang.org/grpc"
 
-	gamepb "singxd/proto/gamepb"
+	gamepb "singxd/grpc/gamepb"
 )
 
 type server struct {
