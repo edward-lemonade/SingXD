@@ -10,6 +10,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
+	"singxd/internal/apperror"
 	"singxd/internal/storage"
 )
 
@@ -42,10 +43,10 @@ func (s *ChartService) CreateChart(ctx context.Context, draftUUID string, UID st
 	}
 	chart, err := save(ctx, s.db, UID, chartBase)
 	if err != nil {
-		return nil, fmt.Errorf("saving chart: %w", err)
+		return nil, apperror.WrapUnknown(err, "failed to save chart")
 	}
 	if err := moveDraftToChart(ctx, s.s3Client, draftUUID, chart.ID); err != nil {
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to finalize chart storage")
 	}
 	return chart, nil
 }
@@ -56,11 +57,14 @@ func (s *ChartService) FindChartByID(ctx context.Context, id uint) (*PublicChart
 	}
 	chart, err := findByID(ctx, s.db, id)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrChartNotFound, err)
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, apperror.NotFound("chart not found", err)
+		}
+		return nil, apperror.WrapUnknown(err, "failed to fetch chart")
 	}
 	audioURL, bgURL, err := getChartURLs(ctx, s.s3Client, chart.ID, ChartURLMinutes)
 	if err != nil {
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to load chart media")
 	}
 	chart.Properties.AudioURL = audioURL
 	chart.Properties.BackgroundImageURL = bgURL
@@ -80,7 +84,7 @@ func (s *ChartService) FindVocalsFileByID(ctx context.Context, id uint) ([]byte,
 
 	data, err := getVocalsFile(ctx, s.s3Client, id)
 	if err != nil {
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to fetch vocals track")
 	}
 
 	if err := s.redisClient.Set(ctx, key, data, vocalsCacheTTL); err != nil {
@@ -93,7 +97,7 @@ func (s *ChartService) FindVocalsFileByID(ctx context.Context, id uint) ([]byte,
 func (s *ChartService) FindInstrumentalsFileByID(ctx context.Context, id uint) ([]byte, error) {
 	data, err := getInstrumentalsFile(ctx, s.s3Client, id)
 	if err != nil {
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to fetch instrumental track")
 	}
 	return data, nil
 }
@@ -104,7 +108,7 @@ func (s *ChartService) ListCharts(ctx context.Context, page, limit int, search s
 	}
 	charts, total, err := list(ctx, s.db, page, limit, search)
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, apperror.WrapUnknown(err, "failed to list charts")
 	}
 	ids := make([]uint, len(charts))
 	for i, c := range charts {
@@ -127,13 +131,13 @@ func (s *ChartService) ListChartsByUID(ctx context.Context, uid string) ([]Publi
 	}
 	records, err := listByUID(ctx, s.db, uid)
 	if err != nil {
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to list your charts")
 	}
 	charts := make([]PublicChart, 0, len(records))
 	for _, r := range records {
 		c, err := r.toPublicChart()
 		if err != nil {
-			return nil, err
+			return nil, apperror.WrapUnknown(err, "failed to parse chart data")
 		}
 		charts = append(charts, *c)
 	}

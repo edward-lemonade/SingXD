@@ -3,6 +3,7 @@ package draft
 import (
 	"context"
 	"fmt"
+
 	"singxd/internal/storage"
 )
 
@@ -39,7 +40,7 @@ func getURL(ctx context.Context, s3Client *S3Client, uuid, fileType string, expi
 	}
 	k := storage.FindByPrefix(files, fileType)
 	if k == "" {
-		return "", fmt.Errorf("no %s file found for uuid=%s", fileType, uuid)
+		return "", ErrFileNotFound
 	}
 	return s3Client.GetPresignedURL(ctx, k, expiryMinutes)
 }
@@ -51,7 +52,7 @@ func downloadFile(ctx context.Context, s3Client *S3Client, uuid, fileType string
 	}
 	k := storage.FindByPrefix(files, fileType)
 	if k == "" {
-		return nil, fmt.Errorf("no %s file found for uuid=%s", fileType, uuid)
+		return nil, ErrFileNotFound
 	}
 	return s3Client.DownloadFile(ctx, k)
 }

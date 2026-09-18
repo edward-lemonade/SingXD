@@ -2,11 +2,11 @@ package draft
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"gorm.io/gorm"
 
+	"singxd/internal/apperror"
 	chartpkg "singxd/internal/domain/chart"
 )
 
@@ -41,7 +41,7 @@ const PythonVenv = "./internal/service/draft/scripts/.venv/bin/python"
 func (s *DraftService) InitDraft(ctx context.Context, uid *string) (string, error) {
 	record, err := initOne(ctx, s.db, uid)
 	if err != nil {
-		return "", err
+		return "", apperror.WrapUnknown(err, "failed to create draft")
 	}
 	return record.UUID, nil
 }
@@ -49,13 +49,13 @@ func (s *DraftService) InitDraft(ctx context.Context, uid *string) (string, erro
 func (s *DraftService) ListDrafts(ctx context.Context, uid string) ([]chartpkg.DraftChart, error) {
 	records, err := listByUID(ctx, s.db, uid)
 	if err != nil {
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to list drafts")
 	}
 	drafts := make([]chartpkg.DraftChart, 0, len(records))
 	for _, r := range records {
 		d, err := r.toDraftChart()
 		if err != nil {
-			return nil, err
+			return nil, apperror.WrapUnknown(err, "failed to parse draft data")
 		}
 		drafts = append(drafts, d)
 	}
@@ -65,16 +65,16 @@ func (s *DraftService) ListDrafts(ctx context.Context, uid string) ([]chartpkg.D
 func (s *DraftService) GetDraft(ctx context.Context, uuid string, uid *string) (*chartpkg.DraftChartWithURLs, error) {
 	record, err := findByUUIDAndUID(ctx, s.db, uuid, uid)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrDraftNotFound, err)
+		return nil, apperror.WrapUnknown(err, "failed to fetch draft")
 	}
 	d, err := record.toDraftChart()
 	if err != nil {
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to parse draft data")
 	}
 
 	instURL, vocalsURL, bgURL, err := getDraftURLs(ctx, s.s3Client, uuid, TempURLMinutes)
 	if err != nil {
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to load draft media")
 	}
 
 	return &chartpkg.DraftChartWithURLs{
@@ -87,24 +87,24 @@ func (s *DraftService) GetDraft(ctx context.Context, uuid string, uid *string) (
 
 func (s *DraftService) UpdateDraft(ctx context.Context, uuid string, uid *string, draft chartpkg.ChartBase) (*chartpkg.DraftChart, error) {
 	if _, err := findByUUIDAndUID(ctx, s.db, uuid, uid); err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrDraftNotFound, err)
+		return nil, apperror.WrapUnknown(err, "failed to update draft")
 	}
 	record, err := updateByUUIDAndUID(ctx, s.db, uuid, uid, draft)
 	if err != nil {
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to update draft")
 	}
 	d, err := record.toDraftChart()
 	if err != nil {
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to parse draft data")
 	}
 	return &d, nil
 }
 
 func (s *DraftService) DeleteDraft(ctx context.Context, uuid, uid string) error {
 	if _, err := findByUUIDAndUID(ctx, s.db, uuid, &uid); err != nil {
-		return fmt.Errorf("%w: %w", ErrDraftNotFound, err)
+		return apperror.WrapUnknown(err, "failed to delete draft")
 	}
-	return deleteByUUIDAndUID(ctx, s.db, uuid, uid)
+	return apperror.WrapUnknown(deleteByUUIDAndUID(ctx, s.db, uuid, uid), "failed to delete draft")
 }
 
 type ChartCreator interface {
@@ -114,7 +114,7 @@ type ChartCreator interface {
 func (s *DraftService) PublishDraft(ctx context.Context, uuid string, uid string, draft chartpkg.ChartBase, chartSvc ChartCreator) (*chartpkg.PublicChart, error) {
 	created, err := chartSvc.CreateChart(ctx, uuid, uid, draft)
 	if err != nil {
-		return nil, err
+		return nil, err // already an AppError from ChartService, per the last file
 	}
 	_ = deleteByUUID(ctx, s.db, uuid)
 	return created, nil

@@ -63,7 +63,16 @@ func main() {
 	}))
 
 	SetupRoutes(router, handlers, authService, gameClient)
-	router.Run(":8080")
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = os.Getenv("GATEWAY_PORT")
+	}
+	if port == "" {
+		port = "8080"
+	}
+
+	router.Run(":" + port)
 }
 
 func setupS3(ctx context.Context) *storage.S3Client {

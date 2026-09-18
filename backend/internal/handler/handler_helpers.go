@@ -23,7 +23,7 @@ func getUID(c *gin.Context) *string {
 func getRequiredUID(c *gin.Context) string {
 	uid := getUID(c)
 	if uid == nil {
-		apperror.Unauthorized(c)
+		apperror.ServiceError(c, apperror.Unauthenticated("authentication required", nil))
 		return ""
 	}
 	return *uid

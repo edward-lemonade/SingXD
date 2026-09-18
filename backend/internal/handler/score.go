@@ -5,18 +5,18 @@ import (
 	"strconv"
 
 	"singxd/internal/apperror"
-	"singxd/internal/domain/score"
+	scorepkg "singxd/internal/domain/score"
 
 	"github.com/gin-gonic/gin"
 )
 
-type ScoreService = score.ScoreService
+type ScoreService = scorepkg.ScoreService
 
 type ScoreHandler struct {
-	scoreService *ScoreService
+	scoreService *scorepkg.ScoreService
 }
 
-func NewScoreHandler(service *ScoreService) *ScoreHandler {
+func NewScoreHandler(service *scorepkg.ScoreService) *ScoreHandler {
 	return &ScoreHandler{scoreService: service}
 }
 
@@ -47,7 +47,7 @@ func (h *ScoreHandler) GetMyScoresForChart(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid chart id"})
+		apperror.ServiceError(c, apperror.InvalidInput("invalid chart id", err))
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *ScoreHandler) GetTopScoresForChart(c *gin.Context) { // eventually make
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid chart id"})
+		apperror.ServiceError(c, apperror.InvalidInput("invalid chart id", err))
 		return
 	}
 

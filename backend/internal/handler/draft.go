@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"singxd/internal/apperror"
@@ -9,17 +8,16 @@ import (
 	draftpkg "singxd/internal/domain/draft"
 
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc/codes"
 )
 
 type DraftService = draftpkg.DraftService
 
 type DraftHandler struct {
-	draftService *DraftService
-	chartService *ChartService
+	draftService *draftpkg.DraftService
+	chartService *chartpkg.ChartService
 }
 
-func NewDraftHandler(draftService *DraftService, chartService *ChartService) *DraftHandler {
+func NewDraftHandler(draftService *draftpkg.DraftService, chartService *chartpkg.ChartService) *DraftHandler {
 	return &DraftHandler{draftService: draftService, chartService: chartService}
 }
 
@@ -51,12 +49,7 @@ func (a *DraftHandler) GetDraft(c *gin.Context) {
 	uuid := c.Param("uuid")
 	draft, err := a.draftService.GetDraft(c.Request.Context(), uuid, &uid)
 	if err != nil {
-		if errors.Is(err, draftpkg.ErrDraftNotFound) {
-			apperror.ServiceError(c, err)
-			return
-		}
-		wrapped := apperror.Wrap(err, "draft.fetch_failed", "Failed to fetch draft", http.StatusInternalServerError, codes.Internal)
-		apperror.ServiceError(c, wrapped)
+		apperror.ServiceError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"draft": draft})
@@ -70,18 +63,12 @@ func (a *DraftHandler) UpdateDraft(c *gin.Context) {
 	}
 	var req Request
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		apperror.ServiceError(c, apperror.InvalidInput("invalid request body", err))
 		return
 	}
 	draft, err := a.draftService.UpdateDraft(c.Request.Context(), uuid, uid, req.ChartBase)
 	if err != nil {
-		// preserve sentinel mappings
-		if errors.Is(err, draftpkg.ErrDraftNotFound) {
-			apperror.ServiceError(c, err)
-			return
-		}
-		wrapped := apperror.Wrap(err, "draft.update_failed", "Failed to update draft", http.StatusInternalServerError, codes.Internal)
-		apperror.ServiceError(c, wrapped)
+		apperror.ServiceError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"draft": draft})
@@ -105,14 +92,10 @@ func (a *DraftHandler) PublishDraft(c *gin.Context) {
 	}
 	var req Request
 	if err := c.ShouldBindJSON(&req); err != nil {
-		apperror.BadRequest(c, "invalid request body")
+		apperror.ServiceError(c, apperror.InvalidInput("invalid request body", err))
 		return
 	}
-	//_, err := a.draftService.UpdateDraft(c.Request.Context(), uuid, uid, req.ChartBase)
-	//if err != nil {
-	//	transport.ServiceError(c, err)
-	//	return
-	//}
+
 	chart, err := a.draftService.PublishDraft(c.Request.Context(), uuid, uid, req.ChartBase, a.chartService)
 	if err != nil {
 		apperror.ServiceError(c, err)

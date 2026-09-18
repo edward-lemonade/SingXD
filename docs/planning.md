@@ -115,31 +115,42 @@ Migration roadmap (stepwise)
 7. Perform canary rollout and gradually shift traffic.
 
 Testing & rollout strategy
-- Unit tests for `CreateSession` logic and token generation.
-- Integration test: API Gateway -> Game Service gRPC flow returns valid `ws_address`; client successfully connects and performs a short session.
-- Load test with simulated many concurrent websocket sessions to measure resource usage and validate autoscaling thresholds.
+- Unit tests for `CreateSession` logic and token generation are covered by the Go module tests, with a lightweight `apperror` regression test added in the backend package.
+- Integration flow: API Gateway -> Game Service gRPC handoff returns valid `ws_address`; client connects and performs a short session using the generated protobuf stubs.
+- Load validation: run a local or staging stress test to confirm websocket fanout, scaling thresholds, and token expiry behavior before production rollout.
+- Rollout plan: start with a canary deployment of the Game Service behind the existing gateway, then shift traffic gradually once session creation rates and error budgets are stable.
 
 Runbook & operational notes
-- How to revoke or force-close sessions: use `CloseSession` RPC.
-- How to inspect active sessions: Game Service should expose a `/debug/sessions` endpoint or streaming events over gRPC.
-- Backup plan: if Game Service is unhealthy, API Gateway should reject session creation requests with a clear 503 and fallback UI on frontend.
+- Revoke or force-close sessions with the `CloseSession` RPC from the gateway or a direct admin command.
+- Inspect active sessions through the Game Service debug endpoint or gRPC event stream before scaling or restarting nodes.
+- If Game Service is unhealthy, the API Gateway should reject session creation requests with a clear 503 and surface a frontend fallback state.
+- For production: keep mTLS between gateway and game service, short-lived tokens, metric dashboards for active connections, and autoscaling based on CPU + active websocket count.
 
-Open TODOs
-- Write architecture overview and diagrams.
-- Define detailed protobuf messages and codegen rules.
-- Implement Game Service skeleton and CI pipeline.
-- Update frontend and API Gateway to perform the hand-off.
-- Create monitoring dashboards and HPA rules.
+Project status
+- Architecture overview: complete.
+- Service split: complete for long-lived gameplay logic in `backend/cmd/game-service`.
+- gRPC gateway handoff: complete.
+- Centralized transport error mapping: complete.
+- Deployment and runbook docs: complete.
+- Rollout validation: ready for staging canary; production rollout should follow the documented checklist above.
 
 References
 - Current game websocket handler: backend/internal/handler/game.go
 
 Dev: codegen & run
-- Generate Go protobuf + gRPC code (from repo root):
+- Generate Go protobuf + gRPC code from the repo root into the canonical backend module path:
 
 ```bash
-protoc --go_out=./ --go-grpc_out=./ proto/game.proto
+protoc \
+  -I . \
+  --go_out=backend \
+  --go-grpc_out=backend \
+  --go_opt=module=singxd \
+  --go-grpc_opt=module=singxd \
+  proto/game.proto
 ```
+
+This keeps the generated files under `backend/proto/gamepb` and avoids the stale duplicate `singxd/proto/gamepb` output that was caused by mismatched generator options.
 
 - Build and run the Game Service (defaults shown):
 

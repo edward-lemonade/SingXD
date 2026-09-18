@@ -1,15 +1,18 @@
 package editor
 
-import "errors"
+import (
+	"singxd/internal/apperror"
+)
 
+// editor/errors.go — sentinel AppErrors for the editor package
 var (
-	ErrMissingUUID               = errors.New("missing uuid")
-	ErrInvalidAudioType          = errors.New("invalid audio type")
-	ErrInvalidImageType          = errors.New("invalid image type")
-	ErrSeparationFailed          = errors.New("separation failed")
-	ErrVocalsNotGenerated        = errors.New("vocals file not generated")
-	ErrInstrumentalNotGenerated  = errors.New("instrumental file not generated")
-	ErrAlignmentFailed           = errors.New("alignment failed")
-	ErrParsingLyrics             = errors.New("failed to parse lyrics")
-	ErrPythonInterpreterNotFound = errors.New("python interpreter not found")
+	ErrMissingUUID               = apperror.InvalidInput("missing uuid", nil)
+	ErrInvalidAudioType          = apperror.InvalidInput("invalid audio type", nil)
+	ErrInvalidImageType          = apperror.InvalidInput("invalid image type", nil)
+	ErrSeparationFailed          = apperror.Internal("separation failed", nil)
+	ErrVocalsNotGenerated        = apperror.Internal("vocals file not generated", nil)
+	ErrInstrumentalNotGenerated  = apperror.Internal("instrumental file not generated", nil)
+	ErrAlignmentFailed           = apperror.Internal("alignment failed", nil)
+	ErrParsingLyrics             = apperror.Unprocessable("failed to parse lyrics", nil)
+	ErrPythonInterpreterNotFound = apperror.Internal("python interpreter not found", nil)
 )

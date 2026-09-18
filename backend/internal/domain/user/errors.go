@@ -1,7 +1,7 @@
 package user
 
-import "errors"
+import "singxd/internal/apperror"
 
 var (
-	ErrUserNotFound = errors.New("user not found")
+	ErrUserNotFound = apperror.NotFound("user not found", nil)
 )

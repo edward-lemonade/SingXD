@@ -6,6 +6,8 @@ import (
 	"log"
 
 	"gorm.io/gorm"
+
+	"singxd/internal/apperror"
 )
 
 type UserService struct {
@@ -25,7 +27,7 @@ func NewUserService(s3Client *S3Client, db *gorm.DB) *UserService {
 
 func (s *UserService) GetOrCreateByUID(ctx context.Context, uid string) (*User, error) {
 	if err := UpsertUserByUID(ctx, s.db, uid); err != nil {
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to create user")
 	}
 
 	record, err := GetByUID(ctx, s.db, uid)
@@ -33,7 +35,7 @@ func (s *UserService) GetOrCreateByUID(ctx context.Context, uid string) (*User, 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrUserNotFound
 		}
-		return nil, err
+		return nil, apperror.WrapUnknown(err, "failed to fetch user")
 	}
 
 	return &User{

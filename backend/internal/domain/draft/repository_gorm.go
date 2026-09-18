@@ -3,6 +3,7 @@ package draft
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"time"
 
 	"gorm.io/datatypes"
@@ -49,6 +50,9 @@ func updateByUUIDAndUID(ctx context.Context, db *gorm.DB, uuid string, uid *stri
 	}
 	var record DraftRecord
 	if err := db.WithContext(ctx).Where("uuid = ? AND (author_uid = ? OR author_uid IS NULL)", uuid, uid).First(&record).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return DraftRecord{}, ErrDraftNotFound.WithCause(err)
+		}
 		return DraftRecord{}, err
 	}
 	record.Lines = lines
@@ -74,6 +78,9 @@ func findByUUIDAndUID(ctx context.Context, db *gorm.DB, uuid string, uid *string
 	if err := db.WithContext(ctx).
 		Where("uuid = ? AND (author_uid = ? OR author_uid IS NULL)", uuid, uid).
 		First(&record).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrDraftNotFound.WithCause(err)
+		}
 		return nil, err
 	}
 	return &record, nil

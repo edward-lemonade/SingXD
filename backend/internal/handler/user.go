@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"singxd/internal/apperror"
 	"singxd/internal/domain/user"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,7 @@ func (a *UserHandler) Me(c *gin.Context) {
 
 	currentUser, err := a.userService.GetOrCreateByUID(c.Request.Context(), *uid)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch current user."})
+		apperror.ServiceError(c, err)
 		return
 	}
 

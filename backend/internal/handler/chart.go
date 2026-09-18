@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"errors"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -10,16 +8,15 @@ import (
 	chartpkg "singxd/internal/domain/chart"
 
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc/codes"
 )
 
 type ChartService = chartpkg.ChartService
 
 type ChartHandler struct {
-	chartService *ChartService
+	chartService *chartpkg.ChartService
 }
 
-func NewChartHandler(service *ChartService) *ChartHandler {
+func NewChartHandler(service *chartpkg.ChartService) *ChartHandler {
 	return &ChartHandler{chartService: service}
 }
 
@@ -29,35 +26,26 @@ func NewChartHandler(service *ChartService) *ChartHandler {
 func (a *ChartHandler) GetChart(c *gin.Context) {
 	idStr := c.Param("id")
 	if idStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "missing id"})
+		apperror.ServiceError(c, apperror.InvalidInput("missing id", nil))
 		return
 	}
 
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		apperror.ServiceError(c, apperror.InvalidInput("invalid id", err))
 		return
 	}
 
 	chart, err := a.chartService.FindChartByID(c.Request.Context(), uint(id))
 	if err != nil {
-		// Preserve sentinel mappings (e.g. not found); only wrap unexpected errors
-		if errors.Is(err, chartpkg.ErrChartNotFound) {
-			apperror.ServiceError(c, err)
-			return
-		}
-		wrapped := apperror.Wrap(err, "chart.fetch_failed", "Failed to fetch chart", http.StatusInternalServerError, codes.Internal)
-		apperror.ServiceError(c, wrapped)
+		apperror.ServiceError(c, err)
 		return
 	}
 
 	type Response struct {
 		Chart chartpkg.PublicChart `json:"chart"`
 	}
-
-	c.JSON(http.StatusOK, Response{
-		Chart: *chart,
-	})
+	c.JSON(http.StatusOK, Response{Chart: *chart})
 }
 
 func (a *ChartHandler) ListCharts(c *gin.Context) {
@@ -77,9 +65,7 @@ func (a *ChartHandler) ListCharts(c *gin.Context) {
 
 	charts, total, err := a.chartService.ListCharts(c.Request.Context(), page, limit, search)
 	if err != nil {
-		log.Printf("[Service Error]: %v", err)
-		status, msg := apperror.ToHTTP(err)
-		c.JSON(status, gin.H{"error": msg})
+		apperror.ServiceError(c, err)
 		return
 	}
 
@@ -102,9 +88,7 @@ func (a *ChartHandler) ListMyCharts(c *gin.Context) {
 
 	charts, err := a.chartService.ListChartsByUID(c.Request.Context(), uid)
 	if err != nil {
-		log.Printf("[Service Error]: %v", err)
-		status, msg := apperror.ToHTTP(err)
-		c.JSON(status, gin.H{"error": msg})
+		apperror.ServiceError(c, err)
 		return
 	}
 

@@ -1,0 +1,42 @@
+syntax = "proto3";
+package singxd.game;
+
+option go_package = "singxd/proto/gamepb";
+
+import "google/protobuf/empty.proto";
+
+service GameManager {
+  // Called by the API gateway to allocate a session and receive connection info
+  rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+
+  // Optional: request the Game Service to preload assets into memory
+  rpc PreloadVocals(PreloadRequest) returns (google.protobuf.Empty);
+
+  // Inform game-service to close a session early
+  rpc CloseSession(CloseSessionRequest) returns (google.protobuf.Empty);
+
+  // Optional: streaming for metrics / monitoring
+  rpc StreamSessionEvents(stream SessionEvent) returns (google.protobuf.Empty);
+}
+
+message CreateSessionRequest {
+  uint64 chart_id = 1;
+  // Firebase UID string of requesting user
+  string user_uid = 2;
+  // Preferred chunk size (samples) or 0 for default
+  uint32 samples_in_chunk = 3;
+}
+
+message CreateSessionResponse {
+  string session_id = 1;
+  // Address that clients should connect to for websocket (ws://host:port or wss://)
+  string ws_address = 2;
+  // Short-lived token the client will present when connecting over WS
+  string ws_token = 3;
+  // Optional: TTL seconds for token
+  uint32 token_ttl = 4;
+}
+
+message PreloadRequest { uint64 chart_id = 1; }
+message CloseSessionRequest { string session_id = 1; }
+message SessionEvent { string session_id = 1; string type = 2; string payload = 3; }
