@@ -76,9 +76,9 @@ func main() {
 }
 
 func setupS3(ctx context.Context) *storage.S3Client {
-	bucket := os.Getenv("S3_BUCKET")
+	bucket := os.Getenv("AWS_S3_BUCKET")
 	if bucket == "" {
-		log.Fatal("S3_BUCKET environment variable not set")
+		log.Fatal("AWS_S3_BUCKET environment variable not set")
 	}
 	s3Client, err := storage.NewS3Client(ctx, bucket)
 	if err != nil {

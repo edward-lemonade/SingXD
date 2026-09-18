@@ -12,6 +12,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
@@ -23,7 +24,13 @@ type S3Client struct {
 func NewS3Client(ctx context.Context, bucket string) (*S3Client, error) {
 	cfg, err := config.LoadDefaultConfig(
 		ctx,
-		config.WithRegion(os.Getenv("AWS_REGION")))
+		config.WithRegion(os.Getenv("AWS_REGION")),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
+			os.Getenv("AWS_ACCESS_KEY_ID"),
+			os.Getenv("AWS_SECRET_ACCESS_KEY"),
+			os.Getenv("AWS_SESSION_TOKEN"),
+		)),
+	)
 	if err != nil {
 		return nil, err
 	}

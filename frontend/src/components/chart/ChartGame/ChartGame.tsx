@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import {
     connectChartGameSocket,
+    startGameSession,
     WsMsg,
     WsSummaryMsg,
     type ChartGameSocketHandle,
@@ -222,18 +223,32 @@ export default function ChartGame({
     useEffect(() => {
         if (!chart.properties.audioUrl) return;
 
-        const handle = connectChartGameSocket({
-            chartId,
-            onMessage: handleMessage,
-            onError: evt => console.warn('[ChartGame ws] error', evt),
-            onClose: evt => console.debug('[ChartGame ws] closed', evt.code, evt.reason),
-        });
+        let isCancelled = false;
 
-        socketRef.current = handle;
+        const startSession = async () => {
+            try {
+                const session = await startGameSession(chartId);
+                if (isCancelled) return;
 
-        navigator.mediaDevices
-            .getUserMedia({ audio: true, video: false })
-            .then(async stream => {
+                const handle = connectChartGameSocket({
+                    wsUrl: session.wsAddress,
+                    onMessage: handleMessage,
+                    onError: evt => console.warn('[ChartGame ws] error', evt),
+                    onClose: evt => console.debug('[ChartGame ws] closed', evt.code, evt.reason),
+                });
+
+                socketRef.current = handle;
+
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: true,
+                    video: false,
+                });
+
+                if (isCancelled) {
+                    stream.getTracks().forEach(track => track.stop());
+                    return;
+                }
+
                 mediaStreamRef.current = stream;
 
                 const ctx = new AudioContext({ sampleRate: 44100 });
@@ -269,10 +284,15 @@ export default function ChartGame({
                 };
 
                 ctx.createMediaStreamSource(stream).connect(node);
-            })
-            .catch(err => console.error('[ChartGame] mic error', err));
+            } catch (err) {
+                console.error('[ChartGame] failed to start session', err);
+            }
+        };
+
+        startSession();
 
         return () => {
+            isCancelled = true;
             if (summaryTimeoutRef.current) {
                 clearTimeout(summaryTimeoutRef.current);
                 summaryTimeoutRef.current = null;

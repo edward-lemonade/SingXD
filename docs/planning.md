@@ -128,7 +128,7 @@ Runbook & operational notes
 
 Project status
 - Architecture overview: complete.
-- Service split: complete for long-lived gameplay logic in `backend/cmd/game-service`.
+- Service split: complete for long-lived gameplay logic in `backend/game-service`, with the API gateway retained under `backend/api`.
 - gRPC gateway handoff: complete.
 - Centralized transport error mapping: complete.
 - Deployment and runbook docs: complete.
@@ -155,16 +155,17 @@ This keeps the generated files under `backend/proto/gamepb` and avoids the stale
 - Build and run the Game Service (defaults shown):
 
 ```bash
-cd backend
+cd backend/game-service
 # game service gRPC runs on :50051 and websocket on :9090 by default
-GAME_WS_HOST=localhost:9090 GAME_SERVICE_ADDR=localhost:50051 go run ./cmd/game-service
+GAME_WS_HOST=localhost:9090 GAME_SERVICE_ADDR=localhost:50051 go run .
 ```
 
 - Run API gateway (from `backend`):
 
 ```bash
 # ensure GAME_SERVICE_ADDR is set so the gateway can call CreateSession
-GAME_SERVICE_ADDR=localhost:50051 go run ./
+cd backend
+GAME_SERVICE_ADDR=localhost:50051 go run .
 ```
 
 Notes: The repository requires `protoc` with the Go plugins (`protoc-gen-go` and `protoc-gen-go-grpc`) installed to generate `proto/gamepb` sources before building the Go services.

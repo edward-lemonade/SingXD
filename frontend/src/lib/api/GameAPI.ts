@@ -23,6 +23,16 @@ export async function preloadVocals(chartId: number): Promise<void> {
     await API.get(ROUTE_CONFIG.game.load(chartId));
 }
 
+export async function startGameSession(chartId: number): Promise<{
+    sessionId: string;
+    wsAddress: string;
+    wsToken: string;
+    tokenTtl: number;
+}> {
+    const response = await API.post(ROUTE_CONFIG.game.start(chartId));
+    return response.data;
+}
+
 export interface ChartGameSocketHandle {
     sendBinary: (data: ArrayBuffer) => void;
     sendJSON: (data: unknown) => void;
@@ -30,14 +40,13 @@ export interface ChartGameSocketHandle {
 }
 
 export function connectChartGameSocket(options: {
-    chartId: number;
+    wsUrl: string;
     onMessage: (evt: MessageEvent) => void;
     onError: (evt: Event) => void;
     onClose: (evt: CloseEvent) => void;
 }): ChartGameSocketHandle {
-    const { chartId, onMessage, onError, onClose } = options;
+    const { wsUrl, onMessage, onError, onClose } = options;
 
-    const wsUrl = ROUTE_CONFIG.game.run(chartId);
     const ws = new WebSocket(wsUrl);
     ws.binaryType = 'arraybuffer';
     ws.onmessage = onMessage;
